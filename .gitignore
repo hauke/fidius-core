@@ -1,0 +1,6 @@
+config.yaml
+*~
+test/test_*.rb
+*.yaml
+*#*
+doc/
