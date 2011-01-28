@@ -10,9 +10,10 @@ module Scan
 class PortScan
   include FIDIUS::Action::Scan
 
-  def initialize host, port
+  def initialize host, port_range = nil
+    check_param host
     @host = host
-    @port = port
+    @port_range = port_range
   end
 
   def execute

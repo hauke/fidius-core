@@ -16,6 +16,11 @@ module Scan
   end
 
 
+  def check_param host
+    return true if host.is_a FIDIUS::Asset::Host
+    nil
+  end
+
   # 
   def get_success
     # should return a list of hosts which are new after scan
