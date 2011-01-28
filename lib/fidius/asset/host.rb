@@ -3,7 +3,9 @@ module FIDIUS
 
 module Asset
 
-class Host
+
+# TODO make this saveable to database
+class Host # < ActiveRecord
   
   def initialize 
     raise NotImplementedError, "not implemented yet"
@@ -24,6 +26,12 @@ class Host
   def ip
     raise NotImplementedError, "not implemented yet"
   end
+
+  def mac_addr
+    raise NotImplementedError, "not implemented yet"
+  end
+
+  
 
 end
 

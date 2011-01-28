@@ -1,0 +1,5 @@
+
+
+- an instance of the msf must be available in all classes
+- generall logging must be implemented
+- assets must be saveable into database
