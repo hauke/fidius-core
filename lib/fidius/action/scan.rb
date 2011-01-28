@@ -15,7 +15,6 @@ module Scan
     raise NotImplementedError, "method must be implemented by subclass"
   end
 
-
   def check_param host
     return true if host.is_a FIDIUS::Asset::Host
     nil

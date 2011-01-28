@@ -11,11 +11,39 @@ class Host # < ActiveRecord
     raise NotImplementedError, "not implemented yet"
   end
 
-  def scan type, port_range = nil
+  def exploited?
     raise NotImplementedError, "not implemented yet"
   end
 
-  def scanned?
+  def reachable?
+    raise NotImplementedError, "not implemented yet"
+  end
+
+  def get_services
+    # should return nil of services unknown, an empty array 
+    # if host has no services and a list of Service instances if
+    # any services has been discovered yet
+    raise NotImplementedError, "not implemented yet"
+  end
+
+  def get_subnets
+    raise NotImplementedError, "not implemented yet"
+  end
+  
+  def add_subnet
+    raise NotImplementedError, "not implemented yet"
+  end
+
+  def reachable_trough
+    # should return gateway host through which one 
+    raise NotImplementedError, "not implemented yet"
+  end
+
+  def get_session
+    raise NotImplementedError, "not implemented yet"
+  end
+
+  def ports_scanned?
     raise NotImplementedError, "not implemented yet"
   end
 
@@ -31,7 +59,9 @@ class Host # < ActiveRecord
     raise NotImplementedError, "not implemented yet"
   end
 
-  
+  def self.==
+      raise NotImplementedError, "not implemented yet"
+  end
 
 end
 
