@@ -23,9 +23,9 @@ class PortScan
     raise ArgumentError, "target not set" unless @target
     
     if @port_range
-      args = [" -sV -p #{@port_range}", @target]
+      args = [" -sV -p #{@port_range}", @target.ip]
     else
-      args = [" -sV ", @target]
+      args = [" -sV ", @target.ip]
     end
     nmap = Rex::FileUtils.find_full_path("nmap") || Rex::FileUtils.find_full_path("nmap.exe")
     
