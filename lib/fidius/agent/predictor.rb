@@ -38,6 +38,8 @@ module MachineLearning
 
     # dim: #known_services, num_layers: user specified (10)
     def initialize dim, num_layers
+      @training_set = []
+      @labels = []
       setup(dim, num_layers)       
     end
 
@@ -55,7 +57,7 @@ module MachineLearning
   
     def add_instance(example, label) 
       @training_set << example
-      @labels << lable
+      @labels << label
     end
     
     def predict(example)

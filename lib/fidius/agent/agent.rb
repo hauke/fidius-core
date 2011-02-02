@@ -12,7 +12,7 @@ module MachineLearning
 
     def initialize host, value
       @host = host
-      @value = value
+      @value = [value]
     end
 
   end
@@ -44,7 +44,7 @@ module MachineLearning
     
     # call with array of instances for training and #operations
     def train instances, iterations
-      @instances.each do |i|
+      instances.each do |i|
         @predictor.add_instance(i.host.get_services_as_bit_vector, i.value)
       end
       iterations.times do
