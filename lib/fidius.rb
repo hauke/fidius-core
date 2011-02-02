@@ -11,14 +11,14 @@ module FIDIUS
   require 'fidius/knowledge/subnet'
   require 'fidius/knowledge/asset'
 
+  # ACTION
+  require 'fidius/action/scan'
+
   # AI
   require 'ai4r'
   require 'algorithms'
   require 'fidius/agent/agent'
   require 'fidius/agent/predictor'
-
-  # ACTION
-  require 'fidius/action/scan'
 
 end
 
