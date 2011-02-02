@@ -1,20 +1,22 @@
 module FIDIUS
   # MISC
   require 'rubygems'
+  
+  $LOAD_PATH.unshift File.expand_path(File.dirname __FILE__)
 
   # KNOWLEDGE
-  require File.join(File.dirname(__FILE__),'fidius' ,'knowledge', 'service')
-  require File.join(File.dirname(__FILE__),'fidius' , 'knowledge', 'loudness')
-  require File.join(File.dirname(__FILE__),'fidius' , 'knowledge', 'subnet')
-  require File.join(File.dirname(__FILE__),'fidius' , 'knowledge', 'asset')
+  require 'fidius/knowledge/service'
+  require 'fidius/knowledge/loudness'
+  require 'fidius/knowledge/subnet'
+  require 'fidius/knowledge/asset'
 
   # AI
   require 'ai4r'
   require 'algorithms'  
-  require File.join(File.dirname(__FILE__),'fidius' , 'agent', 'agent')
-  require File.join(File.dirname(__FILE__),'fidius' , 'agent', 'predictor')
+  require 'fidius/agent/agent'
+  require 'fidius/agent/predictor'
 
   # ACTION
-  require File.join(File.dirname(__FILE__),'fidius' , 'action', 'scan')
+  require 'fidius/action/scan'
   
 end
