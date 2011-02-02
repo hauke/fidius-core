@@ -12,7 +12,7 @@ module FIDIUS
 
   # AI
   require 'ai4r'
-  require 'algorithms'  
+  require 'algorithms'
   require 'fidius/agent/agent'
   require 'fidius/agent/predictor'
 
