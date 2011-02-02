@@ -1,4 +1,5 @@
 module FIDIUS
+  
   # MISC
   require 'rubygems'
   
@@ -18,5 +19,7 @@ module FIDIUS
 
   # ACTION
   require 'fidius/action/scan'
-  
+
 end
+
+
