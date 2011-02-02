@@ -33,5 +33,3 @@ module MachineLearning
     end
   end
 end
-
-end # FIDIUS
