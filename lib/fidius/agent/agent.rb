@@ -4,10 +4,22 @@ module MachineLearning
   include Containers
   include Action::Scan
 
+  class Instance
+    
+    attr_acessor :host, :value
+
+    def initialize host, value
+      @host = host
+      @value = value
+    end
+
+  end
+
   class Agent
   
-    def initialize predictor
-      @predictor = predictor
+    def initialize 
+      # dimension = |known_services|; 8 layers
+      @predictor = Predictor.new(known_services().size, 8)
       @open_list = PriorityQueue.new
     end
 
@@ -27,9 +39,12 @@ module MachineLearning
       return @open_list.pop
     end
     
-    def reward services, real_value
-      @predictor.add_instance(services, real_value)
+    def train instances
+      @instances.each do |i|
+        @predictor.add_instance(i.host.get_services_as_bit_vector, i.value)
+      end
       @predictor.train
     end
+
   end
 end
