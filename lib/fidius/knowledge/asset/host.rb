@@ -5,8 +5,14 @@ module Asset
 # TODO make this saveable to database
 class Host # < ActiveRecord
   
-  def initialize 
-    raise NotImplementedError, "not implemented yet"
+  attr_accessor :services, :name
+
+  def initialize name
+    # should be nil if services unknown, an empty array 
+    # if host has no services and a list of Service instances if
+    # any services has been discovered yet
+    @services = nil
+    @name = name
   end
 
   def exploited?
@@ -17,18 +23,20 @@ class Host # < ActiveRecord
     raise NotImplementedError, "not implemented yet"
   end
 
-  def get_services
-    # should return nil of services unknown, an empty array 
-    # if host has no services and a list of Service instances if
-    # any services has been discovered yet
-    raise NotImplementedError, "not implemented yet"
-  end
-
   def get_services_as_bit_vector
-    services = get_services
-    return [] unless services
-    services.each do |service|
+    return [] unless @services
+
+    bit_vector = []
+    known = MachineLearning::known_services
+
+    known.each do |service|
+      if @services.include? service 
+        bit_vector << 1
+      else
+        bit_vector << 0
+      end
     end
+    bit_vector
   end
   
   def get_subnets
