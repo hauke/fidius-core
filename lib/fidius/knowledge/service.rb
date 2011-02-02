@@ -18,8 +18,9 @@ class Service
     raise NotImplementedError, "not implemented yet"
   end
 
-  def self.== x
-      self.name == x.name && self.port == x.port && self.proto == x.proto      
+  def == x
+    @name.eql? x.name and @port == x.port and @proto == x.proto      
   end
+
 end # class Service
 end # module FIDIUS

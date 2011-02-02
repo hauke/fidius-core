@@ -6,7 +6,7 @@ module MachineLearning
   NODES_PER_LAYER = 10
   OUT = 1
   
-  def known_services
+  def self.known_services
     services = []    
     services << Service.new("ssh", 22, "tcp")
     services << Service.new("vnc", 5900, "tcp")
@@ -62,7 +62,7 @@ module MachineLearning
       @ann.eval(example)
     end
 
-    private
+private
     def setup dim, num_layers
       @ann_topology = []
       @ann_topology << dim

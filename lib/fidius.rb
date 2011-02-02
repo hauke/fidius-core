@@ -18,4 +18,3 @@ module FIDIUS
   require File.join(File.dirname(__FILE__),'fidius' , 'action', 'scan')
   
 end
-
