@@ -41,11 +41,11 @@ module MachineLearning
       setup(dim, num_layers)       
     end
 
-    def initialize training_set, labels, num_layers
-      @training_set = training_set
-      @labels = labels
-      setup(training_set[0].size, num_layers)    
-    end
+    #def initialize training_set, labels, num_layers
+    #  @training_set = training_set
+    #  @labels = labels
+    #  setup(training_set[0].size, num_layers)    
+    #end
 
     def train
       @training_set.size.times do |i|
@@ -86,4 +86,4 @@ end
 
 end
 
-end # FIDIUS
+
