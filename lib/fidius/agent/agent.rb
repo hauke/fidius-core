@@ -23,6 +23,7 @@ module MachineLearning
       @open_list = PriorityQueue.new
     end
 
+    # Call for next host to exploit
     def decision neighbours # list of hosts
       neighbours.each do |n|
         if n == nil
@@ -39,11 +40,14 @@ module MachineLearning
       return @open_list.pop
     end
     
-    def train instances
+    # call with array of instances for training and #operations
+    def train instances, iterations
       @instances.each do |i|
         @predictor.add_instance(i.host.get_services_as_bit_vector, i.value)
       end
-      @predictor.train
+      iterations.times do
+        @predictor.train
+      end
     end
 
   end
