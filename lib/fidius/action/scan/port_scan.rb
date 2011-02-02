@@ -15,7 +15,7 @@ class PortScan
     @port_range = port_range
   end
 
-  def execute
+  def execute 
     raise ArgumentError, "target not set" unless @target
     # should execute the nmap scan
     raise NotImplementedError, "not implemented yet"
