@@ -4,7 +4,7 @@ module Asset
 
 # TODO make this saveable to database
 class Host # < ActiveRecord
-  
+
   attr_accessor :services, :name
 
   def initialize name
@@ -31,11 +31,7 @@ class Host # < ActiveRecord
     known = FIDIUS::MachineLearning::known_services
 
     known.each do |service|
-      if @services.include? service 
-        bit_vector << 1
-      else
-        bit_vector << 0
-      end
+      bit_vector << (@services.include?(service) ? 1 : 0)
     end
     bit_vector
   end
@@ -73,7 +69,7 @@ class Host # < ActiveRecord
     raise NotImplementedError, "not implemented yet"
   end
 
-  def self.==
+  def ==
       raise NotImplementedError, "not implemented yet"
   end
 

@@ -1,0 +1,6 @@
+
+
+
+== Gems needed
+   - ai4r
+   - algorithms
