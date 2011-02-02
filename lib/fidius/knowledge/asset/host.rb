@@ -1,8 +1,6 @@
-
 module FIDIUS
 
 module Asset
-
 
 # TODO make this saveable to database
 class Host # < ActiveRecord
@@ -26,6 +24,13 @@ class Host # < ActiveRecord
     raise NotImplementedError, "not implemented yet"
   end
 
+  def get_services_as_bit_vector
+    services = get_services
+    return [] unless services
+    services.each do |service|
+    end
+  end
+  
   def get_subnets
     raise NotImplementedError, "not implemented yet"
   end
@@ -67,3 +72,5 @@ end
 
 end # module Asset
 end # module FIDIUS
+
+

@@ -1,12 +1,16 @@
 module FIDIUS
 
-module Service
+class Service
 
-  def get_exploits
-    raise NotImplementedError, "not implemented yet"
+  attr_accessor :port, :name, :proto
+
+  def initialize(name, port, proto)
+    @name = name
+    @port = port
+    @proto = proto # tcp or udp
   end
 
-  def get_port
+  def get_exploits
     raise NotImplementedError, "not implemented yet"
   end
 
@@ -14,5 +18,8 @@ module Service
     raise NotImplementedError, "not implemented yet"
   end
 
-end # module Service
+  def self.== x
+      self.name == x.name && self.port == x.port && self.proto == x.proto      
+  end
+end # class Service
 end # module FIDIUS
