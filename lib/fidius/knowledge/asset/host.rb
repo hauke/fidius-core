@@ -31,7 +31,7 @@ class Host # < ActiveRecord
     known = FIDIUS::MachineLearning::known_services
 
     known.each do |service|
-      bit_vector = (@services.include? service) ? 1 : 0
+      bit_vector << (@services.include?(service) ? 1 : 0)
     end
     bit_vector
   end
