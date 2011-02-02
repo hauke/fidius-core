@@ -86,31 +86,4 @@ end
 
 end
 
-# TEST
-include MachineLearning
-
-set = []    # [[1,0,1], [1,1,1]] Ports {0: closed. 1:open}
-labels = [] # [0.9, 0.1] Value of host {0...1}  
-
-fp = File.open("nmap.csv", "r")
-while line = fp.gets
-  set << str2example(line)
-end
-fp.close
-
-fp = File.open("pred.csv", "r")
-while line = fp.gets
-   labels << [line.to_i]
-end
-fp.close
-
-pred =  Predictor.new(set, labels, 2)
-300.times do |i|
-  pred.train
-end
-
-set.size.times do |x|
-  puts "#{pred.predict(set[x])}" # "#{labels[x]}"
-end
-
 end # FIDIUS
