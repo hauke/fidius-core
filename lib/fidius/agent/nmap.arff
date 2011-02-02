@@ -1,0 +1,62 @@
+% A Data Set for Host classification / prediction for use in Weka [1]
+% 
+%  - I will add Operating system information
+%  - In the moment classification in server / host
+%    but in the future I will predict values of hosts
+%
+% [1] http://www.cs.waikato.ac.nz/ml/weka/
+% 
+% Daniel Kohlsdorf <dkohl@tzi.de>
+
+@RELATION nmap
+
+% PORTS
+@ATTRIBUTE ssh {0,1}
+@ATTRIBUTE vnc {0,1}
+@ATTRIBUTE smtp {0,1}
+@ATTRIBUTE domain {0,1}
+@ATTRIBUTE mysql {0,1}
+@ATTRIBUTE http {0,1}
+@ATTRIBUTE netbios-ssn {0,1}
+@ATTRIBUTE microsoft-ds {0,1}
+@ATTRIBUTE ftp {0,1}
+@ATTRIBUTE ipp {0,1}
+@ATTRIBUTE afp {0,1}
+@ATTRIBUTE kerberos-sec {0,1}
+@ATTRIBUTE https {0,1}
+@ATTRIBUTE svn {0,1}
+@ATTRIBUTE aol {0,1}
+@ATTRIBUTE http-proxy {0,1}
+@ATTRIBUTE pop3 {0,1}
+@ATTRIBUTE ldab {0,1}
+@ATTRIBUTE cvspserver {0,1}
+@ATTRIBUTE imap {0,1}
+@ATTRIBUTE ppp {0,1}
+@ATTRIBUTE os {Solaris, WindowsXP, WindowsServer, Linux, OsX}
+% Class
+@ATTRIBUTE class {server, client}
+
+@DATA
+% ssh, vnc, smtp, domain, mysql, http, netbios-ssn, microsoft-ds, ftp, ipp, 
+% afp, kerberos, https, svn, aol, http-proxy, pop, ldap, cvspserver,
+% imap, ppp, class
+1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Solaris, server % pierre
+1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Solaris, server % marie 
+1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Solaris, server % dns_one
+1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Solaris, server % dns_two
+1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Solaris, server % erwin
+1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, Solaris, server % matrix
+1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, Solaris, server % auriga 
+1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, Solaris, server % emil
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, Solaris, server % maildrop
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, Solaris, server % snort0 
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, Solaris, server % imap
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, Solaris, server % pop
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, Solaris, server % webmail
+
+1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Linux, client % x12
+1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Linux, client % x13
+1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, Linux, client % x21
+1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, OsX, client % m12
+1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, OsX, client % m22
+0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, OsX, client % mac
