@@ -27,7 +27,8 @@ class Host # < ActiveRecord
     return [] unless @services
 
     bit_vector = []
-    known = MachineLearning::known_services
+    
+    known = FIDIUS::MachineLearning::known_services
 
     known.each do |service|
       if @services.include? service 

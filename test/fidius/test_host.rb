@@ -1,4 +1,4 @@
-require '../../lib/fidius'
+require File.join(File.dirname(__FILE__), '..', '..','lib', 'fidius')
 
 def test_host
   h = FIDIUS::Asset::Host.new("KEEEEEKS")
