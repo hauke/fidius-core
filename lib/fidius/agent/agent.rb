@@ -1,12 +1,14 @@
+require File.join(File.dirname(__FILE__), '..', '..', 'fidius')
+
 module FIDIUS
+include FIDIUS::Action::Scan
 
 module MachineLearning
   include Containers
-  include Action::Scan
 
   class Instance
     
-    attr_acessor :host, :value
+    attr_accessor :host, :value
 
     def initialize host, value
       @host = host
@@ -19,7 +21,7 @@ module MachineLearning
   
     def initialize 
       # dimension = |known_services|; 8 layers
-      @predictor = Predictor.new(known_services().size, 8)
+      @predictor = Predictor.new(MachineLearning::known_services().size, 8)
       @open_list = PriorityQueue.new
     end
 
@@ -49,7 +51,7 @@ module MachineLearning
         @predictor.train
       end
     end
-
+    
   end
 end # modules MachineLearning
 end # modules FIDIUS
