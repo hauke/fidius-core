@@ -8,7 +8,8 @@ class Observable
     @observers << observer
   end
 
-  protected
+protected
+  
   def notify_all(msg)
     @observers.each do |observer|
       observer.notify(msg)

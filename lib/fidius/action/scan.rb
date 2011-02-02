@@ -26,8 +26,8 @@ module Scan
     raise NotImplementedError, "method must be implemented by subclass"
   end
 
-  def initialize host
-    @target_host = host
+  def initialize target
+    @target = target
   end
 
   def loudness

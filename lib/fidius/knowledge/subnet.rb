@@ -3,7 +3,7 @@ module FIDIUS
 class Subnet
 
   def initialize 
-
+    
   end
 
   def get_hosts
@@ -16,4 +16,4 @@ class Subnet
   
 end
 
-end
+end # module FIDIUS

@@ -11,7 +11,7 @@ class ARPScan
   include FIDIUS::Action::Scan
 
   def execute
-    raise ArgumentError, "host is not set" unless @target_host
+    raise ArgumentError, "target not set" unless @target
     # should execute the nmap scan
     raise NotImplementedError, "not implemented yet"
   end
