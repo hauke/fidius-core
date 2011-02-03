@@ -52,6 +52,13 @@ module MachineLearning
       end
     end
     
+    def reward instance, iterations 
+      @predictor.add_instance(i.host.get_services_as_bit_vector, i.value)
+      iterations.times do
+        @predictor.train
+      end
+    end
+
   end
 end # modules MachineLearning
 end # modules FIDIUS
