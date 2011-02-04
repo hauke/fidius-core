@@ -1,5 +1,4 @@
 require 'find'
-require 'rex/compat'
 require 'tempfile'
 
 module Rex
