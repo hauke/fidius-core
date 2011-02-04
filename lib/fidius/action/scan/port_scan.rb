@@ -21,9 +21,11 @@ module FIDIUS
           raise ArgumentError, "target not set" unless @target
           
           if @port_range
-            args = [" -sV -p #{@port_range}", @target.ip]
+            puts "range"
+            args = ["-sV -p #{@port_range}", @target.ip]
           else
-            args = [" -sV ", @target.ip]
+            puts "no range"
+            args = ["-sV", @target.ip]
           end
           nmap = Rex::FileUtils.find_full_path("nmap") || Rex::FileUtils.find_full_path("nmap.exe")
 
@@ -35,7 +37,12 @@ module FIDIUS
           fd = Tempfile.new('xmlnmap')
           fd.binmode
           args.push('-oX', fd.path)
-          system([nmap, "nmap"], *args)
+          puts "show the args plaease, little bastard : #{args.join(" ")}"
+
+          
+
+          puts system("#{nmap} #{args.join(' ')}")
+          
           data = ""
           ::File.open(fd.path, 'rb') do |f|
             data = f.read(f.stat.size)
