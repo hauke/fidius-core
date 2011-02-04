@@ -1,12 +1,9 @@
+require File.join(File.dirname(__FILE__), '..', 'scan')
 
 module FIDIUS
   
   module Action
-    
-    require File.join(File.dirname(__FILE__), '..', 'scan')
-    require 'rex'
-    require 'tempfile'
-    require 'nokogiri'
+
     module Scan
       
       class PortScan

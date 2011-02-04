@@ -5,14 +5,15 @@ module Asset
 # TODO make this saveable to database
 class Host # < ActiveRecord
 
-  attr_accessor :services, :name
+  attr_accessor :services, :name, :ip
 
-  def initialize name
+  def initialize name, ip
     # should be nil if services unknown, an empty array 
     # if host has no services and a list of Service instances if
     # any services has been discovered yet
     @services = nil
     @name = name
+    @ip = ip
   end
 
   def exploited?
@@ -58,10 +59,6 @@ class Host # < ActiveRecord
   end
 
   def hostname
-    raise NotImplementedError, "not implemented yet"
-  end
-
-  def ip
     raise NotImplementedError, "not implemented yet"
   end
 

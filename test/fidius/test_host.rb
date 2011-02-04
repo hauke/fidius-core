@@ -2,7 +2,7 @@
 require File.join(File.dirname(__FILE__), '..', '..','lib', 'fidius')
 
 def test_host
-  h = FIDIUS::Asset::Host.new("KEEEEEKS")
+  h = FIDIUS::Asset::Host.new("KEEEEEKS", "192.168.0.1")
   h.services = []
   h.services << FIDIUS::Service.new("ssh", 22, "tcp")
   h.services << FIDIUS::Service.new("vnc", 5900, "tcp")
