@@ -7,7 +7,7 @@ module FIDIUS
 
   require 'fidius/misc/nmap_xml' # copied from msf/lib
   require 'fidius/misc/file'     # copied from msf/lib
-
+  require 'fidius/misc/compat'   # copied from msf/lib
   # KNOWLEDGE
   require 'fidius/knowledge/service'
   require 'fidius/knowledge/loudness'
