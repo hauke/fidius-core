@@ -28,8 +28,8 @@ module MachineLearning
     # Call for next host to exploit
     def decision neighbours # list of hosts
       neighbours.each do |n|
-        if n == nil
-          scan =  PortScan.new(n, "21-4000")
+        if n.services == nil
+          scan =  FIDIUS::Action::Scan::PortScan.new(n)
           scan.execute
         end
 
