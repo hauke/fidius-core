@@ -1,13 +1,4 @@
-
-module FIDIUS
-
-module Action
-
-require File.join(File.dirname(__FILE__), '..', 'scan')
-
-module Scan
-
-class PingScan
+class FIDIUS::Action::Scan::PingScan
   include FIDIUS::Action::Scan
 
   def execute
@@ -18,6 +9,3 @@ class PingScan
 
 end
 
-end # module Scan
-end # module Action
-end # module FIDIUS

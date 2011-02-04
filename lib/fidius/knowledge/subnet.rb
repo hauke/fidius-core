@@ -1,9 +1,6 @@
-module FIDIUS
-
 require "ipaddr"
 
-class Subnet
-
+class FIDIUS::Subnet
   def initialize ip_range
     if ip_range.is_a? String
       @ip_range = IPAddr.new ip_range
@@ -12,7 +9,6 @@ class Subnet
     else
       raise ArgumentError.new "arguemtn is neither an string nor an ip address object"
     end
-    
   end
 
   def get_asset
@@ -22,14 +18,8 @@ class Subnet
   def add_asset
     raise NotImplementedError, "not implemented yet"
   end
-
-  
-  
 end
 
-end # module FIDIUS
-
 if __FILE__ == $0
-  
   FIDIUS::Subnet.new "192.168.56.0/4"
 end

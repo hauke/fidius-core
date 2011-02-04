@@ -1,3 +1,5 @@
+module FIDIUS::Asset
 
+  self.autoload :Host, 'fidius/knowledge/asset/host'
 
-require File.join(File.dirname(__FILE__), 'asset', 'host')
+end

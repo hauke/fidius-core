@@ -1,13 +1,4 @@
-
-module FIDIUS
-
-module Action
-
-require File.join(File.dirname(__FILE__), '..', 'scan')
-
-module Scan
-
-class ARPScan
+class FIDIUS::Action::Scan::ARPScan
   include FIDIUS::Action::Scan
 
   def execute
@@ -18,6 +9,3 @@ class ARPScan
 
 end
 
-end # module Scan
-end # module Action
-end # module FIDIUS

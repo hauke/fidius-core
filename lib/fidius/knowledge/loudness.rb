@@ -1,12 +1,6 @@
-
-module FIDIUS
-
-module Loudness
+module FIDIUS:: Loudness
 
   SILENT = 0
-
-  
-
   VERY_VERY_LOUD = 100
 
   def self.<
@@ -16,7 +10,5 @@ module Loudness
   def self.>
       raise NotImplementedError, "not implemented yet"
   end
-
-end
 
 end

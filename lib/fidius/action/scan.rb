@@ -1,11 +1,8 @@
-
-module FIDIUS
-
-require File.join(File.dirname(__FILE__), '..', 'action')
-
-module Action
-
-module Scan
+module FIDIUS::Action::Scan
+  
+  autoload :ArpScan,  'fidius/action/scan/arp_scan'
+  autoload :PingScan, 'fidius/action/scan/ping_scan'
+  autoload :PortScan, 'fidius/action/scan/port_scan'
   
   #
   # initilizing the scan
@@ -35,5 +32,3 @@ module Scan
   end
 end
 
-end
-end
