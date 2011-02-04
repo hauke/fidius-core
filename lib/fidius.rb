@@ -2,10 +2,11 @@ module FIDIUS
   
   # MISC
   require 'rubygems'
-  require 'misc/nmap_xml' # copied from msf/lib
-  require 'misc/file'     # copied from msf/lib
-  
+
   $LOAD_PATH.unshift File.expand_path(File.dirname __FILE__)
+
+  require 'fidius/misc/nmap_xml' # copied from msf/lib
+  require 'fidius/misc/file'     # copied from msf/lib
 
   # KNOWLEDGE
   require 'fidius/knowledge/service'
