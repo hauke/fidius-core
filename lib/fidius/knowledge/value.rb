@@ -3,6 +3,7 @@ module FIDIUS
   # simple relevance implementation
   class Relevance
     
+    # Action: fill me!
     attr_acessor :count_files, :disk_usage, :interfaces, :num_connections
     
     def initialize 
