@@ -17,6 +17,7 @@ module FIDIUS
   # ACTION
   require 'fidius/action/scan'
   require 'fidius/action/scan/port_scan'
+  require 'fidius/action/scan/ping_scan'
   require 'rex'
   require 'tempfile'
   require "fileutils"

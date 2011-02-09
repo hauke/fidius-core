@@ -35,6 +35,7 @@ module FIDIUS
           fd = Tempfile.new('xmlnmap')
           fd.binmode
           args.push('-oX', fd.path)
+          system("#{nmap} #{args.join(' ')}")
           data = ""
           ::File.open(fd.path, 'rb') do |f|
             data = f.read(f.stat.size)
