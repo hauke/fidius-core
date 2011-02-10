@@ -11,3 +11,4 @@ hosts.each do |host|
   p "The Services: #{target.get_services_as_bit_vector}"
   i += 1
 end
+

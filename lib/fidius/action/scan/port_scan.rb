@@ -1,25 +1,25 @@
 require File.join(File.dirname(__FILE__), '..', 'scan')
 
 module FIDIUS
-  
+
   module Action
 
     module Scan
-      
+
       class PortScan
         include FIDIUS::Action::Scan
-        
+
         def initialize target, port_range = nil
           raise ArgumentError, "target isnt a target-Object" unless target.ip
           @target = target
           @target.services = []
           @port_range = port_range
         end
-        
-        def execute 
-          
+
+        def execute
+
           raise ArgumentError, "target not set" unless @target
-          
+
           if @port_range
             args = ["-sV -p #{@port_range}", @target.ip]
           else
@@ -31,7 +31,7 @@ module FIDIUS
             puts("The nmap executable could not be found")
             return
           end
-          
+
           fd = Tempfile.new('xmlnmap')
           fd.binmode
           args.push('-oX', fd.path)
@@ -56,7 +56,8 @@ module FIDIUS
           return @target
         end
       end
-      
+
     end # module Scan
   end # module Action
 end # module FIDIUS
+

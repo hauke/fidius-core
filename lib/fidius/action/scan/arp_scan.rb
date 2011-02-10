@@ -35,13 +35,16 @@ class ARPScan
       data = f.read(f.stat.size)
     end
     arguments = {:filename => fd.path}.merge(:data => data)
-
+    puts fd.path
     parser = Rex::Parser::NmapXMLStreamParser.new
     parser.on_found_host = Proc.new do |h|
-      h["addrs"].each do |a|
-        @hosts << a[1]
+      # all hosts are down :/ TODO: FIXME
+      if h["status"] == "up"
+          puts h["addrs"]["ipv4"]
+         @hosts << h["addrs"]["ipv4"]
       end
     end
+    system("cp #{fd.path} /home/chroiss/Desktop/")
     fd.close(true)
     REXML::Document.parse_stream(data, parser)
     return @hosts
