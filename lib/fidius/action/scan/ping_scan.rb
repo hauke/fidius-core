@@ -38,11 +38,10 @@ class PingScan
     parser = Rex::Parser::NmapXMLStreamParser.new
     parser.on_found_host = Proc.new do |h|
       if h["status"] == "up"
-          puts h["addrs"]["ipv4"]
-         @hosts << h["addrs"]["ipv4"]
+        puts h["addrs"]["ipv4"]
+        @hosts << h["addrs"]["ipv4"]
       end
     end
-    system("cp #{fd.path} /home/chroiss/Desktop/")
     fd.close(true)
     REXML::Document.parse_stream(data, parser)
     return @hosts

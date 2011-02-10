@@ -44,7 +44,6 @@ class ARPScan
          @hosts << h["addrs"]["ipv4"]
       end
     end
-    system("cp #{fd.path} /home/chroiss/Desktop/")
     fd.close(true)
     REXML::Document.parse_stream(data, parser)
     return @hosts
