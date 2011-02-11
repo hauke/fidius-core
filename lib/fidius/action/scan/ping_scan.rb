@@ -1,12 +1,4 @@
-module FIDIUS
-
-module Action
-
-require File.join(File.dirname(__FILE__), '..', 'scan')
-
-module Scan
-
-class PingScan
+class FIDIUS::Action::Scan::PingScan
   include FIDIUS::Action::Scan
 
   # returns an array of hosts (which are up) in a given subnet
@@ -48,8 +40,4 @@ class PingScan
   end
 
 end
-
-end # module Scan
-end # module Action
-end # module FIDIUS
 

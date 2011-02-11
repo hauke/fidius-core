@@ -1,5 +1,4 @@
-
-require File.join(File.dirname(__FILE__), '..', '..','lib', 'fidius')
+require File.join File.expand_path(File.dirname __FILE__), '..', '..', 'lib', 'fidius'
 
 def test_host
   h = FIDIUS::Asset::Host.new("KEEEEEKS", "192.168.0.1")

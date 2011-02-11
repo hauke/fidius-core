@@ -1,34 +1,32 @@
+require 'rubygems' # if RUBY_VERSION < 1.9
+
+# Action requirements
+require 'rex'
+require 'tempfile'
+require "fileutils"
+
+# AI requirements
+require 'ai4r'
+require 'algorithms'
+
+# self requirements
+$LOAD_PATH.unshift File.expand_path(File.dirname __FILE__)
+require 'fidius/misc/nmap_xml' # copied from msf/lib
+require 'fidius/misc/file'     # copied from msf/lib
+require 'fidius/misc/compat'   # copied from msf/lib
+
 module FIDIUS
-  
-  # MISC
-  require 'rubygems'
-
-  $LOAD_PATH.unshift File.expand_path(File.dirname __FILE__)
-
-  require 'fidius/misc/nmap_xml' # copied from msf/lib
-  require 'fidius/misc/file'     # copied from msf/lib
-  require 'fidius/misc/compat'   # copied from msf/lib
   # KNOWLEDGE
-  require 'fidius/knowledge/service'
-  require 'fidius/knowledge/loudness'
-  require 'fidius/knowledge/subnet'
-  require 'fidius/knowledge/asset'
+  autoload :Service,  'fidius/knowledge/service'
+  autoload :Loudness, 'fidius/knowledge/loudness'
+  autoload :Subnet,   'fidius/knowledge/subnet'
+  autoload :Asset,    'fidius/knowledge/asset'
 
   # ACTION
-  require 'fidius/action/scan'
-  require 'fidius/action/scan/port_scan'
-  require 'fidius/action/scan/ping_scan'
-  require 'fidius/action/scan/arp_scan'
-  require 'rex'
-  require 'tempfile'
-  require "fileutils"
+  autoload :Action,   'fidius/action'
 
   # AI
-  require 'ai4r'
-  require 'algorithms'
-  require 'fidius/agent/agent'
-  require 'fidius/agent/predictor'
-  
+  autoload :MachineLearning, 'fidius/agent/machine_learning'
 end
 
 

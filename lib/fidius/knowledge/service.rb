@@ -1,6 +1,4 @@
-module FIDIUS
-
-class Service < Struct.new(:name, :port, :proto)
+class FIDIUS::Service < Struct.new(:name, :port, :proto)
 
   def get_exploits
     raise NotImplementedError, "not implemented yet"
@@ -9,6 +7,5 @@ class Service < Struct.new(:name, :port, :proto)
   def to_s
     raise NotImplementedError, "not implemented yet"
   end
-
-end # class Service
-end # module FIDIUS
+  
+end # class FIDIUS::Service
