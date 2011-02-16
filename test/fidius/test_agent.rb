@@ -2,7 +2,7 @@ require File.join File.expand_path(File.dirname __FILE__), '..', '..', 'lib', 'f
 
 include FIDIUS::MachineLearning
 
-# Training set of 2 hosts
+# Training set
 h1 = FIDIUS::Asset::Host.new("KEEEEEKS", "")
 h1.services = []
 h1.services << FIDIUS::Service.new("ssh", 22, "tcp")
@@ -10,7 +10,6 @@ h1.services << FIDIUS::Service.new("vnc", 5900, "tcp")
 h1.services << FIDIUS::Service.new("smtp", 25, "tcp")
 h1.services << FIDIUS::Service.new("domain", 53, "udp")
 inst = Instance.new(h1, 2)
-
 h2 = FIDIUS::Asset::Host.new("KEEEEEKS2", "")
 h2.services = []
 h2.services << FIDIUS::Service.new("ssh", 22, "tcp")
@@ -19,7 +18,7 @@ h2.services << FIDIUS::Service.new("smtp", 25, "tcp")
 h2.services << FIDIUS::Service.new("domain", 53, "udp")
 inst2 = Instance.new(h2, 3)
 
-# Test set (without services)
+# Test set
 h3 = FIDIUS::Asset::Host.new("101", "134.102.201.101")
 h4 = FIDIUS::Asset::Host.new("102", "134.102.201.102")
 h5 = FIDIUS::Asset::Host.new("103", "134.102.201.103")

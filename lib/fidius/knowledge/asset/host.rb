@@ -1,17 +1,17 @@
 
 # TODO make this saveable to database
-class FIDIUS::Asset::Host # < ActiveRecord
+class FIDIUS::Asset::Host < ActiveRecord::Base
 
-  attr_accessor :services, :name, :ip
+  #attr_accessor :services, :name, :ip
 
-  def initialize name, ip
+  #def initialize name, ip
     # should be nil if services unknown, an empty array 
     # if host has no services and a list of Service instances if
     # any services has been discovered yet
-    @services = nil
-    @name = name
-    @ip = ip
-  end
+  #  @services = nil
+  #  @name = name
+  #  @ip = ip
+  #end
 
   def exploited?
     raise NotImplementedError, "not implemented yet"
