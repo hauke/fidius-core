@@ -1,4 +1,4 @@
-class FIDIUS::Service < Struct.new(:name, :port, :proto)
+class FIDIUS::Service < Struct.new(:name, :port, :proto, :desc)
 
   def get_exploits
     raise NotImplementedError, "not implemented yet"
