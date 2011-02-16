@@ -1,4 +1,5 @@
 class FIDIUS::Action::Scan::PingScan
+
   include FIDIUS::Action::Scan
 
   # returns an array of hosts (which are up) in a given subnet
