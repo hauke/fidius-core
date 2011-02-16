@@ -99,7 +99,7 @@ problem.set_goal(g)
 
 # Generate Plan
 problem.write('test.pddl')
-plan('domain.pddl', 'test.pddl', 'test.plan')
+plan('../domain.pddl', 'test.pddl', 'test.plan')
 
 # Parse Plan
 parser = CffParser.new('test.plan')
