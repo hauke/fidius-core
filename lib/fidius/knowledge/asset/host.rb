@@ -1,9 +1,6 @@
-module FIDIUS
-
-module Asset
 
 # TODO make this saveable to database
-class Host # < ActiveRecord
+class FIDIUS::Asset::Host # < ActiveRecord
 
   attr_accessor :services, :name, :ip
 
@@ -71,8 +68,4 @@ class Host # < ActiveRecord
   end
 
 end
-
-end # module Asset
-end # module FIDIUS
-
 
