@@ -1,6 +1,6 @@
 module FIDIUS
   include FIDIUS::Action::Scan
-      
+  
   module MachineLearning
     include Containers
     include Ai4r
@@ -41,8 +41,8 @@ module FIDIUS
       services
     end
 
-    self.autoload :Agent,     'fidius/agent/agent'
-    self.autoload :Predictor, 'fidius/agent/predictor'
+    self.autoload :Agent,     'fidius/decision/agent/agent'
+    self.autoload :Predictor, 'fidius/decision/agent/predictor'
 
     class Instance
       attr_accessor :host, :value
