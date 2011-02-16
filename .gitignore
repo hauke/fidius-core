@@ -4,3 +4,4 @@ test/test_*.rb
 *.yaml
 *#*
 doc/
+lib/data/database.yml
