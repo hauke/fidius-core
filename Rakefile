@@ -29,8 +29,14 @@ def with_db &block
   ActiveRecord::Base.logger.level = Logger::WARN
   begin
     yield connection_data
-  rescue PGError => e
-    puts e.message
+#  rescue ActiveRecord::StatementInvalid => e
+#    if e.message =~ /^PGError.*DROP DATABASE/m
+#      raise 
+#    else
+#      raise
+#    end
+  rescue
+    raise
   ensure
     ActiveRecord::Base.connection.disconnect!
   end
