@@ -62,7 +62,7 @@ namespace :db do
   desc "Creates the database."
   task :create do    
     with_db do |config|
-      ActiveRecord::Base.connection.execute("CREATE DATABASE #{conn["config"]}")
+      ActiveRecord::Base.connection.execute("CREATE DATABASE #{config["database"]}")
     end
   end
 
