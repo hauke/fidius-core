@@ -2,20 +2,26 @@ require File.join File.expand_path(File.dirname __FILE__), '..', 'lib', 'fidius'
 require "xmlrpc/server"
 
 s = XMLRPC::Server.new(8080,"127.0.0.1") 
-
+puts "START"
 s.add_handler("model.host.find") do |opts|
+  puts "HALLO"
   # TODO: find :all
   # TODO: more generic, not only hosts
-  res = nil
+  puts opts.inspect
+  res = nil  
+
   
-  if opts.size == 1
-    id = opts[0].to_i
-    if !FIDIUS::Asset::Host.exists?(id)
-      puts "raise"
-      raise XMLRPC::FaultException.new(1, "object does not exist")
-    end
-    res = FIDIUS::Asset::Host.find(id)
-  end 
+
+  if opts[0].to_i > 0
+    # id
+    opts[0] = opts[0].to_i
+    res = FIDIUS::Asset::Host.find *opts
+  else
+    # first or last or all
+    opts[0] = opts[0].to_sym
+    res = FIDIUS::Asset::Host.find *opts
+  end
+
   puts "i am here and res is: #{res}"
   unless res
     puts "throw error"
