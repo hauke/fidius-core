@@ -4,6 +4,9 @@ require 'logger'
 
 $WD = Dir.pwd
 
+# getting config dir
+$CFG_D = File.join $WD, "config"
+
 Rake::TestTask.new do |t|
   Dir.chdir("test/fidius")
   t.libs << "test"
@@ -17,15 +20,28 @@ end
 
 def connection_data
   Dir.chdir($WD)
-  @connection_data ||= YAML.load_file('lib/data/database.yml')[get_env]
+  @connection_data ||= YAML.load_file("#{$CFG_D}/database.yml")[get_env]
 end
 
 def with_db &block
   ActiveRecord::Base.establish_connection(connection_data)
   ActiveRecord::Base.logger = Logger.new(STDOUT)
   ActiveRecord::Base.logger.level = Logger::WARN
-  yield connection_data
-  ActiveRecord::Base.connection.disconnect!
+  begin
+    yield connection_data
+  rescue PGError => e
+    puts e.message
+  ensure
+    ActiveRecord::Base.connection.disconnect!
+  end
+end
+
+namespace :test do
+  desc "Print out important directories."
+  task :dir do
+    puts "root directory:   #{$WD}"
+    puts "config directory: #{$CFG_D}"
+  end
 end
 
 namespace :db do
@@ -33,7 +49,7 @@ namespace :db do
   task :migrate do
     with_db do
       Dir.chdir($WD)
-      ActiveRecord::Migrator.migrate('lib/data/sql', ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
+      ActiveRecord::Migrator.migrate("#{$CFG_D}/sql", ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
     end
   end
 

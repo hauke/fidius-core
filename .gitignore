@@ -1,7 +1,5 @@
-config.yaml
-*~
 test/test_*.rb
-*.yaml
 *#*
+*~
 doc/
-lib/data/database.yml
+**/database.yml
