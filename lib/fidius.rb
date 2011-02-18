@@ -19,7 +19,7 @@ require 'fidius/misc/file'     # copied from msf/lib
 require 'fidius/misc/compat'   # copied from msf/lib
 
 # TODO: make something with eviroment tag
-conn = YAML::load(File.open(File.expand_path('../../lib/data/database.yml', __FILE__)))
+conn = YAML::load(File.open(File.expand_path("../../config/database.yml", __FILE__)))
 ActiveRecord::Base.establish_connection(conn["development"])
 
 
