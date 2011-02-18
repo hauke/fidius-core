@@ -1,6 +1,10 @@
 require 'rake/testtask'
 require 'active_record'
+
 $WD = Dir.pwd
+
+# getting config dir
+$CFG_D = File.join $WD, "config"
 
 Rake::TestTask.new do |t|
   Dir.chdir("test/fidius")
@@ -17,21 +21,27 @@ def get_env
   return env
 end
 def connection_data
-  Dir.chdir($WD)
-  YAML::load(File.open('data/database.yml'))[get_env]
+  YAML::load(File.open("#{CFG_D}/database.yml"))[get_env]
 end
 
 def connect_to_db
-  #connection_data = YAML::load(File.open('data/database.yml'))[ENV["DB"]]
+  #connection_data = YAML::load(File.open("#{CFG_D}/database.yml))[ENV["DB"]]
   ActiveRecord::Base.establish_connection(connection_data)
   ActiveRecord::Base.logger = Logger.new(STDOUT)
+end
+
+namespace :test do
+  task :test do
+    puts "root directory: #{$WD}"
+    puts "config directory: #{$CFG_D}"
+  end
 end
 
 namespace :db do
   task :migrate do 
     connect_to_db
     Dir.chdir($WD)
-    ActiveRecord::Migrator.migrate('data/sql', ENV["VERSION"] ? ENV["VERSION"].to_i : nil )
+    ActiveRecord::Migrator.migrate("#{CFG_D}/sql", ENV["VERSION"] ? ENV["VERSION"].to_i : nil )
   end
   task :create do
     conn = connection_data
