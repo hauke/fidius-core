@@ -17,6 +17,5 @@ module FIDIUS
       @count_files + @disk_usage + @interfaces + @num_connections
     end
 
-  end # Relevance
-
-end # FIDIUS
+  end # class Relevance
+end # module FIDIUS

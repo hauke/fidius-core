@@ -61,5 +61,6 @@ module FIDIUS
       end
       return example
     end
-  end
-end
+    
+  end # module MachineLearning
+end # module FIDIUS

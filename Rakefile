@@ -31,7 +31,7 @@ def connect_to_db
 end
 
 namespace :test do
-  task :test do
+  task :dir do
     puts "root directory: #{$WD}"
     puts "config directory: #{$CFG_D}"
   end
