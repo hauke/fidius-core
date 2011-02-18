@@ -1,5 +1,7 @@
-module FIDIUS::Asset
+module FIDIUS
+  module Asset
 
-  self.autoload :Host, 'fidius/knowledge/asset/host'
+    self.autoload :Host, 'fidius/knowledge/asset/host'
 
-end
+  end # module Asset
+end # module FIDIUS

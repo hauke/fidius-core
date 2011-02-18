@@ -40,5 +40,5 @@ module FIDIUS
       @action_model = ActionModel.new(parser.tree)
     end
 
-   end  # Planner
+  end  # Planner
 end # FIDIUS

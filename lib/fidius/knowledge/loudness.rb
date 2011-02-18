@@ -1,4 +1,5 @@
-module FIDIUS:: Loudness
+module FIDIUS
+  module Loudness
 
   SILENT = 0
   VERY_VERY_LOUD = 100
@@ -11,4 +12,5 @@ module FIDIUS:: Loudness
       raise NotImplementedError, "not implemented yet"
   end
 
-end
+  end # module Loudness
+end # module FIDIUS
