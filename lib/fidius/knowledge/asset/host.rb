@@ -3,7 +3,7 @@
 module FIDIUS
   module Asset
     class Host < ActiveRecord::Base
-
+      has_many :services
       #attr_accessor :services, :name, :ip
 
       #def initialize name, ip

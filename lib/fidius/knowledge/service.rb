@@ -1,5 +1,5 @@
 module FIDIUS
-  class Service < Struct.new(:name, :port, :proto)
+  class Service < ActiveRecord::Base
 
     def get_exploits
       raise NotImplementedError, "not implemented yet"
