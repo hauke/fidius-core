@@ -1,4 +1,5 @@
 require "xmlrpc/server"
+require "fidius/misc/json_symbol_addon.rb"
 
 module FIDIUS
   module RPC
@@ -35,14 +36,31 @@ module FIDIUS
     private
     
       def add_handlers
-        add_handler("model.host.find") do |opts|
-          find FIDIUS::Asset::Host, *opts
-        end
-        
-        add_handler("model.service.find") do |opts|
-          # find FIDIUS::Service, *opts
-          # TODO: not an ActiveRecord yet
-          [].to_xml
+        add_handler("model.find") do |opts|
+          puts "opts: #{opts}"
+          raise XMLRPC::FaultException.new(1, "model.find expects at least 2 parameters(modelname, opts)") if opts.size < 2
+          model_name = opts.shift
+          opts = ActiveSupport::JSON.decode(opts[0])
+          res = nil  
+          model = nil
+          
+          begin
+            # search model in FIDIUS namespace
+            model = Kernel.const_get("FIDIUS").const_get(model_name)
+          rescue 
+          end
+          begin
+            # search model in FIDIUS::Asset namespace
+            model = Kernel.const_get("FIDIUS").const_get("Asset").const_get(model_name)
+          rescue 
+          end
+          raise XMLRPC::FaultException.new(2, "Class #{model_name} was not found") unless model
+          puts "#{model}.find(#{opts})"
+          res = model.find(*opts)
+          unless res
+            raise XMLRPC::FaultException.new(3, "object was not found")
+          end
+          res.to_xml
         end
         
         set_default_handler do |name, *args|
@@ -52,20 +70,6 @@ module FIDIUS
         end
       end
       
-      def find model, *opts
-        res = nil  
-        if opts[0].to_i > 0 # id
-          opts[0] = opts[0].to_i
-          res = model.find *opts
-        else # first or last or all
-          opts[0] = opts[0].to_sym
-          res = model.find *opts
-        end
-        unless res
-          raise XMLRPC::FaultException.new(1, "object was not found")
-        end
-        res.to_xml
-      end
     
     end # class Server
   end # module RPC
