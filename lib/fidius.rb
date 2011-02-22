@@ -18,10 +18,10 @@ require 'fidius/misc/nmap_xml' # copied from msf/lib
 require 'fidius/misc/file'     # copied from msf/lib
 require 'fidius/misc/compat'   # copied from msf/lib
 
-# TODO: make something with eviroment tag
-conn = YAML::load(File.open(File.expand_path('../../lib/data/database.yml', __FILE__)))
-ActiveRecord::Base.establish_connection(conn["development"])
-
+# TODO: make something with evironment tag
+env    = ENV['ENV'] || 'development'
+config = YAML.load_file File.expand_path("../../config/database.yml", __FILE__)
+ActiveRecord::Base.establish_connection(config[env])
 
 module FIDIUS
   # KNOWLEDGE
@@ -35,6 +35,13 @@ module FIDIUS
 
   # AI
   autoload :MachineLearning, 'fidius/agent/machine_learning'
+  
+  # XMLRPC
+  module RPC
+    autoload :Server, 'fidius/rpc/server'
+  end
 end
 
-
+END {
+  ActiveRecord::Base.connection.disconnect!
+}

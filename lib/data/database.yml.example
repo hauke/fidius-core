@@ -1,9 +1,0 @@
-development: 
-  adapter: mysql
-  host: localhost
-  port: 3306
-  encoding: utf8
-  database: fidius2
-  username: root
-  password: ""
-  socket: /opt/lampp/var/mysql/mysql.sock

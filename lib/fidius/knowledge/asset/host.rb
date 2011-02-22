@@ -1,4 +1,3 @@
-
 # TODO make this saveable to database
 module FIDIUS
   module Asset
@@ -66,7 +65,7 @@ module FIDIUS
       end
 
       def ==
-          raise NotImplementedError, "not implemented yet"
+        raise NotImplementedError, "not implemented yet"
       end
 
     end # class Host
