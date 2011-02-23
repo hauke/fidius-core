@@ -1,5 +1,5 @@
-hostname: 127.0.0.1
-port: 55553
-use_ssl: false
-username: fidius
-password: fidius09
+:hostname: localhost
+:port: 55553
+:use_ssl: false
+:username: fidius
+:password: fidius09
