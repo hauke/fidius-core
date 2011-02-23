@@ -53,7 +53,7 @@ module FIDIUS
       end
       
       def find model, *opts
-        res = nil  
+        res = nil
         if opts[0].to_i > 0 # id
           opts[0] = opts[0].to_i
           res = model.find *opts

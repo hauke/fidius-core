@@ -2,17 +2,15 @@ module FIDIUS
   module Action
     module Scan
       class PortScan
-        include FIDIUS::Action::Scan
 
         def initialize target, port_range = nil
           raise ArgumentError, "target isnt a target-Object" unless target.ip
           @target = target
-          @target.services = []
+#          @target.services = []
           @port_range = port_range
         end
         
         def execute 
-          
           raise ArgumentError, "target not set" unless @target
           
           if @port_range

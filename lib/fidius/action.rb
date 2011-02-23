@@ -1,11 +1,8 @@
-class FIDIUS
+module FIDIUS
   module Action
-
-    autoload :Scan, 'fidius/action/scan'
-
-    def get_loudness
-      raise NotImplementedError, "method must be overwritten by subclass"
-    end
+    include FIDIUS::Loudness
     
-  end #module Action
+    autoload :Scan, 'fidius/action/scan'
+        
+  end # module Action
 end # module FIDIUS

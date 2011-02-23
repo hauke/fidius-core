@@ -2,6 +2,7 @@
 module FIDIUS
   module Asset
     class Host < ActiveRecord::Base
+      has_many :services, :class_name => "FIDIUS::Service"
 
       #attr_accessor :services, :name, :ip
 
@@ -24,11 +25,8 @@ module FIDIUS
 
       def get_services_as_bit_vector
         return [] unless @services
-
         bit_vector = []
-        
         known = FIDIUS::MachineLearning::known_services
-
         known.each do |service|
           bit_vector << (@services.include?(service) ? 1 : 0)
         end

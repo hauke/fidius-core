@@ -1,6 +1,6 @@
 require File.join File.expand_path(File.dirname __FILE__), '..', '..', 'lib', 'fidius'
 
-h = FIDIUS::Asset::Host.new("marie", "134.102.201.101")
+h = FIDIUS::Asset::Host.create(:name => "marie", :ip => "134.102.201.101")
 scan = FIDIUS::Action::Scan::PortScan.new(h)
 target = scan.execute
 

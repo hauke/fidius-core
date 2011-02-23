@@ -5,7 +5,7 @@ scan = FIDIUS::Action::Scan::PingScan.new(h)
 hosts = scan.execute
 i = 0
 hosts.each do |host|
-  h = FIDIUS::Asset::Host.new("host#{i}", host)
+  h = FIDIUS::Asset::Host.create(:name => "host#{i}", :ip => host)
   scan = FIDIUS::Action::Scan::PortScan.new(h)
   target = scan.execute
   p "The Services: #{target.get_services_as_bit_vector}"

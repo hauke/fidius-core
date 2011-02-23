@@ -34,7 +34,7 @@ module FIDIUS
   autoload :Action,   'fidius/action'
 
   # AI
-  autoload :MachineLearning, 'fidius/agent/machine_learning'
+  autoload :MachineLearning, 'fidius/decision/agent/machine_learning'
   
   # XMLRPC
   module RPC
