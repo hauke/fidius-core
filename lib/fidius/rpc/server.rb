@@ -42,7 +42,8 @@ module FIDIUS
           # this nasty RuntimeError: Uncaught exception timeout is not implemented yet in method model.find(2)
           # which is triggered by active_record/connection_adapters/abstract/connection_pool.rb:checkout wait method
           # in ruby 1.9 wait(timeout = nil) waiting for timeout is not implemented... strange ?!
-          ActiveRecord::Base.establish_connection($db_connection_config)
+          FIDIUS.connect_db
+          
           raise XMLRPC::FaultException.new(1, "model.find expects at least 2 parameters(modelname, opts)") if opts.size < 2
           model_name = opts.shift
           opts = ActiveSupport::JSON.decode(opts[0])
@@ -69,8 +70,9 @@ module FIDIUS
             raise XMLRPC::FaultException.new(3, "object was not found")
           end
           xml_response = res.to_xml
+          
           # see above nasty timeout is not implemented error
-          ActiveRecord::Base.connection.disconnect!
+          FIDIUS.disconnect_db
           xml_response
         end
         

@@ -1,10 +1,9 @@
-require File.join File.expand_path(File.dirname __FILE__), '..', '..', 'lib', 'fidius'
-require 'test/unit/testcase.rb'
+require 'test_fidius'
 
 # Action is a model, so this will not work anymore...
 #   FIDIUS::Action.new
 
-class ActionTest < Test::Unit::TestCase
+class ActionTest < FIDIUS::Test
   def test_truth
     assert true
   end

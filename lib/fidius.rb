@@ -17,12 +17,7 @@ $LOAD_PATH.unshift File.expand_path(File.dirname __FILE__)
 require 'fidius/misc/nmap_xml' # copied from msf/lib
 require 'fidius/misc/file'     # copied from msf/lib
 require 'fidius/misc/compat'   # copied from msf/lib
-
-# TODO: make something with evironment tag
-env    = ENV['ENV'] || 'development'
-config = YAML.load_file File.expand_path("../../config/database.yml", __FILE__)
-# store db connection settings, for establish_connection calls
-$db_connection_config = config[env]
+require 'fidius/design_patterns/observer'
 
 module FIDIUS
   # KNOWLEDGE
@@ -41,10 +36,18 @@ module FIDIUS
   module RPC
     autoload :Server, 'fidius/rpc/server'
   end
+  
+  def connect_db
+    # TODO: make something with evironment tag
+    env    ||= ENV['ENV'] || 'development'
+    config ||= YAML.load_file File.expand_path("../../config/database.yml", __FILE__)
+    ActiveRecord::Base.establish_connection config[env]
+  end
+  module_function :connect_db
+  
+  def disconnect_db
+    ActiveRecord::Base.connection.disconnect!
+  end
+  module_function :disconnect_db
 end
 
-END {
-  # do not leave connection open
-  # nothing to do anymore ?
-  #ActiveRecord::Base.connection.disconnect!
-}

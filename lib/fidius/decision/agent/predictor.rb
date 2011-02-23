@@ -1,6 +1,7 @@
 module FIDIUS
   module MachineLearning
     class Predictor
+      include Ai4r
 
       # dim: #known_services, num_layers: user specified (10)
       def initialize dim, num_layers

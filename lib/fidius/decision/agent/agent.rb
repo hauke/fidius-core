@@ -3,6 +3,7 @@
 module FIDIUS
   module MachineLearning
     class Agent
+      include Containers
 
       def initialize 
         # dimension = |known_services|; 8 layers

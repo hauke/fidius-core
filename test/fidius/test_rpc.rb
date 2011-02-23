@@ -1,5 +1,9 @@
-require "../../lib/fidius/action/exploit/exploit.rb"
+require 'test_fidius'
 
-include FIDIUS::Action::Exploit
-
-e = Exploit.new
+class RPCTest < FIDIUS::Test
+  include FIDIUS::Action::Exploit
+  
+  def test_exploit
+    assert Exploit.new
+  end
+end

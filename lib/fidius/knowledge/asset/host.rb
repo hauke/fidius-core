@@ -6,15 +6,6 @@ module FIDIUS
 
       #attr_accessor :services, :name, :ip
 
-      #def initialize name, ip
-        # should be nil if services unknown, an empty array 
-        # if host has no services and a list of Service instances if
-        # any services has been discovered yet
-      #  @services = nil
-      #  @name = name
-      #  @ip = ip
-      #end
-
       def exploited?
         raise NotImplementedError, "not implemented yet"
       end

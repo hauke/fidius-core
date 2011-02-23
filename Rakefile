@@ -8,9 +8,8 @@ $WD = Dir.pwd
 $CFG_D = File.join $WD, "config"
 
 Rake::TestTask.new do |t|
-  Dir.chdir("test/fidius")
   t.libs << "test"
-  t.test_files = FileList['test_*.rb']
+  t.test_files = FileList['test/fidius/test_*.rb']
   t.verbose = true
 end
 
