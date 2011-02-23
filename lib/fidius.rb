@@ -21,7 +21,8 @@ require 'fidius/misc/compat'   # copied from msf/lib
 # TODO: make something with evironment tag
 env    = ENV['ENV'] || 'development'
 config = YAML.load_file File.expand_path("../../config/database.yml", __FILE__)
-ActiveRecord::Base.establish_connection(config[env])
+# store db connection settings, for establish_connection calls
+$db_connection_config = config[env]
 
 module FIDIUS
   # KNOWLEDGE
@@ -43,5 +44,7 @@ module FIDIUS
 end
 
 END {
-  ActiveRecord::Base.connection.disconnect!
+  # do not leave connection open
+  # nothing to do anymore ?
+  #ActiveRecord::Base.connection.disconnect!
 }
