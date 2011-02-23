@@ -1,9 +1,7 @@
 require 'test_fidius'
 
 class RPCTest < FIDIUS::Test
-  include FIDIUS::Action::Exploit
-  
   def test_exploit
-    assert Exploit.new
+    assert FIDIUS::Action::Exploit::Exploit.new
   end
 end
