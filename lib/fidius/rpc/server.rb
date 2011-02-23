@@ -5,6 +5,7 @@ module FIDIUS
   module RPC
     class Server < ::XMLRPC::Server
       def initialize(options={}, *args)
+
         defaults = {
           :port => 8080,
           :host => '127.0.0.1',
@@ -37,7 +38,11 @@ module FIDIUS
     
       def add_handlers
         add_handler("model.find") do |opts|
-          puts "opts: #{opts}"
+          # moved establish connection here to avoid
+          # this nasty RuntimeError: Uncaught exception timeout is not implemented yet in method model.find(2)
+          # which is triggered by active_record/connection_adapters/abstract/connection_pool.rb:checkout wait method
+          # in ruby 1.9 wait(timeout = nil) waiting for timeout is not implemented... strange ?!
+          ActiveRecord::Base.establish_connection($db_connection_config)
           raise XMLRPC::FaultException.new(1, "model.find expects at least 2 parameters(modelname, opts)") if opts.size < 2
           model_name = opts.shift
           opts = ActiveSupport::JSON.decode(opts[0])
@@ -55,12 +60,18 @@ module FIDIUS
           rescue 
           end
           raise XMLRPC::FaultException.new(2, "Class #{model_name} was not found") unless model
-          puts "#{model}.find(#{opts})"
-          res = model.find(*opts)
+          begin #save execution of find method
+            res = model.find(*opts)
+          rescue
+            # doesnt matter, object not found will be thrown
+          end
           unless res
             raise XMLRPC::FaultException.new(3, "object was not found")
           end
-          res.to_xml
+          xml_response = res.to_xml
+          # see above nasty timeout is not implemented error
+          ActiveRecord::Base.connection.disconnect!
+          xml_response
         end
         
         set_default_handler do |name, *args|
