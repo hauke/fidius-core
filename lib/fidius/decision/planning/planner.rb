@@ -1,10 +1,9 @@
-require 'cfflib/pddl_prob'
-require 'cfflib/planparser'
-require 'cfflib/action_model'
-
 module FIDIUS
 
   class Planner
+    require 'fidius/decision/planning/cfflib/pddl_prob'
+    require 'fidius/decision/planning/cfflib/planparser'
+    require 'fidius/decision/planning/cfflib/action_model'
     
     @@DOMAIN = "domain.pddl"
     @@CUR_PROB = "fidius_prob.pddl"
@@ -17,10 +16,10 @@ module FIDIUS
       @action_model = nil
     end
    
-    def plan # returns action model
-      create_problem()
-      create_plan()
-      parse_plan()
+    def plan(services, initial_host, target_host) # returns action model
+      create_problem(services, initial_host, target_host)
+#      create_plan()
+#      parse_plan()
     end
 
     private
@@ -32,7 +31,7 @@ module FIDIUS
     # services we want to exploit
     # TODO visibility (through hosts)
     # TODO subnets
-    def create_problem(services, initial_host)
+    def create_problem(services, initial_host, target_host)
       problem = PlanningProblem.new("FIDIUS_PROBLEM", @@DOMAIN)
       
       # add services 
@@ -43,28 +42,37 @@ module FIDIUS
       # add hosts
       hosts.each do |host|
         problem.add_object(host.id, "computer")
-        host.get_subnets do |sub|
-          p = Predicate.new("host_subnet")
-          p.add_object(host.host_name)
-          p.add_object(sub)
-          problem.add_predicate(p)
-        end
-      end
 
-      # host' s possible services
-      unknown = Unknown.new
-      services.each do |s|
-        service = Predicate.new("service_running")
-        service.add_object(host.host_name)
-        service.add_object(s.name)
-        unknown.add_unkown(service)
-        unknown.add_oneof(service)
+# NOT IMPLEMENTED
+#        host.get_subnets.each do |sub| 
+#          p = Predicate.new("host_subnet")
+#          p.add_object(host.host_name)
+#          p.add_object(sub)
+#          problem.add_predicate(p)
+#        end
+
+        # host' s possible services
+        unknown = Unknown.new
+        services.each do |s|
+          service = Predicate.new("service_running")
+          service.add_object(host.id)
+          service.add_object(s.name)
+          unknown.add_unkown(service)
+          unknown.add_oneof(service)
+        end
+        problem.add_predicate(unknown)
       end
-      problem.add_predicate(unknown)
       
-      p_1 = Predicate.new("on_host")
-      p_1.add_object(host_1)
-      problem.add_predicate()
+      # starting at initial_host
+      p = Predicate.new("on_host")
+      p.add_object(initial_host.id)
+      problem.add_predicate(p)
+
+      # goal is to exploit target
+      goal_p = Predicate.new("on_host")
+      goal_p.add_object(target_host.id)
+      goal = Goal.new(goal_p)
+      problem.set_goal(goal)
 
       problem.write(@@CUR_PROB)
     end
