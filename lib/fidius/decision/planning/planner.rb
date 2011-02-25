@@ -3,7 +3,6 @@ require 'cfflib/planparser'
 require 'cfflib/action_model'
 
 module FIDIUS
-  # include MachineLearning # known services
 
   class Planner
     
@@ -11,17 +10,16 @@ module FIDIUS
     @@CUR_PROB = "fidius_prob.pddl"
     @@CUR_PLAN = "fidius.plan"
 
-    attr_accessor :hosts, :subnets
+    attr_accessor :hosts
 
     def initialize
       @hosts = []
-      @subnets = []
       @action_model = nil
     end
    
-    def plan
-#      create_problem()
-#      create_plan()
+    def plan # returns action model
+      create_problem()
+      create_plan()
       parse_plan()
     end
 
@@ -31,6 +29,9 @@ module FIDIUS
       proc.close         
     end
     
+    # services we want to exploit
+    # TODO visibility (through hosts)
+    # TODO subnets
     def create_problem(services, initial_host)
       problem = PlanningProblem.new("FIDIUS_PROBLEM", @@DOMAIN)
       
