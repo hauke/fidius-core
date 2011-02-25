@@ -1,4 +1,4 @@
-require 'pddl_prob'
+
 require 'planparser'
 require 'action_model'
 
