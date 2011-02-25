@@ -32,7 +32,7 @@ module FIDIUS
     end
     
     def create_problem(services, initial_host)
-      problem = PlanningProblem.new(@@CUR_PROB, @@DOMAIN)
+      problem = PlanningProblem.new("FIDIUS_PROBLEM", @@DOMAIN)
       
       # add services 
       services.each do |s|
@@ -60,6 +60,12 @@ module FIDIUS
         unknown.add_oneof(service)
       end
       problem.add_predicate(unknown)
+      
+      p_1 = Predicate.new("on_host")
+      p_1.add_object(host_1)
+      problem.add_predicate()
+
+      problem.write(@@CUR_PROB)
     end
 
     def parse_plan
