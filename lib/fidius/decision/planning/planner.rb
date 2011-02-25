@@ -31,8 +31,35 @@ module FIDIUS
       proc.close         
     end
     
-    def create_problem
-      raise "not implemented error"
+    def create_problem(services, initial_host)
+      problem = PlanningProblem.new(@@CUR_PROB, @@DOMAIN)
+      
+      # add services 
+      services.each do |s|
+        problem.add_object(s.name, "service")
+      end
+      
+      # add hosts
+      hosts.each do |host|
+        problem.add_object(host.id, "computer")
+        host.get_subnets do |sub|
+          p = Predicate.new("host_subnet")
+          p.add_object(host.host_name)
+          p.add_object(sub)
+          problem.add_predicate(p)
+        end
+      end
+
+      # host' s possible services
+      unknown = Unknown.new
+      services.each do |s|
+        service = Predicate.new("service_running")
+        service.add_object(host.host_name)
+        service.add_object(s.name)
+        unknown.add_unkown(service)
+        unknown.add_oneof(service)
+      end
+      problem.add_predicate(unknown)
     end
 
     def parse_plan
