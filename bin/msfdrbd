@@ -3,33 +3,59 @@
 require 'yaml'
 require 'drb'
 begin
-  CFG = YAML.load_file(File.expand_path '../../config/msf.yml', __FILE__)
+  cfg = YAML.load_file(File.expand_path '../../config/msf.yml', __FILE__)
 rescue
-  puts "No DRb config `config/msf.yml' found."
+  puts "[*] No DRb config `config/msf.yml' found. Aborting!"
   raise
 end
 
-$:.unshift(File.join CFG[:msf_path], 'lib')
+$:.unshift(File.join cfg[:msf_path], 'lib')
 require 'msf/base'
 
+module FIDIUS
+  class MsfDRbD
 
-class MsfDRbD
-  def initialize
-    @uri = "druby://#{CFG[:drb_host]}:#{CFG[:drb_port]}"
-    puts 'Loading Metasploit framework'
-    @framework = Msf::Simple::Framework.create
-    DRb.start_service @uri, self
-    puts 'Loaded. Waiting...'
-    DRb.thread.join
-  end
-  
-  def framework
-    @framework
-  end
-  
-  def debug
-    p @framework.sessions
-  end
+    attr_reader :uri
+    attr_reader :framework
+
+    def initialize
+      @framework = Msf::Simple::Framework.create
+    end
+
+    class << self
+      def start_service(host='localhost', port=56606, opts={})
+        uri = "druby://#{host}:#{port}"
+        puts "[*] Loading Metasploit framework."
+        obj = self.new
+        DRb.start_service uri, obj, opts
+        puts "[*] Loaded. Listening on `#{uri}'"
+        DRb.thread.join
+        puts "[*] Quit."
+      end
+
+      def stop_service
+        DRb.thread.kill
+      end
+    end
+
+    def debug
+      p @framework
+      p @framework.sessions
+    end
+
+  private
+    def method_missing(method, *args, &block)
+      @framework.send(method, *args, &block)
+    end
+
+  end # class MsfDRbD
+end # module FIDIUS
+
+Signal.trap("INT") do
+  puts "[*] Stopping service."
+  FIDIUS::MsfDRbD.stop_service
 end
 
-MsfDRbD.new
+puts "[*] Starting service."
+FIDIUS::MsfDRbD.start_service cfg[:drb_host], cfg[:drb_port], :verbose => true
+
