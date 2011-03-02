@@ -1,0 +1,10 @@
+#!/usr/bin/ruby
+
+require 'yaml'
+
+begin
+  cfg = YAML.load_file(File.expand_path '../../config/msf.yml', __FILE__)
+rescue
+  puts "No DRb config `config/msf.yml' found."
+end
+uri = "druby://#{cfg[:host]}:#{cfg[:uri]}"
