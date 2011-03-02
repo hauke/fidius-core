@@ -32,6 +32,7 @@ module FIDIUS
   # AI
   autoload :MachineLearning, 'fidius/decision/agent/machine_learning'
   autoload :Planner, 'fidius/decision/planning/planner'
+  
   # XMLRPC
   module RPC
     autoload :Server, 'fidius/rpc/server'
