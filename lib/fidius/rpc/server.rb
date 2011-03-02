@@ -35,35 +35,79 @@ module FIDIUS
       end
       
     private
-    
+      include FIDIUS::MachineLearning
       def add_handlers
-
+        add_handler("model.clean_hosts") do |opts|
+          begin
+            FIDIUS.connect_db
+            FIDIUS::Asset::Host.destroy_all
+            FIDIUS.disconnect_db
+          rescue
+          end
+          "ok"          
+        end
+        # TODO REFACTOR THIS
         add_handler("action.scan") do |opts|
           # TODO
+
+            FIDIUS.connect_db
+            puts "scan dummy| #{FIDIUS::Asset::Host.all.size} Hosts in DB"
+            if (FIDIUS::Asset::Host.all.size == 0)
+              ["192.168.0.2","192.168.0.88","192.168.0.16"].each do |ip|
+                h = FIDIUS::Asset::Host.create(:name => "KEEEEEKS", :ip => "192.168.0.1")
+                h.services << FIDIUS::Service.new(:name => "ssh",    :port => 22,   :proto => "tcp")
+                h.services << FIDIUS::Service.new(:name => "vnc",    :port => 5900, :proto => "tcp")
+                h.services << FIDIUS::Service.new(:name => "smtp",   :port => 25,   :proto => "tcp")
+                h.services << FIDIUS::Service.new(:name => "domain", :port => 53,   :proto => "udp")
+                h.save
+              end
+            end
+            FIDIUS.disconnect_db
+          "ok"
         end
 
-        add_hander("decision.nn.next") do |opts|
-          FIDIUS::MachineLearning.agent.next.id
+        add_handler("decision.nn.next") do |opts|
+          FIDIUS.connect_db
+          #res = FIDIUS::Asset::Host.first.id
+          res = FIDIUS::MachineLearning.agent.next.id
+          #puts "result: #{res}"
+          FIDIUS.disconnect_db
+          "#{res}"
         end
-
+        # TODO REFACTOR THIS
         add_handler("decision.nn.train") do |opts|
-          # TODO replace dummy hosts
-          h1 = FIDIUS::Asset::Host.create(:name => "KEEEEEKS", :ip => "")
-          h1.services = []
-          h1.services << FIDIUS::Service.create(:name => "ssh", :port => 22, :proto => "tcp")
-          h1.services << FIDIUS::Service.create(:name => "vnc", :port => 5900, :proto => "tcp")
-          h1.services << FIDIUS::Service.create(:name => "smtp", :port => 25, :proto => "tcp")
-          h1.services << FIDIUS::Service.create(:name => "domain", :port => 53, :proto => "udp")
-          inst = Instance.new(h1, 2)
-          h2 = FIDIUS::Asset::Host.create(:name => "KEEEEEKS2", :ip => "")
-          h2.services = []
-          h2.services << FIDIUS::Service.create(:name => "ssh", :port => 22, :proto => "tcp")
-          h2.services << FIDIUS::Service.create(:name => "vnc", :port => 5900, :proto => "tcp")
-          h2.services << FIDIUS::Service.create(:name => "smtp", :port => 25, :proto => "tcp")
-          h2.services << FIDIUS::Service.create(:name => "domain", :port => 53, :proto => "udp")
-          inst2 = Instance.new(h2, 3)
-
-          FIDIUS::MachineLearning.agent.train([inst, inst2], 100)
+          FIDIUS.connect_db
+          #if FIDIUS::Asset::Host.all.size == 0
+            # TODO replace dummy hosts
+            #h1 = FIDIUS::Asset::Host.find_or_create_by_name("KEEEEEKS")
+            #if h1.services.size == 0
+            #  h1.services = []
+            #  h1.services << FIDIUS::Service.create(:name => "ssh", :port => 22, :proto => "tcp")
+            #  h1.services << FIDIUS::Service.create(:name => "vnc", :port => 5900, :proto => "tcp")
+            #  h1.services << FIDIUS::Service.create(:name => "smtp", :port => 25, :proto => "tcp")
+            #  h1.services << FIDIUS::Service.create(:name => "domain", :port => 53, :proto => "udp")
+            #end
+            #inst = Instance.new(h1, 2)
+            #h2 = FIDIUS::Asset::Host.find_or_create_by("KEEEEEKS2")
+            #if h2.services.size == 0
+            #  h2.services = []
+            #  h2.services << FIDIUS::Service.create(:name => "ssh", :port => 22, :proto => "tcp")
+            #  h2.services << FIDIUS::Service.create(:name => "vnc", :port => 5900, :proto => "tcp")
+            #  h2.services << FIDIUS::Service.create(:name => "smtp", :port => 25, :proto => "tcp")
+            #  h2.services << FIDIUS::Service.create(:name => "domain", :port => 53, :proto => "udp")
+            #end
+            #inst2 = Instance.new(h2, 3)
+            unless $trained
+              instances = Array.new
+              FIDIUS::Asset::Host.all.each do |host|
+                instances << Instance.new(host, rand(10))
+              end
+              FIDIUS::MachineLearning.agent.train(instances, 100)
+              $trained = true
+            end
+          #end
+          FIDIUS.disconnect_db
+          "ok"
         end
 
         add_handler("model.find") do |opts|
