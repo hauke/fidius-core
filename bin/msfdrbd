@@ -9,7 +9,7 @@ rescue
   raise
 end
 
-$:.unshift(File.join cfg[:msf_path], 'lib')
+$:.unshift(File.join CFG[:msf_path], 'lib')
 require 'msf/base'
 
 
@@ -18,7 +18,7 @@ class MsfDRbD
     @uri = "druby://#{CFG[:drb_host]}:#{CFG[:drb_port]}"
     puts 'Loading Metasploit framework'
     @framework = Msf::Simple::Framework.create
-    DRb.start_service uri, self
+    DRb.start_service @uri, self
     puts 'Loaded. Waiting...'
     DRb.thread.join
   end
