@@ -119,3 +119,21 @@ namespace :db do
     drop_database connection_data
   end
 end
+
+begin
+  require 'yard'
+
+  YARD::Rake::YardocTask.new(:doc) do |t|
+    t.files = ['lib/**/*.rb']
+    static_files = 'README.md, LICENSE'
+    t.options += [
+      '--title', 'FIDIUS Architecture',
+      '--private',   # include private methods
+      '--protected', # include protected methods
+      '--files', static_files,
+      '--readme', 'README.md'
+    ]
+  end
+rescue LoadError
+  puts 'YARD not installed (gem install yard), http://yardoc.org'
+end
