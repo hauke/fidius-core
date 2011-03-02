@@ -7,7 +7,7 @@ class PortScanTest < FIDIUS::Test
     target = scan.execute
 
     vector   = target.get_services_as_bit_vector
-    expected = []
+    expected = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     assert_equal expected, vector
   end
 end

@@ -11,7 +11,8 @@ module FIDIUS
       end
 
       def after_create()
-        FIDIUS::MachineLearning.agent.add(self)
+        agent = FIDIUS::MachineLearning::agent
+        agent.add(self)
       end
 
       def reachable?
@@ -19,7 +20,7 @@ module FIDIUS
       end
 
       def get_services_as_bit_vector
-        return [] unless @services
+        @services = [] unless @services
         bit_vector = []
         known = FIDIUS::MachineLearning::known_services
         known.each do |service|

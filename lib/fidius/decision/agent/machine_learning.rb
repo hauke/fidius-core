@@ -8,6 +8,13 @@ module FIDIUS
     NODES_PER_LAYER = 10
     OUT = 1
     
+    self.autoload :Agent,     'fidius/decision/agent/agent'
+    self.autoload :Predictor, 'fidius/decision/agent/predictor'
+
+    def self.agent
+      @@AGENT ||= Agent.new()
+    end
+
     def self.known_services
       @@services ||= initialize_services
     end
@@ -40,9 +47,6 @@ module FIDIUS
       services << Service.create(:name => "imap", :port => 143, :proto => "tcp")
       services
     end
-
-    self.autoload :Agent,     'fidius/decision/agent/agent'
-    self.autoload :Predictor, 'fidius/decision/agent/predictor'
 
     class Instance
       attr_accessor :host, :value

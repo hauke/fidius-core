@@ -3,10 +3,6 @@
 module FIDIUS
   module MachineLearning
     
-    def self.agent()
-      @@AGENT ||= Agent.new()
-    end
-
     class Agent
       include Containers
 
@@ -17,8 +13,8 @@ module FIDIUS
       end
 
       def add(host)
-        prediction = @predictor.predict(n.get_services_as_bit_vector)
-        @open_list.push(n, prediction)
+        prediction = @predictor.predict(host.get_services_as_bit_vector)
+        @open_list.push(host, prediction)
       end
       
       def next
