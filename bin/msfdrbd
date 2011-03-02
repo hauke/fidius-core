@@ -31,3 +31,5 @@ class MsfDRbD
     p @framework.sessions
   end
 end
+
+MsfDRbD.new
