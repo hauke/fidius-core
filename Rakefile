@@ -125,13 +125,14 @@ begin
 
   YARD::Rake::YardocTask.new(:doc) do |t|
     t.files = ['lib/**/*.rb']
-    static_files = 'README.md, LICENSE'
+    static_files = 'LICENSE'
     t.options += [
       '--title', 'FIDIUS Architecture',
       '--private',   # include private methods
       '--protected', # include protected methods
       '--files', static_files,
-      '--readme', 'README.md'
+      '--readme', 'README.md',
+      '--exclude', 'misc'
     ]
   end
 rescue LoadError
