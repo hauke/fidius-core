@@ -3,7 +3,7 @@
 require 'yaml'
 require 'drb'
 begin
-  cfg = YAML.load_file(File.expand_path '../../config/msf.yml', __FILE__)
+  CFG = YAML.load_file(File.expand_path '../../config/msf.yml', __FILE__)
 rescue
   puts "No DRb config `config/msf.yml' found."
   raise
@@ -15,7 +15,7 @@ require 'msf/base'
 
 class MsfDRbD
   def initialize
-    @uri = "druby://#{cfg[:drb_host]}:#{cfg[:drb_port]}"
+    @uri = "druby://#{CFG[:drb_host]}:#{CFG[:drb_port]}"
     puts 'Loading Metasploit framework'
     @framework = Msf::Simple::Framework.create
     DRb.start_service uri, self
