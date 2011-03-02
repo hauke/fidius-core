@@ -37,6 +37,35 @@ module FIDIUS
     private
     
       def add_handlers
+
+        add_handler("action.scan") do |opts|
+          # TODO
+        end
+
+        add_hander("decision.nn.next") do |opts|
+          FIDIUS::MachineLearning.agent.next.id
+        end
+
+        add_handler("decision.nn.train") do |opts|
+          # TODO replace dummy hosts
+          h1 = FIDIUS::Asset::Host.create(:name => "KEEEEEKS", :ip => "")
+          h1.services = []
+          h1.services << FIDIUS::Service.create(:name => "ssh", :port => 22, :proto => "tcp")
+          h1.services << FIDIUS::Service.create(:name => "vnc", :port => 5900, :proto => "tcp")
+          h1.services << FIDIUS::Service.create(:name => "smtp", :port => 25, :proto => "tcp")
+          h1.services << FIDIUS::Service.create(:name => "domain", :port => 53, :proto => "udp")
+          inst = Instance.new(h1, 2)
+          h2 = FIDIUS::Asset::Host.create(:name => "KEEEEEKS2", :ip => "")
+          h2.services = []
+          h2.services << FIDIUS::Service.create(:name => "ssh", :port => 22, :proto => "tcp")
+          h2.services << FIDIUS::Service.create(:name => "vnc", :port => 5900, :proto => "tcp")
+          h2.services << FIDIUS::Service.create(:name => "smtp", :port => 25, :proto => "tcp")
+          h2.services << FIDIUS::Service.create(:name => "domain", :port => 53, :proto => "udp")
+          inst2 = Instance.new(h2, 3)
+
+          FIDIUS::MachineLearning.agent.train([inst, inst2], 100)
+        end
+
         add_handler("model.find") do |opts|
           # moved establish connection here to avoid
           # this nasty RuntimeError: Uncaught exception timeout is not implemented yet in method model.find(2)

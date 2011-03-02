@@ -1,5 +1,5 @@
 require 'test_fidius'
-
+ 
 class AgentTest < FIDIUS::Test
   include FIDIUS::MachineLearning
   

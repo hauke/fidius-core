@@ -2,6 +2,11 @@
 
 module FIDIUS
   module MachineLearning
+    
+    def self.agent()
+      @@AGENT ||= Agent.new()
+    end
+
     class Agent
       include Containers
 
@@ -11,6 +16,15 @@ module FIDIUS
         @open_list = PriorityQueue.new
       end
 
+      def add(host)
+        prediction = @predictor.predict(n.get_services_as_bit_vector)
+        @open_list.push(n, prediction)
+      end
+      
+      def next
+        @open_list.pop
+      end
+      
       # Call for next host to exploit
       def decision neighbours # list of hosts
         neighbours.each do |n|

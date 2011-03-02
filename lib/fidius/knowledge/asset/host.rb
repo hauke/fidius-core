@@ -10,6 +10,10 @@ module FIDIUS
         raise NotImplementedError, "not implemented yet"
       end
 
+      def after_create()
+        FIDIUS::MachineLearning.agent.add(self)
+      end
+
       def reachable?
         raise NotImplementedError, "not implemented yet"
       end
