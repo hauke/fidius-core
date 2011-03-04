@@ -15,11 +15,14 @@ require 'algorithms'
 require 'active_record'
 
 # self requirements
+# FIXME: `require' only when needed!
 $LOAD_PATH.unshift File.expand_path(File.dirname __FILE__)
 require 'fidius/misc/nmap_xml' # copied from msf/lib
 require 'fidius/misc/file'     # copied from msf/lib
 require 'fidius/misc/compat'   # copied from msf/lib
 require 'fidius/design_patterns/observer'
+
+require 'fidius/config'
 
 module FIDIUS
   # KNOWLEDGE
@@ -33,18 +36,16 @@ module FIDIUS
 
   # AI
   autoload :MachineLearning, 'fidius/decision/agent/machine_learning'
-  autoload :Planner, 'fidius/decision/planning/planner'
+  autoload :Planner,         'fidius/decision/planning/planner'
   
   # XMLRPC
   module RPC
     autoload :Server, 'fidius/rpc/server'
   end
   
-  def connect_db
-    # TODO: make something with evironment tag
-    env    ||= ENV['ENV'] || 'development'
-    config ||= YAML.load_file File.expand_path("../../config/database.yml", __FILE__)
-    ActiveRecord::Base.establish_connection config[env]
+  def connect_db env=nil
+    env ||= @env
+    ActiveRecord::Base.establish_connection config['databases'][env]
   end
   module_function :connect_db
   

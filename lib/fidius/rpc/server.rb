@@ -4,24 +4,21 @@ require "fidius/misc/json_symbol_addon.rb"
 module FIDIUS
   module RPC
     class Server < ::XMLRPC::Server
+    
       def initialize(options={}, *args)
-
-        defaults = {
-          :port => 8080,
-          :host => '127.0.0.1',
-          :max_connections => 4,
-          :stdlog => $stdout,
-          :audit => true,
-          :debug => true
-        }
-        options = defaults.merge options
+        options = {
+          'max_connections' => 4,
+          'stdlog' => $stdout,
+          'audit' => true,
+          'debug' => true
+        }.merge options
         super(
-          options[:port],
-          options[:host],
-          options[:max_connections],
-          options[:stdlog],
-          options[:audit],
-          options[:debug],
+          options['port'],
+          options['host'],
+          options['max_connections'],
+          options['stdlog'],
+          options['audit'],
+          options['debug'],
           *args
         )
         add_handlers

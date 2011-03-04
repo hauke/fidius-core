@@ -7,7 +7,7 @@ module FIDIUS
     #     msf = FIDIUS::Action::Msf.instance.framework
     #
     # You might get an Error::ENOENT if the configuration file
-    # (+config/msf.yml+) was not found.
+    # (+config/fidius.yml+) was not found.
     class Msf
       include Singleton
 
@@ -18,8 +18,8 @@ module FIDIUS
       # The construction will fail if the configuration yaml file could
       # not be found.
       def initialize
-        cfg = YAML.load_file(File.expand_path '../../../../config/msf.yml', __FILE__)
-        @uri = "druby://#{cfg[:drb_host]}:#{cfg[:drb_port]}"
+        host, port = FIDIUS.config['metasploit']['host'], FIDIUS.config['metasploit']['port']
+        @uri = "druby://#{host}:#{port}"
         begin
           DRb.current_server
         rescue DRb::DRbServerNotFound
@@ -27,7 +27,7 @@ module FIDIUS
           ThreadGroup.new.add DRb.thread
         end
       rescue
-        puts "No `config/msf.yml' found."
+        puts "No `metasploit' section in `config/fidius.yml' found."
         raise
       end
 

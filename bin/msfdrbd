@@ -2,18 +2,19 @@
 
 require 'yaml'
 require 'drb'
+require File.expand_path('../../lib/fidius/config.rb', __FILE__)
+
 begin
-  cfg = YAML.load_file(File.expand_path '../../config/fidius.yml', __FILE__)['metasploit']
+  cfg = FIDIUS.config['metasploit']
 rescue
-  puts "[*] No DRb config `config/msf.yml' found. Aborting!"
+  puts "[*] No `metasploit' section in `config/fidius.yml' found. Aborting!"
   raise
 end
 
-$:.unshift(File.join cfg[:msf_path], 'lib')
+$:.unshift(File.join cfg['path'], 'lib')
 require 'msf/base'
 
 module FIDIUS
-  # TODO: plugins.load kapseln und doppeltes Laden verhindern
   # TODO: Callback-Methoden kapseln
 
   class MsfDRbD

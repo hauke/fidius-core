@@ -19,7 +19,7 @@ end
 
 def connection_data
   Dir.chdir($WD)
-  @connection_data ||= YAML.load_file("#{$CFG_D}/database.yml")[get_env]
+  @connection_data ||= YAML.load_file("#{$CFG_D}/fidius.yml")[databases][get_env]
 end
 
 def with_db &block

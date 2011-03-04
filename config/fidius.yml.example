@@ -11,7 +11,7 @@ databases:
 metasploit:
   host: localhost
   port: 56606
-  msf_path: /path/to/msf
+  path: /path/to/msf
 xmlrpc:
   host: localhost
   port: 55553
