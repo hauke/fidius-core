@@ -41,6 +41,31 @@ module FIDIUS
       end
     end
 
+    def load_plugin(name, opts={})
+      @loaded ||= []
+      unless @loaded.include? name
+        @framework.plugins.load name, opts
+        @loaded << name
+      end
+    end
+    
+    def unload_plugin(name)
+      if @loaded.include? name
+        @framework.plugins.unload name
+        @loaded.delete name
+      end
+    end
+    
+    def list_plugins
+      basepath = File.expand_path('../../lib/msf_plugins/', __FILE__)
+      Dir.glob("#{basepath}**/*.rb").map {|f| f.gsub(basepath, '').gsub(/\.rb$/, '') }
+    end
+
+    def run_exploit(exploit, opts)
+      mod = @framework.modules.create(exploit)
+      Msf::Simple::Exploit.exploit_simple(mod, opts)
+    end
+    
     def debug
       p @framework
       p @framework.sessions
