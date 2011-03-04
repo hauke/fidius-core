@@ -68,6 +68,11 @@ module FIDIUS
       mod = @framework.modules.create(exploit)
       Msf::Simple::Exploit.exploit_simple(mod, opts)
     end
+
+    def run_exploit(auxiliary, opts)
+      mod = @framework.modules.create(auxiliary)
+      Msf::Simple::Auxiliary.run_simple(mod, opts)
+    end
     
     def debug
       p @framework
