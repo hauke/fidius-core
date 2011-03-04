@@ -54,7 +54,7 @@ module FIDIUS
             puts "scan dummy| #{FIDIUS::Asset::Host.all.size} Hosts in DB"
             if (FIDIUS::Asset::Host.all.size == 0)
               ["192.168.0.2","192.168.0.88","192.168.0.16"].each do |ip|
-                h = FIDIUS::Asset::Host.create(:name => "KEEEEEKS", :ip => "192.168.0.1")
+                h = FIDIUS::Asset::Host.create(:name => "KEEEEEKS", :ip => ip)
                 h.services << FIDIUS::Service.new(:name => "ssh",    :port => 22,   :proto => "tcp")
                 h.services << FIDIUS::Service.new(:name => "vnc",    :port => 5900, :proto => "tcp")
                 h.services << FIDIUS::Service.new(:name => "smtp",   :port => 25,   :proto => "tcp")
@@ -69,7 +69,14 @@ module FIDIUS
         add_handler("decision.nn.next") do |opts|
           FIDIUS.connect_db
           #res = FIDIUS::Asset::Host.first.id
-          res = FIDIUS::MachineLearning.agent.next.id
+          begin
+            puts "next.id"
+            res = FIDIUS::MachineLearning.agent.next.id
+            puts "res ist: #{res}"
+          rescue
+            puts $!.inspect
+            puts $!.backtrace
+          end
           #puts "result: #{res}"
           FIDIUS.disconnect_db
           "#{res}"
