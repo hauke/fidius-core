@@ -1,5 +1,4 @@
-## XXX: Hm. Should this be FIDIUS::Decision::Agent??
-
+## XXX: Hm. Should this be FIDIUS::Decision::Agent?? DKOHL: I am thinking about it :D
 module FIDIUS
   module MachineLearning
     
@@ -23,7 +22,10 @@ module FIDIUS
       # it returns the last one
       def next
         cur = @open_list.pop
-        @current = cur if cur != nil
+        if cur == nil
+          return @current
+        end
+        @current = cur
       end
       
       # Call for next host to exploit
