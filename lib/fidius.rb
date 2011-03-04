@@ -1,9 +1,11 @@
 require 'rubygems' # if RUBY_VERSION < 1.9
 
 # Action requirements
-require 'rex'
 require 'tempfile'
-require "fileutils"
+require 'fileutils'
+require 'yaml'
+require 'drb'
+require 'singleton'
 
 # AI requirements
 require 'ai4r'
