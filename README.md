@@ -10,7 +10,8 @@ Install these Rubygems:
 
 ## Metasploit
 
-You will need a copy of the open source [Metasploit Framework](http://www.metasploit.com/framework/download/).
+You will need a copy of the open source
+[Metasploit Framework](http://www.metasploit.com/framework/download/).
 It is also possible (and recommended) to get a more recent SVN copy:
 
     $ svn co https://www.metasploit.com/svn/framework3/trunk/

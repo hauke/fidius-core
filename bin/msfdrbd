@@ -13,6 +13,9 @@ $:.unshift(File.join cfg[:msf_path], 'lib')
 require 'msf/base'
 
 module FIDIUS
+  # TODO: plugins.load kapseln und doppeltes Laden verhindern
+  # TODO: Callback-Methoden kapseln
+
   class MsfDRbD
 
     attr_reader :uri
