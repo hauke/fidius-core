@@ -10,6 +10,7 @@ module FIDIUS
         # dimension = |known_services|; 8 layers
         @predictor = Predictor.new(FIDIUS::MachineLearning::known_services.size, 8)
         @open_list = PriorityQueue.new
+        @current = nil
       end
 
       def add(host)
@@ -17,8 +18,12 @@ module FIDIUS
         @open_list.push(host, prediction)
       end
       
+      # returns the next host 
+      # if there is no host in the priority queue
+      # it returns the last one
       def next
-        @open_list.pop
+        cur = @open_list.pop
+        @current = cur if cur != nil
       end
       
       # Call for next host to exploit
