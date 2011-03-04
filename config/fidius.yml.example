@@ -1,0 +1,17 @@
+databases:
+  development: 
+    adapter: mysql
+    host: localhost
+    port: 3306
+    encoding: utf8
+    database: fidius
+    username: msf
+    password: passwordverydifficulttoguessed
+    socket: /tmp/mysql.sock
+metasploit:
+  host: localhost
+  port: 56606
+  msf_path: /path/to/msf
+xmlrpc:
+  host: localhost
+  port: 55553

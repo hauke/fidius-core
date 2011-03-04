@@ -3,7 +3,7 @@
 require 'yaml'
 require 'drb'
 begin
-  cfg = YAML.load_file(File.expand_path '../../config/msf.yml', __FILE__)
+  cfg = YAML.load_file(File.expand_path '../../config/fidius.yml', __FILE__)['metasploit']
 rescue
   puts "[*] No DRb config `config/msf.yml' found. Aborting!"
   raise
@@ -23,6 +23,7 @@ module FIDIUS
 
     def initialize
       @framework = Msf::Simple::Framework.create
+      @plugin_basepath = File.expand_path('../../lib/msf_plugins/', __FILE__)
     end
 
     class << self
@@ -57,8 +58,9 @@ module FIDIUS
     end
     
     def list_plugins
-      basepath = File.expand_path('../../lib/msf_plugins/', __FILE__)
-      Dir.glob("#{basepath}**/*.rb").map {|f| f.gsub(basepath, '').gsub(/\.rb$/, '') }
+      Dir.glob(File.join @plugin_basepath, "**/*.rb").map {|f|
+        f.gsub(@plugin_basepath, '').gsub(/\.rb$/, '')
+      }
     end
 
     def run_exploit(exploit, opts)
@@ -85,5 +87,5 @@ Signal.trap("INT") do
 end
 
 puts "[*] Starting service."
-FIDIUS::MsfDRbD.start_service cfg[:drb_host], cfg[:drb_port], :verbose => true
+FIDIUS::MsfDRbD.start_service cfg['host'], cfg['port'], :verbose => true
 
