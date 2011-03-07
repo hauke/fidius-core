@@ -1,12 +1,14 @@
 require "xmlrpc/server"
 require "fidius/misc/json_symbol_addon.rb"
 require "fidius/rpc/data_changed_patch.rb"
+require "fidius/misc/prelude_initialiser.rb"
 
 module FIDIUS
   module RPC
     class Server < ::XMLRPC::Server
     
       def initialize(options={}, *args)
+        
         options = {
           'max_connections' => 4,
           'stdlog' => $stdout,
@@ -54,12 +56,28 @@ module FIDIUS
           rpc_method_finish ActiveRecord::Base.data_changed?
         end
 
-        add_handler("model.clean_hosts") do |opts|
+        add_handler("meta.dialog_closed") do
           rpc_method_began
-          FIDIUS::Asset::Host.destroy_all
+          ud = UserDialog.find :first, :order=>"created_at"
+          ud.destroy
           rpc_method_finish
         end
 
+        add_handler("model.clean_hosts") do |opts|
+          rpc_method_began
+          FIDIUS::Asset::Host.destroy_all
+          FIDIUS::UserDialog.create_dialog("Removed all Hosts","All Hosts were removed")
+          rpc_method_finish
+        end
+
+        add_handler("action.attack_host") do |host_id|
+          rpc_method_began
+          host = FIDIUS::Asset::Host.find(host_id)
+          host.exploited=true
+          host.save
+          FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
+          rpc_method_finish          
+        end
 
         add_handler("action.scan") do |iprange|
           rpc_method_began
@@ -81,6 +99,7 @@ module FIDIUS
             end
           end
           task.finished
+          FIDIUS::UserDialog.create_dialog("Scan Completed","Scan was completed")
           rpc_method_finish
         end
 
@@ -95,6 +114,7 @@ module FIDIUS
         add_handler("decision.nn.next") do |opts|
           begin
             res = FIDIUS::MachineLearning.agent.next.id
+            FIDIUS::UserDialog.create_yes_no_dialog("Next Target","KI choosed target. Want to attack this host?")
           rescue
             puts $!.inspect
             puts $!.backtrace
@@ -142,6 +162,7 @@ module FIDIUS
           end
           raise XMLRPC::FaultException.new(2, "Class #{model_name} was not found") unless model
           begin #save execution of find method
+            puts "#{model}.find #{opts.inspect}"
             res = model.find(*opts)
           rescue
             # doesnt matter, object not found will be thrown
@@ -149,6 +170,7 @@ module FIDIUS
           unless res
             raise XMLRPC::FaultException.new(3, "object was not found")
           end
+
           # see above nasty timeout is not implemented error
           rpc_method_finish(res.to_xml)
         end

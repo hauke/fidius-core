@@ -32,6 +32,7 @@ module FIDIUS
   autoload :Subnet,   'fidius/knowledge/subnet'
   autoload :Asset,    'fidius/knowledge/asset'
   autoload :Task,    'fidius/knowledge/task'
+  autoload :UserDialog,    'fidius/knowledge/user_dialog'
 
   # ACTION
   autoload :Action,   'fidius/action'

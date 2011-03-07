@@ -13,6 +13,9 @@ module ActiveRecord
     after_create do
       @@data_changed = true
     end
+    after_save do
+      @@data_changed = true
+    end
     after_destroy do
       @@data_changed = true
     end
