@@ -1,5 +1,6 @@
 require "xmlrpc/server"
 require "fidius/misc/json_symbol_addon.rb"
+require "fidius/rpc/data_changed_patch.rb"
 
 module FIDIUS
   module RPC
@@ -44,10 +45,15 @@ module FIDIUS
 
       def rpc_method_finish(result="ok")
         rpc_method_ended
-        result
+        result.to_s
       end
 
       def add_handlers
+        add_handler("meta.data_changed?") do
+          rpc_method_began
+          rpc_method_finish ActiveRecord::Base.data_changed?
+        end
+
         add_handler("model.clean_hosts") do |opts|
           rpc_method_began
           FIDIUS::Asset::Host.destroy_all
@@ -57,6 +63,8 @@ module FIDIUS
 
         add_handler("action.scan") do |iprange|
           rpc_method_began
+          task = FIDIUS::Task.create_task("Scan #{iprange}")
+
           self_address = nil
           # TODO: multiple scans lead to duplicate hosts in db
           scan = FIDIUS::Action::Scan::PingScan.new(iprange)
@@ -72,7 +80,7 @@ module FIDIUS
               # scan ports ?
             end
           end
-
+          task.finished
           rpc_method_finish
         end
 
@@ -155,4 +163,3 @@ module FIDIUS
     end # class Server
   end # module RPC
 end # module FIDIUS
-

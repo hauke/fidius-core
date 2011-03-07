@@ -31,6 +31,7 @@ module FIDIUS
   autoload :Loudness, 'fidius/knowledge/loudness'
   autoload :Subnet,   'fidius/knowledge/subnet'
   autoload :Asset,    'fidius/knowledge/asset'
+  autoload :Task,    'fidius/knowledge/task'
 
   # ACTION
   autoload :Action,   'fidius/action'
@@ -45,8 +46,9 @@ module FIDIUS
   end
   
   def connect_db env=nil
+    databases = config['databases']
     env ||= @env
-    ActiveRecord::Base.establish_connection config['databases'][env]
+    ActiveRecord::Base.establish_connection databases[env]
   end
   module_function :connect_db
   
