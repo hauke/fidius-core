@@ -2,17 +2,21 @@
 
 require 'yaml'
 require 'drb'
+require File.expand_path('../../lib/fidius/config.rb', __FILE__)
+
 begin
-  cfg = YAML.load_file(File.expand_path '../../config/msf.yml', __FILE__)
+  cfg = FIDIUS.config['metasploit']
 rescue
-  puts "[*] No DRb config `config/msf.yml' found. Aborting!"
+  puts "[*] No `metasploit' section in `config/fidius.yml' found. Aborting!"
   raise
 end
 
-$:.unshift(File.join cfg[:msf_path], 'lib')
+$:.unshift(File.join cfg['path'], 'lib')
 require 'msf/base'
 
 module FIDIUS
+  # TODO: Callback-Methoden kapseln
+
   class MsfDRbD
 
     attr_reader :uri
@@ -20,6 +24,7 @@ module FIDIUS
 
     def initialize
       @framework = Msf::Simple::Framework.create
+      @plugin_basepath = File.expand_path('../../lib/msf_plugins/', __FILE__)
     end
 
     class << self
@@ -38,6 +43,37 @@ module FIDIUS
       end
     end
 
+    def load_plugin(name, opts={})
+      @loaded ||= []
+      unless @loaded.include? name
+        @framework.plugins.load name, opts
+        @loaded << name
+      end
+    end
+    
+    def unload_plugin(name)
+      if @loaded.include? name
+        @framework.plugins.unload name
+        @loaded.delete name
+      end
+    end
+    
+    def list_plugins
+      Dir.glob(File.join @plugin_basepath, "**/*.rb").map {|f|
+        f.gsub(@plugin_basepath, '').gsub(/\.rb$/, '')
+      }
+    end
+
+    def run_exploit(exploit, opts)
+      mod = @framework.modules.create(exploit)
+      Msf::Simple::Exploit.exploit_simple(mod, opts)
+    end
+
+    def run_exploit(auxiliary, opts)
+      mod = @framework.modules.create(auxiliary)
+      Msf::Simple::Auxiliary.run_simple(mod, opts)
+    end
+    
     def debug
       p @framework
       p @framework.sessions
@@ -57,5 +93,5 @@ Signal.trap("INT") do
 end
 
 puts "[*] Starting service."
-FIDIUS::MsfDRbD.start_service cfg[:drb_host], cfg[:drb_port], :verbose => true
+FIDIUS::MsfDRbD.start_service cfg['host'], cfg['port'], :verbose => true
 

