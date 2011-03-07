@@ -16,6 +16,7 @@ require 'active_record'
 
 # self requirements
 $LOAD_PATH.unshift File.expand_path(File.dirname __FILE__)
+require 'fidius/misc/ip_helper' # copied from old candc
 require 'fidius/misc/nmap_xml' # copied from msf/lib
 require 'fidius/misc/file'     # copied from msf/lib
 require 'fidius/misc/compat'   # copied from msf/lib

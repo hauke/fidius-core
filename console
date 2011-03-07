@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+irb = "irb"
+libs = "-r lib/fidius"
+libs << " -r lib/fidius/misc/console_initialiser"
+exec "#{irb} #{libs} --simple-prompt"

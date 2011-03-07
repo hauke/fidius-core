@@ -36,85 +36,79 @@ module FIDIUS
       
     private
       include FIDIUS::MachineLearning
+
+      def rpc_method_began
+        FIDIUS.connect_db
+      end
+
+      def rpc_method_ended
+        FIDIUS.disconnect_db
+      end
+
+      def rpc_method_finish(result="ok")
+        rpc_method_ended
+        result
+      end
+
       def add_handlers
         add_handler("model.clean_hosts") do |opts|
-          begin
-            FIDIUS.connect_db
-            FIDIUS::Asset::Host.destroy_all
-            FIDIUS.disconnect_db
-          rescue
-          end
-          "ok"          
+          rpc_method_began
+          FIDIUS::Asset::Host.destroy_all
+          rpc_method_finish
         end
-        # TODO REFACTOR THIS
-        add_handler("action.scan") do |opts|
-          # TODO
 
-            FIDIUS.connect_db
-            puts "scan dummy| #{FIDIUS::Asset::Host.all.size} Hosts in DB"
-            if (FIDIUS::Asset::Host.all.size == 0)
-              ["192.168.0.2","192.168.0.88","192.168.0.16"].each do |ip|
-                h = FIDIUS::Asset::Host.create(:name => "KEEEEEKS", :ip => ip)
-                h.services << FIDIUS::Service.new(:name => "ssh",    :port => 22,   :proto => "tcp")
-                h.services << FIDIUS::Service.new(:name => "vnc",    :port => 5900, :proto => "tcp")
-                h.services << FIDIUS::Service.new(:name => "smtp",   :port => 25,   :proto => "tcp")
-                h.services << FIDIUS::Service.new(:name => "domain", :port => 53,   :proto => "udp")
-                h.save
-              end
+
+        add_handler("action.scan") do |iprange|
+          rpc_method_began
+          self_address = nil
+          # TODO: multiple scans lead to duplicate hosts in db
+          scan = FIDIUS::Action::Scan::PingScan.new(iprange)
+          hosts = scan.execute
+          if hosts.size > 0
+            self_address = FIDIUS.get_my_ip(hosts.first) unless self_address
+            scanner_host = FIDIUS::Asset::Host.find_or_create_by_ip_and_reachable_through_host_id(self_address,nil)
+
+            hosts.delete(self_address) # do not take scanner host in iteration
+            hosts.each do |host|
+              # TODO: determine rating?
+              h = FIDIUS::Asset::Host.create(:name => "host", :ip => host,:reachable_through_host_id=>scanner_host.id,:rating=>7)
+              # scan ports ?
             end
-            FIDIUS.disconnect_db
-          "ok"
+          end
+
+          rpc_method_finish
+        end
+
+        add_handler("action.rate_host") do |host_id,rating|
+          rpc_method_began
+          h = FIDIUS::Asset::Host.find(host_id)
+          h.rating = rating
+          h.save
+          rpc_method_finish
         end
 
         add_handler("decision.nn.next") do |opts|
-          FIDIUS.connect_db
-          #res = FIDIUS::Asset::Host.first.id
           begin
-            puts "next.id"
             res = FIDIUS::MachineLearning.agent.next.id
-            puts "res ist: #{res}"
           rescue
             puts $!.inspect
             puts $!.backtrace
           end
-          #puts "result: #{res}"
-          FIDIUS.disconnect_db
-          "#{res}"
+          rpc_method_finish(res)
         end
+
         # TODO REFACTOR THIS
         add_handler("decision.nn.train") do |opts|
-          FIDIUS.connect_db
-          #if FIDIUS::Asset::Host.all.size == 0
-            # TODO replace dummy hosts
-            #h1 = FIDIUS::Asset::Host.find_or_create_by_name("KEEEEEKS")
-            #if h1.services.size == 0
-            #  h1.services = []
-            #  h1.services << FIDIUS::Service.create(:name => "ssh", :port => 22, :proto => "tcp")
-            #  h1.services << FIDIUS::Service.create(:name => "vnc", :port => 5900, :proto => "tcp")
-            #  h1.services << FIDIUS::Service.create(:name => "smtp", :port => 25, :proto => "tcp")
-            #  h1.services << FIDIUS::Service.create(:name => "domain", :port => 53, :proto => "udp")
-            #end
-            #inst = Instance.new(h1, 2)
-            #h2 = FIDIUS::Asset::Host.find_or_create_by("KEEEEEKS2")
-            #if h2.services.size == 0
-            #  h2.services = []
-            #  h2.services << FIDIUS::Service.create(:name => "ssh", :port => 22, :proto => "tcp")
-            #  h2.services << FIDIUS::Service.create(:name => "vnc", :port => 5900, :proto => "tcp")
-            #  h2.services << FIDIUS::Service.create(:name => "smtp", :port => 25, :proto => "tcp")
-            #  h2.services << FIDIUS::Service.create(:name => "domain", :port => 53, :proto => "udp")
-            #end
-            #inst2 = Instance.new(h2, 3)
-            unless $trained
-              instances = Array.new
-              FIDIUS::Asset::Host.all.each do |host|
-                instances << Instance.new(host, rand(10))
-              end
-              FIDIUS::MachineLearning.agent.train(instances, 100)
-              $trained = true
+          rpc_method_began
+          unless $trained
+            instances = Array.new
+            FIDIUS::Asset::Host.all.each do |host|
+              instances << Instance.new(host, rand(10))
             end
-          #end
-          FIDIUS.disconnect_db
-          "ok"
+            FIDIUS::MachineLearning.agent.train(instances, 100)
+            $trained = true
+          end
+          rpc_method_finish
         end
 
         add_handler("model.find") do |opts|
@@ -122,7 +116,8 @@ module FIDIUS
           # this nasty RuntimeError: Uncaught exception timeout is not implemented yet in method model.find(2)
           # which is triggered by active_record/connection_adapters/abstract/connection_pool.rb:checkout wait method
           # in ruby 1.9 wait(timeout = nil) waiting for timeout is not implemented... strange ?!
-          FIDIUS.connect_db
+          # UPDATE: connect_db moved to rpc_method_began
+          rpc_method_began
           
           raise XMLRPC::FaultException.new(1, "model.find expects at least 2 parameters(modelname, opts)") if opts.size < 2
           model_name = opts.shift
@@ -149,11 +144,8 @@ module FIDIUS
           unless res
             raise XMLRPC::FaultException.new(3, "object was not found")
           end
-          xml_response = res.to_xml
-          
           # see above nasty timeout is not implemented error
-          FIDIUS.disconnect_db
-          xml_response
+          rpc_method_finish(res.to_xml)
         end
         
         set_default_handler do |name, *args|
