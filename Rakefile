@@ -51,6 +51,7 @@ end
 def create_database(config)
   case config['adapter']
   when /mysql/
+    require 'mysql'
     @charset   = ENV['CHARSET']   || 'utf8'
     @collation = ENV['COLLATION'] || 'utf8_unicode_ci'
     creation_options = {:charset => (config['charset'] || @charset), :collation => (config['collation'] || @collation)}
