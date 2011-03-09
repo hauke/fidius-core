@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-irb = "irb"
-libs = "-r lib/fidius"
-libs << " -r lib/fidius/misc/console_initialiser"
-exec "#{irb} #{libs} --simple-prompt"
+require File.expand_path('../lib/fidius.rb', __FILE__)
+require 'fidius/misc/console_initialiser'
+require 'irb'
+
+IRB.start
