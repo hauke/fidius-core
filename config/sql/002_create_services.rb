@@ -4,6 +4,7 @@ class CreateServices < ActiveRecord::Migration
 			t.string :name
 			t.string :port
 			t.string :proto
+      t.string :info
 			t.integer :host_id
 		end
 	end
