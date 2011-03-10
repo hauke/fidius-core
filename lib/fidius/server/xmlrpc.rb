@@ -4,8 +4,8 @@ require "fidius/rpc/data_changed_patch.rb"
 require "fidius/misc/prelude_initialiser.rb"
 
 module FIDIUS
-  module RPC
-    class Server < ::XMLRPC::Server
+  module Server
+    class RPC < ::XMLRPC::Server
     
       def initialize(options={}, *args)
         

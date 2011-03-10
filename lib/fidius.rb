@@ -1,4 +1,6 @@
-require 'rubygems' # if RUBY_VERSION < 1.9
+require 'rubygems' if RUBY_VERSION < '1.9'
+
+# FIXME: `require' only when needed!
 
 # Action requirements
 require 'tempfile'
@@ -15,7 +17,6 @@ require 'algorithms'
 require 'active_record'
 
 # self requirements
-# FIXME: `require' only when needed!
 $LOAD_PATH.unshift File.expand_path(File.dirname __FILE__)
 require 'fidius/misc/ip_helper' # copied from old candc
 require 'fidius/misc/nmap_xml' # copied from msf/lib
@@ -27,23 +28,24 @@ require 'fidius/config'
 
 module FIDIUS
   # KNOWLEDGE
-  autoload :Service,  'fidius/knowledge/service'
-  autoload :Loudness, 'fidius/knowledge/loudness'
-  autoload :Subnet,   'fidius/knowledge/subnet'
-  autoload :Asset,    'fidius/knowledge/asset'
-  autoload :Task,    'fidius/knowledge/task'
-  autoload :UserDialog,    'fidius/knowledge/user_dialog'
+  autoload :Service,    'fidius/knowledge/service'
+  autoload :Loudness,   'fidius/knowledge/loudness'
+  autoload :Subnet,     'fidius/knowledge/subnet'
+  autoload :Asset,      'fidius/knowledge/asset'
+  autoload :Task,       'fidius/knowledge/task'
+  autoload :UserDialog, 'fidius/knowledge/user_dialog' # XXX: knowledge?
 
   # ACTION
-  autoload :Action,   'fidius/action'
+  autoload :Action, 'fidius/action'
 
   # AI
   autoload :MachineLearning, 'fidius/decision/agent/machine_learning'
   autoload :Planner,         'fidius/decision/planning/planner'
   
-  # XMLRPC
-  module RPC
-    autoload :Server, 'fidius/rpc/server'
+  # Server
+  module Server
+    autoload :RPC,    'fidius/server/xmlrpc.rb'
+    autoload :MsfDRb, 'fidius/server/msfdrb.rb'
   end
   
   def connect_db env=nil
