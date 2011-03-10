@@ -1,3 +1,5 @@
+require 'ai4r'
+
 module FIDIUS
   module MachineLearning
     class Predictor

@@ -1,14 +1,16 @@
 require "xmlrpc/server"
-require "fidius/misc/json_symbol_addon.rb"
-require "fidius/server/data_changed_patch.rb"
-require "fidius/misc/prelude_initialiser.rb"
+
+require "fidius/misc/ip_helper"
+require "fidius/misc/json_symbol_addon"
+require "fidius/server/data_changed_patch"
+require "fidius/misc/prelude_initialiser"
 
 module FIDIUS
   module Server
     class RPC < ::XMLRPC::Server
     
       def initialize(options={}, *args)
-        
+        # TODO: simplify
         options = {
           'max_connections' => 4,
           'stdlog' => $stdout,
@@ -35,7 +37,7 @@ module FIDIUS
       end
       
     private
-      include FIDIUS::MachineLearning
+      include FIDIUS::MachineLearning # TODO: include??
 
       def rpc_method_began
         FIDIUS.connect_db

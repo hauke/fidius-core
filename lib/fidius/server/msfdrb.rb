@@ -1,6 +1,4 @@
-require 'yaml'
 require 'drb'
-
 
 module FIDIUS
   module Server
@@ -24,7 +22,7 @@ module FIDIUS
           uri = "druby://#{config['host']}:#{config['port']}"
           puts "[*] Loading Metasploit framework."
           obj = self.new
-          DRb.start_service uri, obj, opts
+          DRb.start_service uri, obj
           puts "[*] Loaded. Listening on `#{uri}'"
           DRb.thread.join
           puts "[*] Quit."

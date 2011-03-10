@@ -1,4 +1,3 @@
-# TODO make this saveable to database
 module FIDIUS
   module Asset
     class Host < ActiveRecord::Base
@@ -10,7 +9,7 @@ module FIDIUS
         raise NotImplementedError, "not implemented yet"
       end
 
-      def after_create()
+      after_create do
         agent = FIDIUS::MachineLearning::agent
         agent.add(self)
       end

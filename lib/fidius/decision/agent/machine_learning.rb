@@ -1,3 +1,6 @@
+require 'algorithms'
+require 'ai4r'
+
 module FIDIUS
   include FIDIUS::Action::Scan
   

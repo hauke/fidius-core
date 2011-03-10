@@ -1,3 +1,9 @@
+# TODO: does EVERY action need these Rex classes?
+
+require 'fidius/misc/nmap_xml' # copied from msf/lib
+require 'fidius/misc/file'     # copied from msf/lib
+require 'fidius/misc/compat'   # copied from msf/lib
+
 module FIDIUS
   module Action
     include FIDIUS::Loudness
@@ -6,6 +12,10 @@ module FIDIUS
     autoload :Exploit, 'fidius/action/exploit'
     autoload :Msf,     'fidius/action/msf'
     
+    # Gets the singleton instance of the DRB wrapped Metasploit
+    # framework.
+    #
+    # @return [Msf::Simple::Framework]  The Metasploit framework.
     def msf_framework
       FIDIUS::Action::Msf.instance.framework
     end

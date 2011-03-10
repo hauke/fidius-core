@@ -1,3 +1,6 @@
+require 'drb'
+require 'singleton'
+
 module FIDIUS
   module Action
     # This class acts as DRb wrapper for the Metasploit framework.
