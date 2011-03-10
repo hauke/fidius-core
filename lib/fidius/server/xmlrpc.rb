@@ -113,6 +113,18 @@ module FIDIUS
           rpc_method_finish
         end
 
+        add_handler("action.browser_autopwn.start") do |lhost|
+          rpc_method_began
+          FIDIUS::Action::Exploit::Passive.instance.start_browser_autopwn lhost
+          rpc_method_finish          
+        end
+
+        add_handler("action.file_autopwn.start") do |lhost|
+          rpc_method_began
+          FIDIUS::Action::Exploit::Passive.instance.start_file_autopwn lhost
+          rpc_method_finish          
+        end
+
         add_handler("decision.nn.next") do |opts|
           begin
             res = FIDIUS::MachineLearning.agent.next.id
