@@ -14,4 +14,4 @@ metasploit:
   path: /path/to/msf
 xmlrpc:
   host: localhost
-  port: 55553
+  port: 8080
