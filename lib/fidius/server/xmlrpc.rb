@@ -1,6 +1,6 @@
 require "xmlrpc/server"
 require "fidius/misc/json_symbol_addon.rb"
-require "fidius/rpc/data_changed_patch.rb"
+require "fidius/server/data_changed_patch.rb"
 require "fidius/misc/prelude_initialiser.rb"
 
 module FIDIUS

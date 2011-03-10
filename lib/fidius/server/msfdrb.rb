@@ -11,8 +11,7 @@ module FIDIUS
 
       def initialize
         @framework = Msf::Simple::Framework.create
-        @plugin_basepath = File.expand_path('../../lib/msf_plugins/', __FILE__)
-        puts '#######', @plugin_basepath, '#######'
+        @plugin_basepath = File.expand_path('../../../../lib/msf_plugins/', __FILE__)
       end
 
       class << self
