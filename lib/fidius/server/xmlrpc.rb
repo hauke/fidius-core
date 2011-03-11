@@ -3,7 +3,7 @@ require "xmlrpc/server"
 require "fidius/misc/ip_helper"
 require "fidius/misc/json_symbol_addon"
 require "fidius/server/data_changed_patch"
-require "fidius/misc/prelude_initialiser"
+require "fidius/misc/assert_initialiser"
 
 module FIDIUS
   module Server

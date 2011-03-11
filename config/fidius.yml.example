@@ -15,3 +15,5 @@ metasploit:
 xmlrpc:
   host: localhost
   port: 8080
+prelude
+  host: 10.20.20.1
