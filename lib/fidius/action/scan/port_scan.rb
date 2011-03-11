@@ -6,7 +6,7 @@ module FIDIUS
         def initialize target, port_range = nil
           raise ArgumentError, "target isnt a target-Object" unless target.ip
           @target = target
-#          @target.services = []
+          @target.services = []
           @port_range = port_range
         end
         
@@ -28,6 +28,7 @@ module FIDIUS
           fd = Tempfile.new('xmlnmap')
           fd.binmode
           args.push('-oX', fd.path)
+          raise "Nmap arp-scan failed" unless (system("#{nmap} #{args.join(' ')}"))
           data = ""
           ::File.open(fd.path, 'rb') do |f|
             data = f.read(f.stat.size)
@@ -38,8 +39,9 @@ module FIDIUS
           parser = Rex::Parser::NmapXMLStreamParser.new
           parser.on_found_host = Proc.new do |h|
             h["ports"].each do |p|
+              puts "Port found: #{p}"
               if p["state"] == "open"
-                @target.services << FIDIUS::Service.new(p["name"], p["portid"].to_i, p["protocol"])
+                @target.services << FIDIUS::Service.new(:name => p["name"], :port => ["portid"], :proto => p["protocol"] , :host_id => @target.ip)
               end
             end
           end
