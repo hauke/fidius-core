@@ -10,6 +10,7 @@ module FIDIUS
     
     autoload :Scan,    'fidius/action/scan'
     autoload :Exploit, 'fidius/action/exploit'
+    autoload :Session, 'fidius/action/session'
     autoload :Msf,     'fidius/action/msf'
     
     # Gets the singleton instance of the DRB wrapped Metasploit

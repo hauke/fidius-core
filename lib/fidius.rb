@@ -13,6 +13,7 @@ require 'fidius/config'
 module FIDIUS
   # KNOWLEDGE
   autoload :Service,    'fidius/knowledge/service'
+  autoload :Session,    'fidius/knowledge/session'
   autoload :Loudness,   'fidius/knowledge/loudness'
   autoload :Subnet,     'fidius/knowledge/subnet'
   autoload :Asset,      'fidius/knowledge/asset'

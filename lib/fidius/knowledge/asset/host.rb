@@ -2,6 +2,7 @@ module FIDIUS
   module Asset
     class Host < ActiveRecord::Base
       has_many :services, :class_name => "FIDIUS::Service"
+      has_many :sessions, :class_name => "FIDIUS::Session"
 
       #attr_accessor :services, :name, :ip
 
@@ -38,10 +39,6 @@ module FIDIUS
 
       def reachable_trough
         # should return gateway host through which one 
-        raise NotImplementedError, "not implemented yet"
-      end
-
-      def get_session
         raise NotImplementedError, "not implemented yet"
       end
 

@@ -34,6 +34,15 @@ module FIDIUS
         raise
       end
 
+      def start
+        FIDIUS::Action::Session.register_session_handler daemon
+        FIDIUS::Action::Session.add_existing_sessions daemon
+      end
+
+      def stop
+        FIDIUS::Action::Session.deregister_session_handler daemon
+      end
+
       # Returns the Metasploit framework. Getting this object is not
       # cached. You may do that on your own.
       # 
