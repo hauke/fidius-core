@@ -41,7 +41,7 @@ module FIDIUS
             h["ports"].each do |p|
               puts "Port found: #{p}"
               if p["state"] == "open"
-                @target.services << FIDIUS::Service.new(:name => p["name"], :port => p["portid"], :proto => p["protocol"] , :host_id => @target.ip)
+                @target.services << FIDIUS::Service.new(:name => p["name"], :port => p["portid"], :proto => p["protocol"] , :host_id => @target.ip , :info => p["product"])
               end
             end
           end
