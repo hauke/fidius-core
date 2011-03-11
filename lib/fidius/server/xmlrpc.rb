@@ -97,7 +97,16 @@ module FIDIUS
             hosts.each do |host|
               # TODO: determine rating?
               h = FIDIUS::Asset::Host.create(:name => "host", :ip => host,:reachable_through_host_id=>scanner_host.id,:rating=>7)
-              # scan ports ?
+
+              scan = FIDIUS::Action::Scan::PortScan.new(h)
+
+              target = scan.execute
+              # TODO: not services returned ??? 
+              target.services.each do |service|
+                service.host_id = h.id
+                service.save
+              end
+
             end
           end
           task.finished
