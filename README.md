@@ -6,7 +6,8 @@ Install these Rubygems:
 
 - [`ai4r`](http://ai4r.rubyforge.org/)
 - [`algorithms`](http://algorithms.rubyforge.org/)
-
+- [`mysql2`](NO LINK FOUND YET)
+- [`yard`](https://rubyforge.org/projects/yard/)
 
 ## Metasploit
 
