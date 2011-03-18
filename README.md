@@ -8,6 +8,7 @@ Install these Rubygems:
 - [`algorithms`](http://algorithms.rubyforge.org/)
 - [`mysql2`](NO LINK FOUND YET)
 - [`yard`](https://rubyforge.org/projects/yard/)
+- [`fidius-common`](https://rubygems.org/gems/fidius-common/)
 
 ## Metasploit
 

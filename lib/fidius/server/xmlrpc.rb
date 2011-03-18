@@ -1,7 +1,7 @@
 require "xmlrpc/server"
 
-require "fidius/misc/ip_helper"
-require "fidius/misc/json_symbol_addon"
+require "fidius-common"
+require "fidius-common/json_symbol_addon"
 require "fidius/server/data_changed_patch"
 require "fidius/misc/assert_initialiser"
 
@@ -95,7 +95,7 @@ module FIDIUS
           scan = FIDIUS::Action::Scan::PingScan.new(iprange)
           hosts = scan.execute
           if hosts.size > 0
-            self_address = FIDIUS.get_my_ip(hosts.first) unless self_address
+            self_address = FIDIUS::Common.get_my_ip(hosts.first) unless self_address
             scanner_host = FIDIUS::Asset::Host.find_or_create_by_ip_and_reachable_through_host_id(self_address,nil)
 
             hosts.delete(self_address) # do not take scanner host in iteration
