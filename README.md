@@ -11,7 +11,6 @@ Install these Rubygems:
 - [`yard`](https://rubyforge.org/projects/yard/)
 - [`activerecord`](https://rubyforge.org/projects/activerecord/)
 
-
 ## Metasploit
 
 You will need a copy of the open source
@@ -24,7 +23,7 @@ It is also possible (and recommended) to get a more recent SVN copy:
 ## Configuration
 
 You need to setup your configuration. To do so, edit the file
-`config/fidius.yml.example` and it without the `.example` extension.
+`config/fidius.yml.example` and save it without the `.example` extension.
 
 In that config file, you will find different sections:
 
