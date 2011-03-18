@@ -10,6 +10,7 @@ Install these Rubygems:
 - [`mysql2`](NO LINK FOUND YET)
 - [`yard`](https://rubyforge.org/projects/yard/)
 - [`activerecord`](https://rubyforge.org/projects/activerecord/)
+- [`fidius-common`](https://rubygems.org/gems/fidius-common/)
 
 ## Metasploit
 
