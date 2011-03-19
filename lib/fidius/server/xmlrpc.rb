@@ -80,9 +80,15 @@ module FIDIUS
         add_handler("action.attack_host") do |host_id|
           rpc_method_began
           host = FIDIUS::Asset::Host.find(host_id)
-          host.exploited=true
-          host.save
-          FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
+          exploiter = FIDIUS::Action::Exploit::Exploit.instance
+          result = exploiter.autopwn host.ip
+          if result
+            host.exploited=true
+            host.save
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
+          else
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
+          end
           rpc_method_finish          
         end
 
