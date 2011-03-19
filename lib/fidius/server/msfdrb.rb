@@ -10,6 +10,7 @@ module FIDIUS
       def initialize
         @framework = Msf::Simple::Framework.create
         @plugin_basepath = File.expand_path('../../../../lib/msf_plugins/', __FILE__)
+        @modules = {}
       end
 
       class << self
@@ -59,7 +60,21 @@ module FIDIUS
         mod = @framework.modules.create(auxiliary)
         Msf::Simple::Auxiliary.run_simple(mod, opts)
       end
-      
+
+      # Creates a new module or returns an older module for the given name.
+      # This method holds a reference to the module so the GC does not clean
+      # the module up while it is still in use by some drb client.
+      #
+      # @param [String]  module_name Name of the module
+      # @return [Metasploit3] The module
+      def module_create(module_name)
+        @modules[module_name] ||= @framework.modules.create(module_name)
+      end
+
+      def modules_clear
+        @modules[module_name] = {}
+      end
+
       def debug
         p @framework
         p @framework.sessions

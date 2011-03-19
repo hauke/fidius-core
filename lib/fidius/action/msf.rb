@@ -70,6 +70,16 @@ module FIDIUS
         })
       end
 
+      # Creates a new module or returns an older module for the given name.
+      # This method holds a reference to the module so the GC does not clean
+      # the module up while it is still in use by some drb client.
+      #
+      # @param [String]  module_name Name of the module
+      # @return [Metasploit3] The module
+      def module_create(module_name)
+        daemon.module_create(module_name)
+      end
+
       # Runs the auxiliary with the given name and the given opts.
       #
       # example usage: msf.run_exploit("server/browser_autopwn",
