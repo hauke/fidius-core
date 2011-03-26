@@ -77,14 +77,15 @@ module FIDIUS
           rpc_method_finish
         end
 
-        add_handler("action.attack_host") do |host_id|
+        add_handler("action.attack_host") do |interface_id|
           rpc_method_began
-          host = FIDIUS::Asset::Host.find(host_id)
+          interface = FIDIUS::Asset::Interface.find(interface_id)
           exploiter = FIDIUS::Action::Exploit::Exploit.instance
-          result = exploiter.autopwn host.ip
+          result = exploiter.autopwn interface
           if result
-            host.exploited=true
-            host.save
+            interface.host.exploited=true
+            interface.host.save
+#TODO: add pivot host id
             FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
           else
             FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
@@ -102,22 +103,16 @@ module FIDIUS
           hosts = scan.execute
           if hosts.size > 0
             self_address = FIDIUS::Common.get_my_ip(hosts.first) unless self_address
-            scanner_host = FIDIUS::Asset::Host.find_or_create_by_ip_and_reachable_through_host_id(self_address,nil)
-
             hosts.delete(self_address) # do not take scanner host in iteration
             hosts.each do |host|
               # TODO: determine rating?
-              h = FIDIUS::Asset::Host.create(:name => "host", :ip => host,:reachable_through_host_id=>scanner_host.id,:rating=>7)
+              h = FIDIUS::Asset::Host.find_or_create_by_ip(host)
+              interface = h.find_by_ip host
 
-              scan = FIDIUS::Action::Scan::PortScan.new(h)
+              scan = FIDIUS::Action::Scan::PortScan.new(interface)
 
               target = scan.execute
               # TODO: not services returned ??? 
-              target.services.each do |service|
-                service.host_id = h.id
-                service.save
-              end
-
             end
           end
           task.finished
@@ -161,7 +156,7 @@ module FIDIUS
           rpc_method_began
           unless $trained
             instances = Array.new
-            FIDIUS::Asset::Host.all.each do |host|
+            FIDIUS::Asset::Interface.all.each do |host|
               instances << Instance.new(host, rand(10))
             end
             FIDIUS::MachineLearning.agent.train(instances, 100)
@@ -187,12 +182,12 @@ module FIDIUS
           begin
             # search model in FIDIUS namespace
             model = Kernel.const_get("FIDIUS").const_get(model_name)
-          rescue 
+          rescue
           end
           begin
             # search model in FIDIUS::Asset namespace
             model = Kernel.const_get("FIDIUS").const_get("Asset").const_get(model_name)
-          rescue 
+          rescue
           end
           raise XMLRPC::FaultException.new(2, "Class #{model_name} was not found") unless model
           begin #save execution of find method

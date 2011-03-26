@@ -9,7 +9,7 @@ module FIDIUS
           @target.services = []
           @port_range = port_range
         end
-        
+
         def execute 
           raise ArgumentError, "target not set" unless @target
           
@@ -41,8 +41,14 @@ module FIDIUS
             h["ports"].each do |p|
               puts "Port found: #{p}"
               if p["state"] == "open"
-                @target.services << FIDIUS::Service.new(:name => p["name"], :port => p["portid"], :proto => p["protocol"] , :host_id => @target.ip , :info => p["product"])
+                service = FIDIUS::Service.find_or_create_by_port_and_proto_and_interface_id(p["portid"], p["protocol"], @target.id)
+                service.info = p["product"] if p["product"]
+                service.name = p["name"] if p["name"]
+                @target.services << service
+                service.save
               end
+              @target.host.os_name = p["ostype"] if p["ostype"]
+              @target.host.save
             end
           end
           fd.close(true)

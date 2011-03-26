@@ -1,16 +1,36 @@
 module FIDIUS
   module AssertInitialiser
 
+# TODO: add ipv6
+# TODO: add windows support
+# TODO: fix mac support
     def self.addLocalAddresses
+      os = IO.popen('uname'){ |f| f.readlines[0] }
+      name = IO.popen('hostname'){ |f| f.readlines[0] }
+      arch = IO.popen('uname -m'){ |f| f.readlines[0] }
+      addres = get_interfaces4
       FIDIUS.connect_db
-      addres = get_interfaces
-      addres.each do |addr|
-        FIDIUS::Asset::Host.find_or_create_by_ip(addr) unless addr == "127.0.0.1"
+      host = nil
+      addres.each do |mac, addr, bcast, mask|
+        next if addr == "127.0.0.1"
+        unless host
+          host = FIDIUS::Asset::Host.find_or_create_by_ip_and_mac(addr, mac)
+          host.localhost = true;
+          host.os_name = os.strip;
+          host.name = name.strip;
+          host.arch = arch.strip;
+          host.save
+        end
+
+        interface = host.find_or_create_by_ip_and_mac addr, mac
+        interface.ip_mask = mask
+        interface.ip_ver = 4
+        interface.save
       end
       FIDIUS.disconnect_db
     end
 
-    def self.get_interfaces
+    def self.get_interfaces4
       # require 'rbconfig'; Config::CONFIG['host_os'] =~ /linux/ bzw. /mswin|mingw/ /darwin/ 
       os = IO.popen('uname'){ |f| f.readlines[0] }
       if os.strip.downcase == "linux" || os.strip.downcase == "darwin"
@@ -18,7 +38,9 @@ module FIDIUS
         raise RuntimeError.new("ifconfig not in PATH") unless !cmd.nil?
         ifconfig = IO.popen([{"LANG" => "C"}, cmd.strip]){ |f| f.readlines.join }
       
-        return ifconfig.scan(Regexp.new("inet addr:((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))")).flatten
+        return ifconfig.scan(/(?:HWaddr ([a-f0-9:]*)?)?\s*inet addr:([0-9\.]*)\s*(?:Bcast:([0-9\.]*)\s*?)?Mask:([0-9\.]*)/)
+        #TODO: IPv6: ifconfig.scan(/inet6 addr: ([0-9a-f:]*)\/([0-9]{1,2})/)
+#ip.inspect.scan(/\/([a-f0-9\.\:]*)>/).flatten
        end
        return []
     end
@@ -27,7 +49,7 @@ module FIDIUS
       return unless FIDIUS.config['prelude']
       FIDIUS.connect_db
       h = FIDIUS::Asset::Host.find_or_create_by_ip(FIDIUS.config['prelude']['host'])
-      h.name = "prelude"
+      h.ids = true;
       h.save
       FIDIUS.disconnect_db
     end

@@ -1,7 +1,7 @@
 module FIDIUS
   module Asset
     class Host < ActiveRecord::Base
-      has_many :services, :class_name => "FIDIUS::Service"
+      has_many :interfaces, :class_name => "FIDIUS::Asset::Interface"
       has_many :sessions, :class_name => "FIDIUS::Session"
 
       #attr_accessor :services, :name, :ip
@@ -10,39 +10,7 @@ module FIDIUS
         raise NotImplementedError, "not implemented yet"
       end
 
-      after_create do
-        agent = FIDIUS::MachineLearning::agent
-        agent.add(self)
-      end
-
       def reachable?
-        raise NotImplementedError, "not implemented yet"
-      end
-
-      def get_services_as_bit_vector
-        @services = [] unless @services
-        bit_vector = []
-        known = FIDIUS::MachineLearning::known_services
-        known.each do |service|
-          bit_vector << (@services.include?(service) ? 1 : 0)
-        end
-        bit_vector
-      end
-      
-      def get_subnets
-        raise NotImplementedError, "not implemented yet"
-      end
-      
-      def add_subnet
-        raise NotImplementedError, "not implemented yet"
-      end
-
-      def reachable_trough
-        # should return gateway host through which one 
-        raise NotImplementedError, "not implemented yet"
-      end
-
-      def ports_scanned?
         raise NotImplementedError, "not implemented yet"
       end
 
@@ -50,13 +18,40 @@ module FIDIUS
         raise NotImplementedError, "not implemented yet"
       end
 
-      def mac_addr
-        raise NotImplementedError, "not implemented yet"
-      end
-
       #def ==
       #  raise NotImplementedError, "not implemented yet"
       #end
+      def find_by_ip_and_mac ip, mac
+        FIDIUS::Asset::Interface.find_by_ip_and_mac_and_host_id(ip, mac, id)
+      end
+
+      def find_or_create_by_ip_and_mac ip, mac
+        FIDIUS::Asset::Interface.find_or_create_by_ip_and_mac_and_host_id(ip, mac, id)
+      end
+
+      def find_by_ip ip
+        FIDIUS::Asset::Interface.find_by_ip_and_host_id(ip, id)
+      end
+
+      def find_or_create_by_ip ip
+        FIDIUS::Asset::Interface.find_or_create_by_ip_and_host_id(ip, id)
+      end
+
+      def self.find_or_create_by_ip_and_mac ip, mac
+        interface = FIDIUS::Asset::Interface.find_or_create_by_ip_and_mac(ip, mac)
+        return interface.host if interface.host
+        host = create
+        host.interfaces << interface
+        host
+      end
+
+      def self.find_or_create_by_ip ip
+        interface = FIDIUS::Asset::Interface.find_or_create_by_ip(ip)
+        return interface.host if interface.host
+        host = create
+        host.interfaces << interface
+        host
+      end
 
     end # class Host
   end # module Asset

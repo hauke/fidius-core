@@ -22,11 +22,13 @@ module FIDIUS
 
       def self.add_session_to_db session
         lhost_addr = FIDIUS::Action::Session.get_lhost session
-        lhost = FIDIUS::Asset::Host.find_by_ip(lhost_addr)
+        lhost = FIDIUS::Asset::Interface.find_by_ip(lhost_addr)
         lhost_id = lhost ? lhost.id : nil
 
         rhost_addr = FIDIUS::Action::Session.get_rhost session
-        host = FIDIUS::Asset::Host.find_or_create_by_ip_and_reachable_through_host_id(rhost_addr, lhost_id)
+        piv_host = FIDIUS::Asset::Host.find_or_create_by_ip(lhost_addr)
+        host = FIDIUS::Asset::Host.find_or_create_by_ip(rhost_addr)
+        host.pivot_host_id = piv_host.id
         session_db = FIDIUS::Session.find_or_create_by_id(session.name.to_s)
         session_db.exploit = session.via_exploit
         session_db.payload = session.via_payload
