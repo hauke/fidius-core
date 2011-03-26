@@ -2,15 +2,9 @@
 
 ## Gems needed
 
-Install these Rubygems:
+Run bundle to install all requered gems:
 
-- [`ai4r`](http://ai4r.rubyforge.org/)
-- [`algorithms`](http://algorithms.rubyforge.org/)
-- [`mysql`](NO LINK FOUND YET)
-- [`mysql2`](NO LINK FOUND YET)
-- [`yard`](https://rubyforge.org/projects/yard/)
-- [`activerecord`](https://rubyforge.org/projects/activerecord/)
-- [`fidius-common`](https://rubygems.org/gems/fidius-common/)
+       $ bundle install
 
 ## Metasploit
 
@@ -50,6 +44,17 @@ In that config file, you will find different sections:
     local Metasploit copy. This must point to the base path of the
     Metasploit framework (where the `msfconsole` et. al. are located).
 
+- **`prelude`** – This is the configuration for the ids to test.
+
+  - The key **`:host`** defines the IP address of the prelude host
+    used in this network.
+
+
+## Setup Database
+
+The databse must be setup before using this software.
+
+       $ rake db:migrate
 
 ## Start your engines
 
@@ -64,6 +69,9 @@ in a seperate terminal.)
 2. Start the architectures XMLRPC interface.
 
        $ ruby <path to fidius architecture>/bin/xml_server.rb
+
+  Ignore the following line:
+     WARN  TCPServer Error: Address already in use - bind(2)
 
 3. Start the FIDIUS Command&Control server.
 
