@@ -12,11 +12,11 @@ module FIDIUS
         @current = nil
       end
 
-      def add(host)
-        prediction = @predictor.predict(host.get_services_as_bit_vector)
-        @open_list.push(host, prediction)
+      def add(interface)
+          prediction = @predictor.predict(interface.get_services_as_bit_vector)
+          @open_list.push(interface, prediction)
       end
-      
+
       # returns the next host 
       # if there is no host in the priority queue
       # it returns the last one
@@ -31,24 +31,29 @@ module FIDIUS
       # Call for next host to exploit
       def decision neighbours # list of hosts
         neighbours.each do |n|
-          if n.services == nil
-            scan =  FIDIUS::Action::Scan::PortScan.new(n)
-            scan.execute
-          end
+          n.interfaces.each do |i|
+            if i.services == nil
+              scan =  FIDIUS::Action::Scan::PortScan.new(i)
+              scan.execute
+            end
 
-          # n.services: x_1 ... x_n with x_i in {0, 1}
-          # 0: closed port
-          # 1: open port
-          prediction = @predictor.predict(n.get_services_as_bit_vector)
-          @open_list.push(n, prediction)
+            # n.services: x_1 ... x_n with x_i in {0, 1}
+            # 0: closed port
+            # 1: open port
+            prediction = @predictor.predict(i.get_services_as_bit_vector)
+            prediction = prediction
+            @open_list.push(i, prediction)
+          end
         end
         return @open_list.pop
       end
       
       # call with array of instances for training and #operations
       def train instances, iterations
-        instances.each do |i|
-          @predictor.add_instance(i.host.get_services_as_bit_vector, i.value)
+        instances.each do |inst|
+          inst.host.interfaces.each do |i|
+            @predictor.add_instance(i.get_services_as_bit_vector, inst.value)
+          end
         end
         iterations.times do
           @predictor.train
@@ -56,7 +61,9 @@ module FIDIUS
       end
       
       def reward instance, iterations 
-        @predictor.add_instance(i.host.get_services_as_bit_vector, i.value)
+        instance.host.interfaces.each do |i|
+          @predictor.add_instance(i.get_services_as_bit_vector, instance.value)
+        end
         iterations.times do
           @predictor.train
         end

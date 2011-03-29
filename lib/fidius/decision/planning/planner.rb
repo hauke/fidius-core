@@ -24,7 +24,6 @@ module FIDIUS
 
     private
     def create_plan
-      # TODO (c)ff konfigurierbar machen
       proc = IO.popen("cff -o #{@@DOMAIN} -f #{@@CUR_PROB} > #{@@CUR_PLAN}", "r+")
       proc.close         
     end

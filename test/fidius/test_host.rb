@@ -8,7 +8,7 @@ class HostTest < FIDIUS::Test
     h.services << FIDIUS::Service.new(:name => "smtp",   :port => 25,   :proto => "tcp")
     h.services << FIDIUS::Service.new(:name => "domain", :port => 53,   :proto => "udp")
     h.save
-    
+   
     vector = h.get_services_as_bit_vector
     expected = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     assert_equal expected, vector

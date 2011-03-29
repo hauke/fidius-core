@@ -3,6 +3,8 @@ require "ipaddr"
 module FIDIUS
   class Subnet
   
+    attr_accessor :ip_range
+
     def initialize ip_range
       if ip_range.is_a? String
         @ip_range = IPAddr.new ip_range

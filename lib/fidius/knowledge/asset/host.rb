@@ -1,10 +1,50 @@
 module FIDIUS
   module Asset
+
+
     class Host < ActiveRecord::Base
       has_many :interfaces, :class_name => "FIDIUS::Asset::Interface"
       has_many :sessions, :class_name => "FIDIUS::Session"
 
+      @@IPv6_DELIM = ':'
+      @@IPv4_DELIM = '.'
       #attr_accessor :services, :name, :ip
+
+      def subnets
+        subnets = []
+        self.interfaces.each do |interface| 
+          # Parse ip adresses
+          ip_comp = interface.ip.split(@@IPv4_DELIM)
+
+          if ip_comp.length == 1 # no IPv4_DELIM found
+            # ipv6
+            ip_comp = interface.ip.split(@@IPv6_DELIM)          
+            4.times do # delete host identifier
+              ip_comp.pop
+            end
+
+            # build ip range
+            str_ip = String.new
+            ip_comp.each do |i|
+              str_ip << i << ":"
+            end
+            str_ip << ":/64"
+            subnets << Subnet.new(str_ip)
+          else
+            # ipv4
+            ip_comp.pop # delete host identifier            
+
+            # build ip range
+            str_ip = String.new
+            ip_comp.each do |i|
+              str_ip << i << "."
+            end
+            str_ip << "0/24"
+            subnets << Subnet.new(str_ip)
+          end          
+        end
+        subnets
+      end
 
       def exploited?
         raise NotImplementedError, "not implemented yet"
