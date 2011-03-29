@@ -23,14 +23,16 @@ module FIDIUS
     end
 
     private
+    def neighbours host_id
+      # search for all interfaces all neighbours
+    end
+
     def create_plan
       proc = IO.popen("cff -o #{@@DOMAIN} -f #{@@CUR_PROB} > #{@@CUR_PLAN}", "r+")
       proc.close         
     end
     
     # services we want to exploit
-    # TODO visibility (through hosts)
-    # TODO subnets
     def create_problem(services, initial_host, target_host)
       problem = PlanningProblem.new("FIDIUS_PROBLEM", @@DOMAIN)
       
@@ -40,16 +42,15 @@ module FIDIUS
       end
       
       # add hosts
-      hosts.each do |host|
+      @hosts.each do |host|
         problem.add_object(host.id, "computer")
 
-# NOT IMPLEMENTED
-#        host.get_subnets.each do |sub| 
-#          p = Predicate.new("host_subnet")
-#          p.add_object(host.host_name)
-#          p.add_object(sub)
-#          problem.add_predicate(p)
-#        end
+        host.subnets.each do |sub| 
+          p = Predicate.new("host_subnet")
+          p.add_object(host.id)
+          p.add_object(sub.ip_range)
+          problem.add_predicate(p)
+        end
 
         # host' s possible services
         unknown = Unknown.new
