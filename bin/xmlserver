@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 require File.expand_path('../../lib/fidius.rb', __FILE__)
 
