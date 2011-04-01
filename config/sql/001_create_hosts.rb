@@ -3,7 +3,7 @@ class CreateHosts < ActiveRecord::Migration
     create_table :hosts do |t|
       t.string :name
       t.string :ip
-      t.integer :rating
+      t.integer :rating #value
       t.boolean :exploited, :default => 0
       t.string :os_name
       t.string :os_sp
