@@ -3,9 +3,11 @@ require 'active_record'
 require 'logger'
 
 $WD = Dir.pwd
-
+import File.join("#{$WD}","test","scenarios.rake")
 # getting config dir
 $CFG_D = File.join $WD, "config"
+
+
 
 Rake::TestTask.new do |t|
   t.libs << "test"

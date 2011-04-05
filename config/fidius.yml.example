@@ -8,11 +8,23 @@ databases:
     username: msf
     password: passwordverydifficulttoguessed
     socket: /tmp/mysql.sock
+  simulator: 
+    adapter: mysql
+    host: localhost
+    port: 3306
+    encoding: utf8
+    database: fidius
+    username: msf
+    password: passwordverydifficulttoguessed
+    socket: /tmp/mysql.sock
 metasploit:
   host: localhost
   port: 56606
   path: /path/to/msf
 xmlrpc:
+  host: localhost
+  port: 8080
+xmlrpc-simulator:
   host: localhost
   port: 8080
 prelude:

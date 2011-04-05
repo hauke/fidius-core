@@ -30,6 +30,7 @@ module FIDIUS
   # Server
   module Server
     autoload :RPC,    'fidius/server/xmlrpc.rb'
+    autoload :Simulator,    'fidius/server/simulator.rb'
     autoload :MsfDRb, 'fidius/server/msfdrb.rb'
   end
   

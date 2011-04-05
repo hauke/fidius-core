@@ -68,7 +68,7 @@ in a seperate terminal.)
 
 2. Start the architectures XMLRPC interface.
 
-       $ ruby <path to fidius architecture>/bin/xml_server.rb
+       $ ruby <path to fidius architecture>/bin/xml_server
 
   Ignore the following line:
      WARN  TCPServer Error: Address already in use - bind(2)
