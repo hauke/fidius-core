@@ -36,8 +36,12 @@ module FIDIUS
       if os.strip.downcase == "linux" # TODO: macOS ifconfig looks different|| os.strip.downcase == "darwin"
         cmd = IO.popen('which ifconfig'){ |f| f.readlines[0] }
         raise RuntimeError.new("ifconfig not in PATH") unless !cmd.nil?
-        ifconfig = IO.popen([{"LANG" => "C"}, cmd.strip]){ |f| f.readlines.join }
-      
+        if RUBY_VERSION.to_f < 1.9
+          ifconfig = IO.popen("LANG=C #{cmd}"){ |f| f.readlines.join }
+        else
+          ifconfig = IO.popen([{"LANG" => "C"}, cmd.strip]){ |f| f.readlines.join }
+        end
+
         return ifconfig.scan(/(?:HWaddr ([a-f0-9:]*)?)?\s*inet addr:([0-9\.]*)\s*(?:Bcast:([0-9\.]*)\s*?)?Mask:([0-9\.]*)/)
         #TODO: IPv6: ifconfig.scan(/inet6 addr: ([0-9a-f:]*)\/([0-9]{1,2})/)
 #ip.inspect.scan(/\/([a-f0-9\.\:]*)>/).flatten
