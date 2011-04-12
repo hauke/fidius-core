@@ -2,7 +2,7 @@ require 'test_fidius'
 
 class PingScanTest < FIDIUS::Test
   def test_ping_scan
-    h = "127.0.0.0/29"
+    h = "127.0.0.0/31"
     scan = FIDIUS::Action::Scan::PingScan.new(h)
     hosts = scan.execute
     i = 0
