@@ -34,7 +34,10 @@
 
    
    ; Network predicates
-   
+   (trap_in_subnet ?subnet - net)
+   (iframe_injected ?host - server)
+   ; is a webserver running
+   (webserver_running ?host - server)
    ; Is host ?target visible from ?host ?
    (host_visible ?host - computer ?target - computer)  
    ; In which ?subnet is ?host located ?
@@ -64,6 +67,24 @@
   )
 
   ; --------------------- ;
+  ;      TRAPPING         ;
+  ; ----------------------;
+  
+  (:action inject_iframe
+   :parameters(?host - server ?subnet - net)
+   :precondition(and(on_host ?host)
+                    (and(webserver_running ?host)
+		         (in_subnet ?subnet)))
+   :effect(and(iframe_injected ?host)(trap_in_subnet ?subnet))
+   )
+  
+  (:action check_httpd
+   :parameters(?host - server)
+   :precondition(on_host ?host)
+   :observe(webserver_running ?host)
+   )
+
+  ; --------------------- ;
   ;      PLUMBING         ;
   ; ----------------------;
   
@@ -87,8 +108,6 @@
    
    :effect(plumb_in ?subnet)                                  ; host plumbed and mark the subnet as plumbed
    )
-
- 
 
   ; --------------------- ;
   ;      MOVING           ;
@@ -169,7 +188,7 @@
 			  (not (nids ?targetnet))))          ; is a nids running
    :observe(service_running ?target ?service)
    )
-
+  
   ; report server hacked in subnet
   (:action report_server
    :parameters(?host - server ?subnet - net)
