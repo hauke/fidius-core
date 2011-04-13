@@ -87,6 +87,7 @@ module FIDIUS
 
         add_handler("action.attack_host") do |interface_id|
           rpc_method_began
+          interface = FIDIUS::Asset::Interface.find(interface_id)
           result = true
           if result
             interface.host.exploited=true
@@ -165,7 +166,20 @@ module FIDIUS
           opts = ActiveSupport::JSON.decode(opts[0])
           res = nil  
           model = nil
-          
+
+          begin
+            # search model global
+            model = nil
+            model_name.split("::").each do |const|
+              unless model
+                model = Kernel.const_get(const)
+              else
+                model = model.const_get(const)
+              end
+            end
+
+          rescue
+          end          
           begin
             # search model in FIDIUS namespace
             model = Kernel.const_get("FIDIUS").const_get(model_name)
@@ -178,7 +192,6 @@ module FIDIUS
           end
           raise XMLRPC::FaultException.new(2, "Class #{model_name} was not found") unless model
           begin #save execution of find method
-            puts "#{model}.find #{opts.inspect}"
             res = model.find(*opts)
           rescue
             # doesnt matter, object not found will be thrown
@@ -186,7 +199,6 @@ module FIDIUS
           unless res
             raise XMLRPC::FaultException.new(3, "object was not found")
           end
-
           # see above nasty timeout is not implemented error
           rpc_method_finish(res.to_xml)
         end

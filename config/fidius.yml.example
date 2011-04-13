@@ -14,6 +14,9 @@ databases:
   simulator: 
     database: fidius
     <<: *default
+  evasiondb:
+    database: evasion_db
+    <<: *default
 
 metasploit:
   host: localhost
