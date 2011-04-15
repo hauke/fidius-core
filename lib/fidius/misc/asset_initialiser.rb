@@ -1,5 +1,5 @@
 module FIDIUS
-  module AssertInitialiser
+  module AssetInitialiser
 
 # TODO: add ipv6
 # TODO: add windows support
