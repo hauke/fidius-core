@@ -6,3 +6,4 @@ doc/
 .bundle/
 Gemfile.lock
 fidius_prob.pddl
+coverage/
