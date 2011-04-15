@@ -12,6 +12,7 @@ module FIDIUS
     autoload :Exploit, 'fidius/action/exploit'
     autoload :Session, 'fidius/action/session'
     autoload :Msf,     'fidius/action/msf'
+    autoload :PostExploit,     'fidius/action/postexploit/postexploit'
     
     # Gets the singleton instance of the DRB wrapped Metasploit
     # framework.
