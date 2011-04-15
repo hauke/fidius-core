@@ -11,6 +11,9 @@ databases:
   development: 
     database: fidius
     <<: *default
+  test:
+    database: fidius_test
+    <<: *default
   simulator: 
     database: fidius
     <<: *default
