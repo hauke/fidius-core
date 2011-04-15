@@ -1,5 +1,19 @@
 require 'drb'
 
+class DRb::DRbMessage
+  def dump(obj, error=false)  # :nodoc:
+    if obj.class.to_s.include? "Msf::" or obj.class.to_s.include? "::Metasploit3" or obj.class.to_s.include? "Rex::" or obj.kind_of? DRbUndumped
+      obj = make_proxy(obj, error)
+    end
+    begin
+      str = Marshal::dump(obj)
+    rescue
+      str = Marshal::dump(make_proxy(obj, error))
+    end
+    [str.size].pack('N') + str
+  end
+end
+
 module FIDIUS
   module Server
     class MsfDRb
