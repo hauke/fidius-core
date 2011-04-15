@@ -8,7 +8,7 @@ module FIDIUS
   class Test < Test::Unit::TestCase
     def setup
       FIDIUS.connect_db
-      #FIDIUS::Action::Msf.instance.start
+      FIDIUS::Action::Msf.instance.start  if ENV['ENV'] == "test"
     end
     
     def teardown

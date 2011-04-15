@@ -9,9 +9,9 @@ class HostTest < FIDIUS::Test
     inter.services << FIDIUS::Service.new(:name => "smtp",   :port => 25,   :proto => "tcp")
     inter.services << FIDIUS::Service.new(:name => "domain", :port => 53,   :proto => "udp")
     inter.save
-    puts "wuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"
-    p inter
+
     vector = inter.get_services_as_bit_vector
+
     expected = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     assert_equal expected, vector
   end

@@ -1,5 +1,6 @@
 require 'rake/testtask'
 require 'active_record'
+
 require 'logger'
 
 $WD = Dir.pwd
@@ -136,6 +137,7 @@ end
 
 Rake::TestTask.new do |t|
   #ENV['ENV'] = "test"
+  #ActiveRecord::Migration.verbose = false
   drop_database(connection_data)
   create_database(connection_data)
   with_db {
