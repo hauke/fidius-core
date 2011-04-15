@@ -7,14 +7,6 @@ import File.join("#{$WD}","test","scenarios.rake")
 # getting config dir
 $CFG_D = File.join $WD, "config"
 
-
-
-Rake::TestTask.new do |t|
-  t.libs << "test"
-  t.test_files = FileList['test/fidius/test_*.rb']
-  t.verbose = true
-end
-
 def get_env
   ENV["ENV"] || "development" 
 end
@@ -140,4 +132,17 @@ begin
   end
 rescue LoadError
   puts 'YARD not installed (gem install yard), http://yardoc.org'
+end
+
+Rake::TestTask.new do |t|
+  #ENV['ENV'] = "test"
+  drop_database(connection_data)
+  create_database(connection_data)
+  with_db {
+    Dir.chdir($WD)
+    ActiveRecord::Migrator.migrate("#{$CFG_D}/sql", ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
+  }
+  t.libs << "test"
+  t.test_files = FileList['test/fidius/test_*.rb']
+  t.verbose = true
 end
