@@ -128,6 +128,12 @@ module FIDIUS
           rpc_method_finish
         end
 
+        add_handler("action.post.interfaces") do |sessionID|
+          rpc_method_began
+          FIDIUS::Action::PostExploit.run sessionID, "getInterfaces"
+          rpc_method_finish
+        end
+
         add_handler("action.browser_autopwn.start") do |lhost|
           rpc_method_began
           FIDIUS::Action::Exploit::Passive.instance.start_browser_autopwn lhost
