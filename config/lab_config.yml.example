@@ -1,0 +1,6 @@
+- vmid: VM_NAME
+  driver: virtualbox
+  tools: true
+  credentials: 
+    - user: admin
+      pass: fidiusthing
