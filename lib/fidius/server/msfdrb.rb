@@ -47,14 +47,19 @@ module FIDIUS
       def load_plugin(name, opts={})
         @loaded ||= []
         unless @loaded.include? name
-          @framework.plugins.load name, opts
+          puts "loading ... #{name}"
+          path = File.join(@plugin_basepath, name) unless name =~ /^\//
+          path ||= name   
+          @framework.plugins.load path, opts
           @loaded << name
         end
       end
       
       def unload_plugin(name)
         if @loaded.include? name
-          @framework.plugins.unload name
+          path = File.join(@plugin_basepath, name) unless name =~ /^\//
+          path ||= name
+          @framework.plugins.unload path
           @loaded.delete name
         end
       end

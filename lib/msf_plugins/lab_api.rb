@@ -2,7 +2,11 @@
 ## $Id$
 ##
 
-$:.unshift(File.join(File.expand_path(File.dirname(__FILE__)), '..', 'lib', 'lab'))
+if FIDIUS.config
+  $:.unshift(File.join(FIDIUS.config["metasploit"]["path"] , 'lib', 'lab'))   
+else
+  $:.unshift(File.join(File.expand_path(File.dirname(__FILE__)), '..', 'lib', 'lab'))
+end
 
 require 'yaml'
 require 'vm_controller'
