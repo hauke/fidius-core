@@ -33,12 +33,12 @@ module FIDIUS
           obj.call(*args)
         end
         Signal.trap(:INT) {
-          FIDIUS::Action::Msf.instance.stop
           shutdown
         }
 
         FIDIUS::Action::Msf.instance.start
         serve
+        FIDIUS::Action::Msf.instance.stop
       end
       
     private
