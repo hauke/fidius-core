@@ -6,13 +6,6 @@ module FIDIUS
         include FIDIUS::Action::Scan
 
         def execute
-          nmap = Rex::FileUtils.find_full_path("nmap") || Rex::FileUtils.find_full_path("nmap.exe")
-
-          if (not nmap)
-            puts("The nmap executable could not be found")
-            return
-          end
-
           fd = Tempfile.new('xmlnmap')
           fd.binmode
           run_nmap fd
@@ -41,6 +34,13 @@ module FIDIUS
         end
 
         def run_nmap fd
+          nmap = Rex::FileUtils.find_full_path("nmap") || Rex::FileUtils.find_full_path("nmap.exe")
+
+          if (not nmap)
+            puts("The nmap executable could not be found")
+            return
+          end
+
           args = create_arg fd.path
           raise "Nmap arp-scan failed" unless (system("#{nmap} #{args.join(' ')}"))
         end
