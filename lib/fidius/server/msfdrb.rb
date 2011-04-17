@@ -22,7 +22,7 @@ module FIDIUS
       attr_reader :framework
 
       def initialize
-        @framework = Msf::Simple::Framework.create
+        @framework = create_framework
         @plugin_basepath = File.expand_path('../../../../lib/msf_plugins/', __FILE__)
         @modules = {}
       end
@@ -47,14 +47,19 @@ module FIDIUS
       def load_plugin(name, opts={})
         @loaded ||= []
         unless @loaded.include? name
-          @framework.plugins.load name, opts
+          puts "loading ... #{name}"
+          path = File.join(@plugin_basepath, name) unless name =~ /^\//
+          path ||= name   
+          @framework.plugins.load path, opts
           @loaded << name
         end
       end
       
       def unload_plugin(name)
         if @loaded.include? name
-          @framework.plugins.unload name
+          path = File.join(@plugin_basepath, name) unless name =~ /^\//
+          path ||= name
+          @framework.plugins.unload path
           @loaded.delete name
         end
       end
@@ -97,6 +102,10 @@ module FIDIUS
     private
       def method_missing(method, *args, &block)
         @framework.send(method, *args, &block)
+      end
+
+      def create_framework
+        Msf::Simple::Framework.create
       end
 
     end # class MsfDRbD

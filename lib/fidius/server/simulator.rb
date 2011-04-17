@@ -88,10 +88,7 @@ module FIDIUS
         add_handler("action.attack_host") do |interface_id|
           rpc_method_began
           interface = FIDIUS::Asset::Interface.find(interface_id)
-          result = true
-          if result
-            interface.host.exploited=true
-            interface.host.save
+          if instance.host.exploited? || true
             FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
           else
             FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")

@@ -33,12 +33,12 @@ module FIDIUS
           obj.call(*args)
         end
         Signal.trap(:INT) {
-          FIDIUS::Action::Msf.instance.stop
           shutdown
         }
 
         FIDIUS::Action::Msf.instance.start
         serve
+        FIDIUS::Action::Msf.instance.stop
       end
       
     private
@@ -82,10 +82,8 @@ module FIDIUS
           interface = FIDIUS::Asset::Interface.find(interface_id)
           exploiter = FIDIUS::Action::Exploit::Exploit.instance
           result = exploiter.autopwn interface
-          if result
-            interface.host.exploited=true
-            interface.host.save
-#TODO: add pivot host id
+          p "exploit result: #{result}"
+          if instance.host.exploited?
             FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
           else
             FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")

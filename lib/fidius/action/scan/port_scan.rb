@@ -1,61 +1,44 @@
 module FIDIUS
   module Action
     module Scan
-      class PortScan
+      class PortScan < NmapScan
 
         def initialize target, port_range = nil
+          raise ArgumentError, "target not set" unless target
           raise ArgumentError, "target isnt a target-Object" unless target.ip
           @target = target
           @target.services = []
           @port_range = port_range
         end
 
-        def execute 
-          raise ArgumentError, "target not set" unless @target
-          
+        def result
+          @target
+        end
+
+        def create_arg tmpfile
           if @port_range
             args = ["-sV -p #{@port_range}", @target.ip]
           else
             args = ["-sV", @target.ip]
           end
-          nmap = Rex::FileUtils.find_full_path("nmap") || Rex::FileUtils.find_full_path("nmap.exe")
-
-          if (not nmap)
-            puts("The nmap executable could not be found")
-            return
-          end
-          
-          fd = Tempfile.new('xmlnmap')
-          fd.binmode
-          args.push('-oX', fd.path)
-          raise "Nmap arp-scan failed" unless (system("#{nmap} #{args.join(' ')}"))
-          data = ""
-          ::File.open(fd.path, 'rb') do |f|
-            data = f.read(f.stat.size)
-          end
-          arguments = {:filename => fd.path}.merge(:data => data)
-          # Use a stream parser instead of a tree parser so we can deal with
-          # huge results files without running out of memory.
-          parser = Rex::Parser::NmapXMLStreamParser.new
-          parser.on_found_host = Proc.new do |h|
-            h["ports"].each do |p|
-              puts "Port found: #{p}"
-              if p["state"] == "open"
-                service = FIDIUS::Service.find_or_create_by_port_and_proto_and_interface_id(p["portid"], p["protocol"], @target.id)
-                service.info = p["product"] if p["product"]
-                service.name = p["name"] if p["name"]
-                @target.services << service
-                service.save
-              end
-              @target.host.os_name = p["ostype"] if p["ostype"]
-              @target.host.save
-            end
-          end
-          fd.close(true)
-          REXML::Document.parse_stream(data, parser)
-          return @target
+          args.push('-oX', tmpfile)
         end
-        
+
+        def extract h
+          h["ports"].each do |p|
+            #puts "Port found: #{p}"
+            if p["state"] == "open"
+              service = FIDIUS::Service.find_or_create_by_port_and_proto_and_interface_id(p["portid"], p["protocol"], @target.id)
+              service.info = p["product"] if p["product"]
+              service.name = p["name"] if p["name"]
+              @target.services << service
+              service.save
+            end
+            @target.host.os_name = p["ostype"] if p["ostype"]
+            @target.host.save
+          end
+        end
+
       end # class PortScan
     end # module Scan
   end # module Action

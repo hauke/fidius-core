@@ -47,14 +47,10 @@ module FIDIUS
       end
 
       def exploited?
-        raise NotImplementedError, "not implemented yet"
+        !sessions.empty?
       end
 
       def reachable?
-        raise NotImplementedError, "not implemented yet"
-      end
-
-      def hostname
         raise NotImplementedError, "not implemented yet"
       end
 
@@ -91,6 +87,11 @@ module FIDIUS
         host = create
         host.interfaces << interface
         host
+      end
+
+      def self.find_by_ip ip
+        interface = FIDIUS::Asset::Interface.find_by_ip(ip)
+        return interface.host
       end
 
     end # class Host

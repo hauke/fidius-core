@@ -2,7 +2,11 @@
 ## $Id$
 ##
 
-$:.unshift(File.join(File.expand_path(File.dirname(__FILE__)), '..', 'lib', 'lab'))
+if FIDIUS.config
+  $:.unshift(File.join(FIDIUS.config["metasploit"]["path"] , 'lib', 'lab'))   
+else
+  $:.unshift(File.join(File.expand_path(File.dirname(__FILE__)), '..', 'lib', 'lab'))
+end
 
 require 'yaml'
 require 'vm_controller'
@@ -34,12 +38,12 @@ module Msf
       end
       
       def lab_load yaml_file
-        return -1 if yaml_file == nil || yaml_file.blank?
+        return -1 if yaml_file == nil || yaml_file.empty?
         @controller.from_file(yaml_file)
       end
       
 			def lab_save file_path
-			  return -1 if file_path == nil || file_path.blank?
+			  return -1 if file_path == nil || file_path.empty?
 			  @controller.to_file(file_path)  
 			end
 			
@@ -131,7 +135,7 @@ module Msf
 			end
 			
 			def lab_revert vmids, snapshot
-			  return -1  if check_vm_param(vmids) || snapshot.blank?
+			  return -1  if check_vm_param(vmids) || snapshot.empty?
 			  snapshot = args[args.count-1] 		
 
   			if vmids.class == String && vmids == "all"
@@ -148,7 +152,7 @@ module Msf
 			end
 			
 			def lab_snapshot vmids, snapshot
-			  return -1  if check_vm_param(vmids) || snapshot.blank?
+			  return -1  if check_vm_param(vmids) || snapshot.empty?
 		
   			if vmids == "all"
   				#Logging	
@@ -166,7 +170,7 @@ module Msf
 			private
 			
 			def check_vm_param param
-			  return (param == nil || (param.class == Array && param.empty?)) || (param.class == String && param.blank?)
+			  return (param == nil || (param.class == Array && param.empty?)) || (param.class == String && param.empty?)
 			end   
       
     end

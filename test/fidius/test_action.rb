@@ -1,4 +1,4 @@
-require 'test_fidius'
+require 'test_unit_fidius'
 
 # Action is a model, so this will not work anymore...
 #   FIDIUS::Action.new

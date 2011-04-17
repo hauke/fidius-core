@@ -1,8 +1,9 @@
 require 'simplecov'
   SimpleCov.start
 require 'fidius'
+require 'mock/msf'
+require 'mock/fidius'
 require 'test/unit'
-
 
 module FIDIUS
   class Test < Test::Unit::TestCase
@@ -12,6 +13,7 @@ module FIDIUS
     end
     
     def teardown
+      FIDIUS::Action::Msf.instance.stop  if ENV['ENV'] == "test"
       FIDIUS.disconnect_db
     end
   end

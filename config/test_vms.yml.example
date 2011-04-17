@@ -1,0 +1,5 @@
+:lab_config: /path/to/lab_config
+:xp_vm: 
+  :lab_name: WINXP_SP2
+  :ip: "192.168.56.101"
+  :waittime: 15

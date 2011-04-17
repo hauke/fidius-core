@@ -5,6 +5,7 @@ module FIDIUS
       autoload :ArpScan,  'fidius/action/scan/arp_scan'
       autoload :PingScan, 'fidius/action/scan/ping_scan'
       autoload :PortScan, 'fidius/action/scan/port_scan'
+      autoload :NmapScan, 'fidius/action/scan/nmap_scan'
       
       #
       # initilizing the scan
