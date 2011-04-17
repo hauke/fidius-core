@@ -47,14 +47,10 @@ module FIDIUS
       end
 
       def exploited?
-        raise NotImplementedError, "not implemented yet"
+        !sessions.empty?
       end
 
       def reachable?
-        raise NotImplementedError, "not implemented yet"
-      end
-
-      def hostname
         raise NotImplementedError, "not implemented yet"
       end
 
