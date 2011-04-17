@@ -22,7 +22,7 @@ module FIDIUS
       attr_reader :framework
 
       def initialize
-        @framework = Msf::Simple::Framework.create
+        @framework = create_framework
         @plugin_basepath = File.expand_path('../../../../lib/msf_plugins/', __FILE__)
         @modules = {}
       end
@@ -102,6 +102,10 @@ module FIDIUS
     private
       def method_missing(method, *args, &block)
         @framework.send(method, *args, &block)
+      end
+
+      def create_framework
+        Msf::Simple::Framework.create
       end
 
     end # class MsfDRbD

@@ -93,6 +93,11 @@ module FIDIUS
         host
       end
 
+      def self.find_by_ip ip
+        interface = FIDIUS::Asset::Interface.find_by_ip(ip)
+        return interface.host
+      end
+
     end # class Host
   end # module Asset
 end # module FIDIUS

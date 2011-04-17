@@ -21,14 +21,10 @@ module FIDIUS
       # The construction will fail if the configuration yaml file could
       # not be found.
       def initialize
-        host, port = FIDIUS.config['metasploit']['host'], FIDIUS.config['metasploit']['port']
+        host = FIDIUS.config['metasploit']['host']
+        port = FIDIUS.config['metasploit']['port']
         @uri = "druby://#{host}:#{port}"
-        begin
-          DRb.current_server
-        rescue DRb::DRbServerNotFound
-          DRb.start_service
-          ThreadGroup.new.add DRb.thread
-        end
+        start_drb
       rescue
         puts "No `metasploit' section in `config/fidius.yml' found."
         raise
@@ -110,6 +106,17 @@ module FIDIUS
       # @return [FIDIUS::MsfDRbD]  The DRb wrapper.
       def daemon
         @msf_daemon ||= DRbObject.new nil, @uri
+      end
+
+private
+
+      def start_drb
+        begin
+          DRb.current_server
+        rescue DRb::DRbServerNotFound
+          DRb.start_service
+          ThreadGroup.new.add DRb.thread
+        end
       end
 
     end # class Msf
