@@ -7,3 +7,4 @@ doc/
 Gemfile.lock
 fidius_prob.pddl
 coverage/
+test/reports/
