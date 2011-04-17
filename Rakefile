@@ -3,7 +3,6 @@ require 'active_record'
 require 'rubygems'
 require 'ci/reporter/rake/test_unit' # use this if you're using Test::Unit
 
-
 require 'logger'
 
 $WD = Dir.pwd

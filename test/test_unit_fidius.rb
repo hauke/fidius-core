@@ -3,6 +3,7 @@ require 'simplecov'
 require 'fidius'
 require 'mock/msf'
 require 'mock/fidius'
+gem 'test-unit'
 require 'test/unit'
 
 module FIDIUS

@@ -10,3 +10,4 @@ gem 'mysql2', '~>0.2.6'
 gem 'simplecov', '>= 0.4.0', :require => false, :group => :test
 gem 'activesupport', '~>3.0.6'
 gem 'amfranz-ci_reporter', '~>1.6.2'
+gem 'test-unit', '~>2.2.0'
