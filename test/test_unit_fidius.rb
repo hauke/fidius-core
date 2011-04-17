@@ -1,4 +1,7 @@
 require 'simplecov'
+gem 'simplecov-rcov'
+require 'simplecov-rcov'
+  SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
   SimpleCov.start
 require 'fidius'
 require 'mock/msf'
