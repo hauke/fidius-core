@@ -3,7 +3,6 @@ require 'simplecov'
 require 'fidius'
 require 'test/unit'
 
-
 module FIDIUS
   class Test < Test::Unit::TestCase
     def setup
@@ -12,6 +11,7 @@ module FIDIUS
     end
     
     def teardown
+      FIDIUS::Action::Msf.instance.stop  if ENV['ENV'] == "test"
       FIDIUS.disconnect_db
     end
   end

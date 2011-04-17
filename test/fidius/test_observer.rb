@@ -1,4 +1,4 @@
-require 'test_fidius'
+require 'test_unit_fidius'
 
 class BlinkingLight < Observable
   def blink
