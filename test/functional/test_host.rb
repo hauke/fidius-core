@@ -1,4 +1,5 @@
-require 'test_unit_fidius'
+require 'test_helper_fidius'
+require 'test_helper_function'
 
 class HostTest < FIDIUS::Test
   def test_host

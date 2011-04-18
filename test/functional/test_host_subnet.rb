@@ -1,4 +1,5 @@
-require 'test_unit_fidius'
+require 'test_helper_fidius'
+require 'test_helper_function'
 require 'ipaddr'
 
 class HostSubnetTest < FIDIUS::Test

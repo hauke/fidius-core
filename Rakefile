@@ -136,9 +136,8 @@ begin
 rescue LoadError
   puts 'YARD not installed (gem install yard), http://yardoc.org'
 end
-
-Rake::TestTask.new("test") do |t|
-  #ENV['ENV'] = "test"
+namespace :test do
+  ENV['ENV'] = "test"
   #ActiveRecord::Migration.verbose = false
   drop_database(connection_data)
   create_database(connection_data)
@@ -146,21 +145,24 @@ Rake::TestTask.new("test") do |t|
     Dir.chdir($WD)
     ActiveRecord::Migrator.migrate("#{$CFG_D}/sql", ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
   }
-  t.libs << "test"
-  t.test_files = FileList['test/fidius/test_*.rb']
-  t.verbose = true
-end
-
-Rake::TestTask.new("integration") do |t|
-  #ENV['ENV'] = "test"
-  #ActiveRecord::Migration.verbose = false
-  drop_database(connection_data)
-  create_database(connection_data)
-  with_db {
-    Dir.chdir($WD)
-    ActiveRecord::Migrator.migrate("#{$CFG_D}/sql", ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
-  }
-  t.libs << "test"
-  t.test_files = FileList['test/integration/test_*.rb']
-  t.verbose = true
+  Rake::TestTask.new(:unit) do |t|
+    t.libs << "test"
+    t.test_files = FileList['test/unit/test_*.rb']
+    t.verbose = true
+  end
+  Rake::TestTask.new(:functional) do |t|
+    t.libs << "test"
+    t.test_files = FileList['test/functional/test_*.rb']
+    t.verbose = true
+  end
+  Rake::TestTask.new(:integration) do |t|    
+    t.libs << "test"
+    t.test_files = FileList['test/integration/test_*.rb']
+    t.verbose = true
+  end
+  Rake::TestTask.new(:all) do |t|    
+    t.libs << "test"
+    t.test_files = FileList['test/unit/test_*.rb', 'test/functional/test_*.rb']
+    t.verbose = true
+  end
 end

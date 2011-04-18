@@ -1,22 +1,3 @@
-require 'simplecov'
-  SimpleCov.start
-require 'fidius'
-require 'test/unit'
-
-module FIDIUS
-  class Test < Test::Unit::TestCase
-    def setup
-      FIDIUS.connect_db
-      FIDIUS::Action::Msf.instance.start  if ENV['ENV'] == "test"
-    end
-    
-    def teardown
-      FIDIUS::Action::Msf.instance.stop  if ENV['ENV'] == "test"
-      FIDIUS.disconnect_db
-    end
-  end
-end
-
 def vm_config
    @vms ||= YAML.load_file File.expand_path("../../config/test_vms.yml", __FILE__)
 end
