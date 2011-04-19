@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~>3.0.5'
+gem 'rails', '~>3.0.6'
 gem 'ai4r', '~>1.9'
 gem 'algorithms', '~>0.3.0'
 gem 'yard', '~>0.6.5'
@@ -11,4 +11,4 @@ gem 'simplecov', '>= 0.4.0', :require => false, :group => :test
 gem 'simplecov-rcov', '~> 0.2.0'
 gem 'activesupport', '~>3.0.6'
 gem 'amfranz-ci_reporter', '~>1.6.2'
-gem 'test-unit', '~>2.2.0'
+gem 'test-unit', '~>2.3.0'
