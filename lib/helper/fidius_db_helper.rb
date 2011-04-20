@@ -1,5 +1,6 @@
 require 'rubygems' if RUBY_VERSION < '1.9'
 require 'active_record'
+require 'logger'
 
 module FIDIUS
   class DbHelper
