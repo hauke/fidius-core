@@ -10,6 +10,12 @@ $LOAD_PATH.unshift File.expand_path(File.dirname __FILE__)
 require 'fidius/design_patterns/observer'
 require 'fidius/config'
 
+begin
+  require 'fidius-evasiondb'
+rescue
+  puts "could not load evasiondb"
+end
+
 module FIDIUS
   # KNOWLEDGE
   autoload :Service,    'fidius/knowledge/service'

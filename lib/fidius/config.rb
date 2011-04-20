@@ -7,10 +7,9 @@ module FIDIUS
     @cfg ||= YAML.load_file File.expand_path("../../../config/fidius.yml", __FILE__)
 
     begin
-      require 'fidius-evasiondb'
       FIDIUS::EvasionDB.config @cfg["databases"]["evasiondb"]
     rescue
-      puts "Error loading EvasionDB: #{$!.message}"
+      puts "Error in config EvasionDB: #{$!.message}"
     end
     @cfg
   end

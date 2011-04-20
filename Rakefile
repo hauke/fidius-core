@@ -137,14 +137,14 @@ rescue LoadError
   puts 'YARD not installed (gem install yard), http://yardoc.org'
 end
 namespace :test do
-  ENV['ENV'] = "test"
+  #ENV['ENV'] = "test"
   #ActiveRecord::Migration.verbose = false
-  drop_database(connection_data)
-  create_database(connection_data)
-  with_db {
-    Dir.chdir($WD)
-    ActiveRecord::Migrator.migrate("#{$CFG_D}/sql", ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
-  }
+  #drop_database(connection_data)
+  #create_database(connection_data)
+  #with_db {
+  #  Dir.chdir($WD)
+  #  ActiveRecord::Migrator.migrate("#{$CFG_D}/sql", ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
+  #}
   Rake::TestTask.new(:unit) do |t|
     t.libs << "test"
     t.test_files = FileList['test/unit/test_*.rb']

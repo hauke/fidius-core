@@ -1,9 +1,10 @@
-require 'rubygems' if RUBY_VERSION < '1.9'
+#require 'rubygems' #if RUBY_VERSION < '1.9'
+require 'fidius'
+
 require 'simplecov'
 require 'simplecov-rcov'
   SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
   SimpleCov.start
-require 'fidius'
 require 'test/unit'
 
 module FIDIUS
