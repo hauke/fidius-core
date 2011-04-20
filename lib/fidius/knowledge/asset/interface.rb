@@ -20,7 +20,7 @@ module FIDIUS
         bit_vector = []
         known = FIDIUS::MachineLearning::known_services
         known.each do |service|
-          bit_vector << (@services.include?(service) ? 1 : 0)
+          bit_vector << (FIDIUS::Service.find_by_port_and_proto_and_interface_id(service["port"], service["proto"], id) ? 1 : 0)
         end
         bit_vector
       end

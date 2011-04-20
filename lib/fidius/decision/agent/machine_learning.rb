@@ -19,12 +19,7 @@ module FIDIUS
     end
 
     def self.known_services
-      @@services ||= initialize_services
-    end
-      
-    def self.initialize_services
-      services = Service.all 
-      services
+      @@services ||= YAML.load_file File.expand_path("../../../../../config/services.yml", __FILE__)
     end
 
     # TODO delete (host.value)

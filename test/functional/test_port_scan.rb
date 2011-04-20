@@ -10,7 +10,7 @@ class PortScanTest < FIDIUS::Test
 
     assert_equal "Windows", h.os_name
     vector   = target.get_services_as_bit_vector
-    expected = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected = [0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
     assert_equal expected, vector
   end
   
@@ -29,11 +29,11 @@ class PortScanTest < FIDIUS::Test
 
 #    h = FIDIUS::Asset::Host.find_by_ip "192.168.56.1" #TODO: why does this not work?
     vector   = h.interfaces[0].get_services_as_bit_vector
-    expected = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected = [0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
     assert_equal expected, vector
 
     vector   = h.interfaces[1].get_services_as_bit_vector
-    expected = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected = [0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
     assert_equal expected, vector
   end
 

@@ -1,0 +1,116 @@
+-
+  name: ssh
+  port: 22
+  proto: tcp 
+-
+  name: vnc
+  port: 5900
+  proto: tcp 
+-
+  name: smtp
+  port: 25
+  proto: tcp 
+-
+  name: domain
+  port: 53
+  proto: udp 
+-
+  name: mysql
+  port: 3306
+  proto: tcp 
+-
+  name: http
+  port: 80
+  proto: tcp 
+-
+  name: netbios-ssn
+  port: 139
+  proto: tcp 
+-
+  name: netbios-ssn
+  port: 139
+  proto: udp 
+-
+  name: microsoft-ds
+  port: 445
+  proto: tcp 
+-
+  name: ftp
+  port: 21
+  proto: tcp 
+-
+  name: ipp
+  port: 631
+  proto: tcp 
+-
+  name: ipp
+  port: 631
+  proto: udp 
+-
+  name: afp
+  port: 548
+  proto: tcp 
+-
+  name: afp
+  port: 548
+  proto: udp 
+-
+  name: kerberos-sec
+  port: 88
+  proto: tcp 
+-
+  name: kerberos-sec
+  port: 88
+  proto: udp 
+-
+  name: https
+  port: 443
+  proto: tcp 
+-
+  name: svn
+  port: 3690
+  proto: tcp 
+-
+  name: aol
+  port: 5190
+  proto: tcp 
+-
+  name: http-proxy
+  port: 1080
+  proto: tcp 
+-
+  name: pop3
+  port: 110
+  proto: tcp 
+-
+  name: ldap
+  port: 389
+  proto: tcp 
+-
+  name: cvspserver
+  port: 2401
+  proto: tcp 
+-
+  name: imap
+  port: 143
+  proto: tcp
+-
+  name: microsoft-rdp
+  port: 3389
+  proto: tcp
+-
+  name: msrpc
+  port: 135
+  proto: tcp
+-
+  name: telnet
+  port: 23
+  proto: tcp
+-
+  name: imaps
+  port: 993
+  proto: tcp
+-
+  name: smtps
+  port: 465
+  proto: tcp

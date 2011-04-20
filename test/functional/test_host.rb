@@ -13,7 +13,7 @@ class HostTest < FIDIUS::Test
 
     vector = inter.get_services_as_bit_vector
 
-    expected = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    expected = [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     assert_equal expected, vector
   end
 end
