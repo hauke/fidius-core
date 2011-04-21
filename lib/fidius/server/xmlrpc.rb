@@ -36,7 +36,9 @@ module FIDIUS
           shutdown
         }
 
+        FIDIUS.connect_db
         FIDIUS::Action::Msf.instance.start
+        FIDIUS.disconnect_db
         serve
         FIDIUS::Action::Msf.instance.stop
       end

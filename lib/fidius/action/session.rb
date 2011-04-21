@@ -69,12 +69,10 @@ module FIDIUS
       end
 
       def self.add_existing_sessions framework
-        FIDIUS.connect_db
         FIDIUS::Session.delete_all
         framework.sessions.each do | key, session |
           FIDIUS::Action::Session.add_session_to_db session
         end
-        FIDIUS.disconnect_db
       end
 
     end # class Session
