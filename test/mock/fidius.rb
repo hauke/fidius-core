@@ -69,4 +69,23 @@ private
       end # class NmapScan
     end # module Scan
   end # module Action
+
+  module Server
+    class RPC
+
+      def startup
+        FIDIUS::Action::Msf.instance.start
+      end
+      
+      def teardown
+      end
+
+      def rpc_method_began
+      end
+
+      def rpc_method_ended
+      end
+    
+    end # class RPC
+  end # module Server
 end # module FIDIUS

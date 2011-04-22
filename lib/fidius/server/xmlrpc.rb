@@ -36,15 +36,23 @@ module FIDIUS
           shutdown
         }
 
-        FIDIUS.connect_db
-        FIDIUS::Action::Msf.instance.start
-        FIDIUS.disconnect_db
+        startup
         serve
-        FIDIUS::Action::Msf.instance.stop
+        teardown
       end
       
     private
       include FIDIUS::MachineLearning # TODO: include??
+      
+      def startup
+        FIDIUS.connect_db
+        FIDIUS::Action::Msf.instance.start
+        FIDIUS.disconnect_db
+      end
+      
+      def teardown
+        FIDIUS::Action::Msf.instance.stop
+      end
 
       def rpc_method_began
         FIDIUS.connect_db
