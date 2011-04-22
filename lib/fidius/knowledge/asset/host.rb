@@ -70,7 +70,9 @@ module FIDIUS
       end
 
       def find_or_create_by_ip ip
-        FIDIUS::Asset::Interface.find_or_create_by_ip_and_host_id(ip, id)
+        interface = FIDIUS::Asset::Interface.find_or_create_by_ip_and_host_id(ip, id)
+        self.interfaces << interface
+        interface
       end
 
       def self.find_or_create_by_ip_and_mac ip, mac
@@ -91,6 +93,7 @@ module FIDIUS
 
       def self.find_by_ip ip
         interface = FIDIUS::Asset::Interface.find_by_ip(ip)
+        return nil unless interface
         return interface.host
       end
 
