@@ -8,7 +8,7 @@ module FIDIUS
 
       def run_exploit(exploit, opts)
         session = FIDIUS::MsfMock::SessionMock.new "1", exploit
-        @framework.sessions << session
+        @framework.sessions.merge({"1" => session})
         @framework.events.subscriber.on_session_open(session)
       end
 
@@ -35,14 +35,35 @@ private
 
     module Scan
       class NmapScan
+
+        @@filename_ping = nil
+        @@filename_port = nil
       
-        def self.filename filename
-          @@filename = filename
+        def self.filename_port filename
+          @@filename_port = filename
+        end
+
+        def self.filename_ping filename
+          @@filename_ping = filename
+        end
+
+        def self.filename_arp filename
+          @@filename_arp = filename
         end
 
         def run_nmap fd
-          args = create_arg fd.path
-          FileUtils.cp @@filename, fd.path
+          args = create_arg(fd.path).join(' ')
+          if args.include?("-sP")
+            ip = args.scan(/-sP ([0-9\.\/]*) -oX/).flatten[0].gsub("\/", "-")
+            filename = @@filename_ping
+            filename ||= File.join(File.expand_path(File.dirname(__FILE__)), '..', 'functional', 'data', "nmap-ping-scan-#{ip}.xml")
+          end
+          if args.include?("-sV")
+            ip = args.scan(/-sV ([0-9\.]*) -oX/).flatten[0]
+            filename = @@filename_port
+            filename ||= File.join(File.expand_path(File.dirname(__FILE__)), '..', 'functional', 'data', "nmap-port-scan-#{ip}.xml")
+          end
+          FileUtils.cp filename, fd.path
         end
 
       end # class NmapScan

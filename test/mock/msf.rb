@@ -4,7 +4,7 @@ module FIDIUS
 
       def initialize
         @modules = ModuleSetMock.new
-        @sessions = []
+        @sessions = {}
         @events = EventDispatcherMock.new
 
         @modules["exploit/http"] = ExploitMock.new "exploit/http", 80
@@ -35,6 +35,10 @@ module FIDIUS
 	
       def add_session_subscriber(subscriber)
         @subscriber = subscriber
+      end
+
+      def remove_session_subscriber(subscriber)
+        @subscriber = nil
       end
 
     end #class EventDispatcherMock

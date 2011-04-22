@@ -1,30 +1,24 @@
 <?xml version="1.0" ?>
 <?xml-stylesheet href="file:///usr/share/nmap/nmap.xsl" type="text/xsl"?>
-<!-- Nmap 5.21 scan initiated Sun Apr 17 12:04:53 2011 as: nmap -sP -oX /tmp/xmlnmap20110417-3877-levd 192.168.56.0/24 -->
-<nmaprun scanner="nmap" args="nmap -sP -oX /tmp/xmlnmap20110417-3877-levd 192.168.56.0/24" start="1303034693" startstr="Sun Apr 17 12:04:53 2011" version="5.21" xmloutputversion="1.03">
+<!-- Nmap 5.21 scan initiated Fri Apr 22 12:38:17 2011 as: nmap -sP -oX /tmp/xmlnmap20110417-3877-levd2 192.168.56.0/24 -->
+<nmaprun scanner="nmap" args="nmap -sP -oX /tmp/xmlnmap20110417-3877-levd2 192.168.56.0/24" start="1303468697" startstr="Fri Apr 22 12:38:17 2011" version="5.21" xmloutputversion="1.03">
 <verbose level="0" />
 <debugging level="0" />
 <host><status state="down" reason="net-unreach"/>
 <address addr="192.168.56.0" addrtype="ipv4" />
-<times srtt="8" rttvar="5000" to="100000" />
+<times srtt="5" rttvar="5000" to="100000" />
 </host>
 <host><status state="up" reason="syn-ack"/>
 <address addr="192.168.56.1" addrtype="ipv4" />
 <hostnames>
 </hostnames>
-<times srtt="178" rttvar="5000" to="100000" />
+<times srtt="161" rttvar="5000" to="100000" />
 </host>
-<host><status state="up" reason="conn-refused"/>
+<host><status state="down" reason="no-response"/>
 <address addr="192.168.56.2" addrtype="ipv4" />
-<hostnames>
-</hostnames>
-<times srtt="326" rttvar="3767" to="100000" />
 </host>
-<host><status state="up" reason="syn-ack"/>
+<host><status state="down" reason="no-response"/>
 <address addr="192.168.56.3" addrtype="ipv4" />
-<hostnames>
-</hostnames>
-<times srtt="228" rttvar="5000" to="100000" />
 </host>
 <host><status state="down" reason="no-response"/>
 <address addr="192.168.56.4" addrtype="ipv4" />
@@ -317,14 +311,23 @@
 <host><status state="down" reason="no-response"/>
 <address addr="192.168.56.100" addrtype="ipv4" />
 </host>
-<host><status state="down" reason="no-response"/>
+<host><status state="up" reason="conn-refused"/>
 <address addr="192.168.56.101" addrtype="ipv4" />
+<hostnames>
+</hostnames>
+<times srtt="372" rttvar="5000" to="100000" />
 </host>
-<host><status state="down" reason="no-response"/>
+<host><status state="up" reason="conn-refused"/>
 <address addr="192.168.56.102" addrtype="ipv4" />
+<hostnames>
+</hostnames>
+<times srtt="302" rttvar="5000" to="100000" />
 </host>
-<host><status state="down" reason="no-response"/>
+<host><status state="up" reason="syn-ack"/>
 <address addr="192.168.56.103" addrtype="ipv4" />
+<hostnames>
+</hostnames>
+<times srtt="258" rttvar="3777" to="100000" />
 </host>
 <host><status state="down" reason="no-response"/>
 <address addr="192.168.56.104" addrtype="ipv4" />
@@ -781,8 +784,8 @@
 </host>
 <host><status state="down" reason="net-unreach"/>
 <address addr="192.168.56.255" addrtype="ipv4" />
-<times srtt="5" rttvar="5000" to="100000" />
+<times srtt="6" rttvar="5000" to="100000" />
 </host>
-<runstats><finished time="1303034708" timestr="Sun Apr 17 12:05:08 2011" elapsed="15.51"/><hosts up="3" down="253" total="256" />
-<!-- Nmap done at Sun Apr 17 12:05:08 2011; 256 IP addresses (3 hosts up) scanned in 15.51 seconds -->
+<runstats><finished time="1303468712" timestr="Fri Apr 22 12:38:32 2011" elapsed="15.31"/><hosts up="3" down="253" total="256" />
+<!-- Nmap done at Fri Apr 22 12:38:32 2011; 256 IP addresses (3 hosts up) scanned in 15.31 seconds -->
 </runstats></nmaprun>
