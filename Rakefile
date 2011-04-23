@@ -72,25 +72,24 @@ def setup_test_enviorment
   }
 end
 
+$UNIT = 'test/unit/test_*.rb'
+$FUNCTIONAL = 'test/functional/test_*.rb'
+$INTEGRATION = 'test/integration/test_*.rb'
+def create_test_task name, files
+   Rake::TestTask.new(name) do |t|
+    t.libs << "test"
+    t.test_files = (FileList[] << files)
+    t.verbose = true
+  end
+end
+
+task :test do 
+  Rake::Task["test:all"].invoke
+end
+
 namespace :test do  
-  Rake::TestTask.new(:unit) do |t|
-    t.libs << "test"
-    t.test_files = FileList['test/unit/test_*.rb']
-    t.verbose = true
-  end
-  Rake::TestTask.new(:functional) do |t|
-    t.libs << "test"
-    t.test_files = FileList['test/functional/test_*.rb']
-    t.verbose = true
-  end
-  Rake::TestTask.new(:integration) do |t|    
-    t.libs << "test"
-    t.test_files = FileList['test/integration/test_*.rb']
-    t.verbose = true
-  end
-  Rake::TestTask.new(:all) do |t|
-    t.libs << "test"
-    t.test_files = FileList['test/unit/test_*.rb', 'test/functional/test_*.rb']
-    t.verbose = true
-  end
+  create_test_task :unit, $UNIT
+  create_test_task :functional, $FUNCTIONAL
+  create_test_task :integration, $INTEGRATION
+  create_test_task :all, [$UNIT, $FUNCTIONAL]
 end
