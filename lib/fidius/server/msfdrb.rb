@@ -1,4 +1,5 @@
 require 'drb'
+require 'drb/acl'
 
 class DRb::DRbMessage
   def dump(obj, error=false)  # :nodoc:
@@ -33,11 +34,8 @@ module FIDIUS
           Signal.trap("INT") do
             puts "[*] Stopping service."
             DRb.thread.kill
-          end        
-          DRb.install_acl(%{
-            deny all
-            allow #{config['host']}
-          })
+          end
+          DRb.install_acl ACL.new(%w[deny all allow #{config['host']}])
           uri = "druby://#{config['host']}:#{config['port']}"
           puts "[*] Loading Metasploit framework."
           obj = self.new
