@@ -34,6 +34,10 @@ module FIDIUS
             puts "[*] Stopping service."
             DRb.thread.kill
           end        
+          DRb.install_acl(%{
+            deny all
+            allow #{config['host']}
+          })
           uri = "druby://#{config['host']}:#{config['port']}"
           puts "[*] Loading Metasploit framework."
           obj = self.new
