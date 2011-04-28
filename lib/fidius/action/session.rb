@@ -7,7 +7,11 @@ module FIDIUS
       # Called when a session is opened.
       #
       def on_session_open(session)
-        FIDIUS::Action::Session.add_session_to_db session
+        begin
+          FIDIUS::Action::Session.add_session_to_db session
+        rescue
+          puts "An error occurred while adding new session #{$!.inspect}"
+        end
       end
 
       #
@@ -30,6 +34,7 @@ module FIDIUS
         host = FIDIUS::Asset::Host.find_or_create_by_ip(rhost_addr)
         host.pivot_host_id = piv_host.id
         session_db = FIDIUS::Session.find_or_create_by_id(session.name.to_s)
+        session_db.name = session.name
         session_db.exploit = session.via_exploit
         session_db.payload = session.via_payload
         host.sessions << session_db
@@ -71,7 +76,11 @@ module FIDIUS
       def self.add_existing_sessions framework
         FIDIUS::Session.delete_all
         framework.sessions.each do | key, session |
-          FIDIUS::Action::Session.add_session_to_db session
+          begin
+            FIDIUS::Action::Session.add_session_to_db session
+          rescue
+            puts "An error occurred while adding new session #{$!.inspect}"
+          end
         end
       end
 
