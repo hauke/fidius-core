@@ -8,7 +8,7 @@ require "fidius/misc/asset_initialiser"
 module FIDIUS
   module Server
     class RPC < ::XMLRPC::Server
-    
+
       def initialize(options={}, *args)
         # TODO: simplify
         options = {
@@ -40,16 +40,16 @@ module FIDIUS
         serve
         teardown
       end
-      
+
     private
       include FIDIUS::MachineLearning # TODO: include??
-      
+
       def startup
         FIDIUS.connect_db
         FIDIUS::Action::Msf.instance.start
         FIDIUS.disconnect_db
       end
-      
+
       def teardown
         FIDIUS::Action::Msf.instance.stop
       end
@@ -98,7 +98,7 @@ module FIDIUS
           else
             FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
           end
-          rpc_method_finish          
+          rpc_method_finish
         end
 
         add_handler("action.scan") do |iprange|
@@ -120,7 +120,7 @@ module FIDIUS
               scan = FIDIUS::Action::Scan::PortScan.new(interface)
 
               target = scan.execute
-              # TODO: not services returned ??? 
+              # TODO: not services returned ???
             end
           end
           task.finished
@@ -136,22 +136,22 @@ module FIDIUS
           rpc_method_finish
         end
 
-        add_handler("action.post.interfaces") do |sessionID|
+        add_handler("action.postexploit") do |sessionID, action|
           rpc_method_began
-          FIDIUS::Action::PostExploit.run sessionID, "getInterfaces"
+          FIDIUS::Action::PostExploit.run sessionID, action
           rpc_method_finish
         end
 
         add_handler("action.browser_autopwn.start") do |lhost|
           rpc_method_began
           FIDIUS::Action::Exploit::Passive.instance.start_browser_autopwn lhost
-          rpc_method_finish          
+          rpc_method_finish
         end
 
         add_handler("action.file_autopwn.start") do |lhost|
           rpc_method_began
           FIDIUS::Action::Exploit::Passive.instance.start_file_autopwn lhost
-          rpc_method_finish          
+          rpc_method_finish
         end
 
         add_handler("decision.nn.next") do |opts|
@@ -186,13 +186,13 @@ module FIDIUS
           # in ruby 1.9 wait(timeout = nil) waiting for timeout is not implemented... strange ?!
           # UPDATE: connect_db moved to rpc_method_began
           rpc_method_began
-          
+
           raise XMLRPC::FaultException.new(1, "model.find expects at least 2 parameters(modelname, opts)") if opts.size < 2
           model_name = opts.shift
           opts = ActiveSupport::JSON.decode(opts[0])
-          res = nil  
+          res = nil
           model = nil
-          
+
           begin
             # search model in FIDIUS namespace
             model = Kernel.const_get("FIDIUS").const_get(model_name)
@@ -217,14 +217,14 @@ module FIDIUS
           # see above nasty timeout is not implemented error
           rpc_method_finish(res.to_xml)
         end
-        
+
         set_default_handler do |name, *args|
           raise XMLRPC::FaultException.new(-99,
             "Method #{name} missing or wrong number of parameters!"
           )
         end
       end
-    
+
     end # class Server
   end # module RPC
 end # module FIDIUS
