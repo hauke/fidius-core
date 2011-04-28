@@ -19,6 +19,7 @@ module FIDIUS
     end
   end
 end
+
 def prepare_test_db
   wd = Dir.pwd
   cfg_d = File.join wd, "config"
@@ -32,4 +33,15 @@ def prepare_test_db
     ActiveRecord::Migrator.migrate("#{cfg_d}/sql", ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
   }
 end
+
+def check_vms
+  @example = YAML.load_file File.expand_path("../../config/fidius.yml.example", __FILE__)
+  @example[:tests].each_pair { |key, pair|
+    unless FIDIUS.config[:tests][key]
+      puts "The Following Key isn't defined in the config_file: #{key}"
+    end
+  }
+end
+
 prepare_test_db
+check_vms

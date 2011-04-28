@@ -33,3 +33,6 @@ xmlrpc-simulator:
   port: 8080
 prelude:
   host: 10.20.20.1
+:tests:
+  :lab_config: path/to/lab_config
+  :xp_vm:
