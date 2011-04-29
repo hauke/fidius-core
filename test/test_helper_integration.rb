@@ -12,9 +12,13 @@ def vm_find_interface vm
 end
 
 def vm_start vm
-  FIDIUS::Action::Msf.instance.daemon.load_plugin "lab_api"
-  msf = FIDIUS::Action::Msf.instance.framework
-  msf.lab_api.lab_load vm_config[:lab_config]
-  msf.lab_api.lab_start vm[:lab_name]
-  sleep vm[:waittime]
+  unless vm == nil
+    FIDIUS::Action::Msf.instance.daemon.load_plugin "lab_api"
+    msf = FIDIUS::Action::Msf.instance.framework
+    msf.lab_api.lab_load FIDIUS.config[:tests][:lab_config]
+    msf.lab_api.lab_start vm[:lab_name]
+    sleep vm[:waittime]
+  else
+    puts "VM not defined"
+  end
 end

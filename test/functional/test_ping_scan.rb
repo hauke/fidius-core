@@ -13,7 +13,9 @@ class PingScanTest < FIDIUS::Test
     assert_equal "192.168.56.103", hosts[3]
     hosts.each do |host|
       h = FIDIUS::Asset::Host.find_or_create_by_ip(host)
-      scan = FIDIUS::Action::Scan::PortScan.new(h.interfaces[0])
+      interface = h.interfaces[0] if h.interfaces[0].ip.include?("192.168.56")
+      interface = h.interfaces[1] unless interface
+      scan = FIDIUS::Action::Scan::PortScan.new(interface)
       target = scan.execute
     end
   end
