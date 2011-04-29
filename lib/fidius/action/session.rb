@@ -9,6 +9,7 @@ module FIDIUS
       def on_session_open(session)
         begin
           FIDIUS::Action::Session.add_session_to_db session
+          FIDIUS::Action::PostExploit::autorun session
         rescue
           puts "An error occurred while adding new session #{$!.inspect}"
         end
@@ -78,6 +79,7 @@ module FIDIUS
         framework.sessions.each do | key, session |
           begin
             FIDIUS::Action::Session.add_session_to_db session
+            FIDIUS::Action::PostExploit::autorun session
           rescue
             puts "An error occurred while adding new session #{$!.inspect}"
           end
