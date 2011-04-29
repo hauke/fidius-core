@@ -36,3 +36,6 @@ prelude:
 :tests:
   :lab_config: path/to/lab_config
   :xp_vm:
+    :lab_name: VM_ID
+    :ip: 127.0.0.1
+    :waittime: 10
