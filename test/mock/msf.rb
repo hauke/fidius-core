@@ -7,8 +7,8 @@ module FIDIUS
         @sessions = {}
         @events = EventDispatcherMock.new
 
-        @modules["exploit/http"] = ExploitMock.new "exploit/http", 80
-        @modules["exploit/smb"] = ExploitMock.new "exploit/smb", 445
+        @modules["http"] = ExploitMock.new "exploit/http", 80
+        @modules["smb"] = ExploitMock.new "exploit/smb", 445
       end
 
       def exploits
@@ -65,6 +65,10 @@ module FIDIUS
         @datastore["RPORT"] = port
       end
 
+      def new
+        self
+      end
+
       def fullname
         @fullname
       end
@@ -79,6 +83,10 @@ module FIDIUS
 
       def datastore
         @datastore
+      end
+
+      def arch
+        "cmd"
       end
 
     end #class ModuleSetMock
