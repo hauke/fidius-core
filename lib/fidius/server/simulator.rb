@@ -3,7 +3,7 @@ require "xmlrpc/server"
 require "fidius-common"
 require "fidius-common/json_symbol_addon"
 require "fidius/server/data_changed_patch"
-require "fidius/misc/asset_initialiser"
+#require "fidius/misc/asset_initialiser"
 
 module FIDIUS
   module Server
@@ -99,7 +99,11 @@ module FIDIUS
         add_handler("action.scan") do |iprange|
           rpc_method_began
           task = FIDIUS::Task.create_task("Scan #{iprange}")
-        
+          attacker = FIDIUS::Asset::Host.find_by_localhost(true)
+          h = FIDIUS::Asset::Host.new(:name=>"Fidius01",:os_name=>"windows",:arch=>"i686")
+          h.interfaces << FIDIUS::Asset::Interface.create(:ip=>"192.168.#{rand(255)}.#{rand(255)}",:ip_ver=>4,:ip_mask=>"255.255.255.0",:mac=>"64:b9:e8:c9:a2:ef")
+          h.pivot_host_id = attacker.id
+          h.save
           task.finished
           FIDIUS::UserDialog.create_dialog("Scan Completed","Scan was completed")
           rpc_method_finish
@@ -115,13 +119,13 @@ module FIDIUS
 
         add_handler("action.browser_autopwn.start") do |lhost|
           rpc_method_began
-          FIDIUS::UserDialog.create_dialog("Browser Autopwn","Browser Autopwn started")
+          FIDIUS::UserDialog.create_dialog("Browser Autopwn","Browser Autopwn started on #{lhost}")
           rpc_method_finish          
         end
 
         add_handler("action.file_autopwn.start") do |lhost|
           rpc_method_began
-          FIDIUS::UserDialog.create_dialog("File Autopwn","File Autopwn started")
+          FIDIUS::UserDialog.create_dialog("File Autopwn","File Autopwn started on #{lhost}")
           rpc_method_finish          
         end
 

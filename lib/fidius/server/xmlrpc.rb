@@ -104,27 +104,31 @@ module FIDIUS
         add_handler("action.scan") do |iprange|
           rpc_method_began
           task = FIDIUS::Task.create_task("Scan #{iprange}")
+          Thread.new {
+            self_address = nil
+            # TODO: multiple scans lead to duplicate hosts in db
+            scan = FIDIUS::Action::Scan::PingScan.new(iprange)
+            attacker = FIDIUS::Asset::Host.find_by_localhost(true)
+            hosts = scan.execute
+            if hosts.size > 0
+              self_address = FIDIUS::Common.get_my_ip(hosts.first) unless self_address
+              hosts.delete(self_address) # do not take scanner host in iteration
+              hosts.each do |host|
+                # TODO: determine rating?
+                h = FIDIUS::Asset::Host.find_or_create_by_ip(host)
+                interface = h.find_by_ip host
+                h.pivot_host_id = attacker.id
+                h.save
+                scan = FIDIUS::Action::Scan::PortScan.new(interface)
 
-          self_address = nil
-          # TODO: multiple scans lead to duplicate hosts in db
-          scan = FIDIUS::Action::Scan::PingScan.new(iprange)
-          hosts = scan.execute
-          if hosts.size > 0
-            self_address = FIDIUS::Common.get_my_ip(hosts.first) unless self_address
-            hosts.delete(self_address) # do not take scanner host in iteration
-            hosts.each do |host|
-              # TODO: determine rating?
-              h = FIDIUS::Asset::Host.find_or_create_by_ip(host)
-              interface = h.find_by_ip host
-
-              scan = FIDIUS::Action::Scan::PortScan.new(interface)
-
-              target = scan.execute
-              # TODO: not services returned ???
+                target = scan.execute
+                # TODO: not services returned ???
+              end
             end
-          end
-          task.finished
-          FIDIUS::UserDialog.create_dialog("Scan Completed","Scan was completed")
+            task.finished
+            FIDIUS::UserDialog.create_dialog("Scan Completed","Scan was completed")
+          }
+          #FIDIUS::UserDialog.create_dialog("Scan started","Scan started. Please wait.")
           rpc_method_finish
         end
 
@@ -145,12 +149,14 @@ module FIDIUS
         add_handler("action.browser_autopwn.start") do |lhost|
           rpc_method_began
           FIDIUS::Action::Exploit::Passive.instance.start_browser_autopwn lhost
+          FIDIUS::UserDialog.create_dialog("BrowserAutopwn startet","BrowserAutopwn startet")
           rpc_method_finish
         end
 
         add_handler("action.file_autopwn.start") do |lhost|
           rpc_method_began
           FIDIUS::Action::Exploit::Passive.instance.start_file_autopwn lhost
+          FIDIUS::UserDialog.create_dialog("FileAutopwn startet","FileAutopwn startet")
           rpc_method_finish
         end
 
