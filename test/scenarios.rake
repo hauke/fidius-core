@@ -3,10 +3,21 @@ namespace :scenario do
   # setup an scenario
   desc "setup a scenario"
   task :setup do
+    ENV["ENV"] = "simulator"
+    require File.join("#{$WD}","lib","helper","fidius_db_helper.rb")
+    $CFG_D = File.join $WD, "config"
+    @db_helper = FIDIUS::DbHelper.new $CFG_D, $WD
+    @db_helper.drop_database
+    @db_helper.create_database
+    @db_helper.with_db do
+      Dir.chdir($WD)
+      ActiveRecord::Migrator.migrate("#{$CFG_D}/sql", ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
+    end
+    
     # require fidius
     require File.join("#{$WD}","lib","fidius.rb")
     # connect db
-    FIDIUS.connect_db get_env
+    FIDIUS.connect_db "simulator"
     # load scenario helper methods
     require File.join("#{$WD}","test","scenario","scenario_helper.rb")
 
