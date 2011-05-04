@@ -7,7 +7,7 @@ module FIDIUS
       end
 
       def run_exploit(exploit, opts)
-        session = FIDIUS::MsfMock::SessionMock.new "1", exploit
+        session = FIDIUS::MsfMock::Session::SessionMock.new "1", exploit
         @framework.sessions.merge({"1" => session})
         @framework.events.subscriber.on_session_open(session)
       end
