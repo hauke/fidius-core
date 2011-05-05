@@ -33,7 +33,7 @@ module FIDIUS
     def self.get_interfaces4
       # require 'rbconfig'; Config::CONFIG['host_os'] =~ /linux/ bzw. /mswin|mingw/ /darwin/ 
       os = IO.popen('uname'){ |f| f.readlines[0] }
-      if os.strip.downcase == "linux" # TODO: macOS ifconfig looks different|| os.strip.downcase == "darwin"
+      if os.strip.downcase == "linux" || os.strip.downcase == "darwin"
         cmd = IO.popen('which ifconfig'){ |f| f.readlines[0] }
         raise RuntimeError.new("ifconfig not in PATH") unless !cmd.nil?
         if RUBY_VERSION.to_f < 1.9
