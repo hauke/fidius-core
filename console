@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
-
+DB_ENV = ARGV[0] || "development"
 require File.expand_path('../lib/fidius.rb', __FILE__)
 require 'fidius/misc/console_initialiser'
 require 'irb'
-
+ARGV[0] = nil # to avoid this: No such file or directory - simulator (Errno::ENOENT)
 IRB.start
