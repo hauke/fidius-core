@@ -87,16 +87,22 @@ module FIDIUS
           rpc_method_finish
         end
 
-        add_handler("action.attack_host") do |interface_id|
+        add_handler("action.attack_host") do |host_id|
           rpc_method_began
-          interface = FIDIUS::Asset::Interface.find(interface_id)
-          exploiter = FIDIUS::Action::Exploit::Exploit.instance
-          result = exploiter.autopwn interface
-          p "exploit result: #{result}"
-          if instance.host.exploited?
-            FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
-          else
-            FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
+          begin
+            host = FIDIUS::Asset::Host.find(host_id)
+
+            interface = host.interfaces.first #FIDIUS::Asset::Interface.find(interface_id)
+            exploiter = FIDIUS::Action::Exploit::Exploit.instance
+            result = exploiter.autopwn interface
+            p "exploit result: #{result}"
+            if interface.host.exploited?
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
+            else
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
+            end
+          rescue
+            puts $!.message+":"+$!.backtrace.inspect
           end
           rpc_method_finish
         end
@@ -216,13 +222,11 @@ module FIDIUS
             # search model in FIDIUS namespace
             model = Kernel.const_get("FIDIUS").const_get(model_name)
           rescue
-            puts $!.message
           end
           begin
             # search model in FIDIUS::Asset namespace
             model = Kernel.const_get("FIDIUS").const_get("Asset").const_get(model_name)
           rescue
-            puts $!.message
           end
           raise XMLRPC::FaultException.new(2, "Class #{model_name} was not found") unless model
           begin #save execution of find method
