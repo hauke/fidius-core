@@ -11,7 +11,8 @@ module FIDIUS
           FIDIUS::Action::Session.add_session_to_db session
           FIDIUS::Action::PostExploit::autorun session
         rescue
-          puts "An error occurred while adding new session #{$!.inspect}"
+          puts "An error occurred while adding new session #{$!.inspect} #{session}"
+          puts $!.backtrace
         end
       end
 
@@ -81,7 +82,8 @@ module FIDIUS
             FIDIUS::Action::Session.add_session_to_db session
             FIDIUS::Action::PostExploit::autorun session
           rescue
-            puts "An error occurred while adding new session #{$!.inspect}"
+            puts "An error occurred while adding old sessions #{$!.inspect} #{session}"
+            puts $!.backtrace
           end
         end
       end

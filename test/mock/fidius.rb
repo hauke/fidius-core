@@ -63,6 +63,7 @@ private
             filename = @@filename_port
             filename ||= File.join(File.expand_path(File.dirname(__FILE__)), '..', 'functional', 'data', "nmap-port-scan-#{ip}.xml")
           end
+          sleep 0.1
           FileUtils.cp filename, fd.path
         end
 
