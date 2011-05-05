@@ -4,7 +4,6 @@ require "fidius-common"
 require "fidius-common/json_symbol_addon"
 require "fidius/server/data_changed_patch"
 #require "fidius/misc/asset_initialiser"
-
 module FIDIUS
   module Server
     class Simulator < ::XMLRPC::Server
@@ -85,10 +84,12 @@ module FIDIUS
           rpc_method_finish
         end
 
-        add_handler("action.attack_host") do |interface_id|
+        add_handler("action.attack_host") do |host_id|
           rpc_method_began
-          interface = FIDIUS::Asset::Interface.find(interface_id)
-          if instance.host.exploited? || true
+          host = FIDIUS::Asset::Host.find(host_id)
+          #interface = host.interfaces.first #FIDIUS::Asset::Interface.find(interface_id)
+          host.sessions << FIDIUS::Session.create
+          if host.exploited? || true
             FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
           else
             FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
@@ -96,16 +97,44 @@ module FIDIUS
           rpc_method_finish          
         end
 
+
+        add_handler("action.reconnaissance") do |host_id|
+          rpc_method_began
+          task = FIDIUS::Task.create_task("Reconnaissance")
+          Thread.new {
+            sleep 40
+            host = FIDIUS::Asset::Host.find(host_id)
+            FIDIUS::Asset::Host.find(:all,:ignore_discovered,:conditions=>({:pivot_host_id=>host.id})).each do |host|
+              if !host.discovered
+                host.discovered = true
+                host.save
+              end
+            end
+            task.finished
+            FIDIUS::UserDialog.create_dialog("Reconnaissance Completed","Reconnaissance was completed")
+          }
+          rpc_method_finish
+        end
+
         add_handler("action.scan") do |iprange|
           rpc_method_began
           task = FIDIUS::Task.create_task("Scan #{iprange}")
           attacker = FIDIUS::Asset::Host.find_by_localhost(true)
-          h = FIDIUS::Asset::Host.new(:name=>"Fidius01",:os_name=>"windows",:arch=>"i686")
-          h.interfaces << FIDIUS::Asset::Interface.create(:ip=>"192.168.#{rand(255)}.#{rand(255)}",:ip_ver=>4,:ip_mask=>"255.255.255.0",:mac=>"64:b9:e8:c9:a2:ef")
-          h.pivot_host_id = attacker.id
-          h.save
-          task.finished
-          FIDIUS::UserDialog.create_dialog("Scan Completed","Scan was completed")
+
+          Thread.new {
+            net = IPAddr.new(iprange)
+            FIDIUS::Asset::Host.find(:all,:ignore_discovered,:conditions=>({:pivot_host_id=>attacker.id})).each do |host|
+              host.interfaces.each do |interface|
+                if net.include?(interface.ip)
+                  host.discovered = true
+                  host.save
+                end
+              end
+            end
+            sleep(40)
+            task.finished
+            FIDIUS::UserDialog.create_dialog("Scan Completed","Scan was completed")
+          }
           rpc_method_finish
         end
 
@@ -214,3 +243,19 @@ module FIDIUS
     end # class Server
   end # module RPC
 end # module FIDIUS
+
+class FIDIUS::Asset::Host
+  # this is for filtering hosts in simulation mode
+  # find only hosts which are discovered
+  def self.find(*args)
+    if args.to_a.member?(:ignore_discovered)
+      args.delete(:ignore_discovered)
+      super(*args)
+    else
+      with_scope(:find=>{:conditions=>{:discovered=>true}}) do
+        super(*args)
+      end
+    end
+  end
+end
+

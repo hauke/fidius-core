@@ -36,6 +36,7 @@ module FIDIUS
             DRb.thread.kill
           end
 
+
           # FIXME: DRb.install_acl ACL.new(%w[deny all allow #{config['host']}])
           uri = "druby://#{config['host']}:#{config['port']}"
           puts "[*] Loading Metasploit framework."

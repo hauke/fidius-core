@@ -10,6 +10,9 @@ class XMLServerTest < FIDIUS::Test
     FIDIUS::Asset::Host.delete_all
     FIDIUS::Service.delete_all
     FIDIUS::Asset::Interface.delete_all
+    h = FIDIUS::Asset::Host.find_or_create_by_ip "192.168.56.1"
+    h.localhost = true
+    h.save
   end
 
   def test_scan_host
@@ -19,6 +22,9 @@ class XMLServerTest < FIDIUS::Test
     result = xmlrpc.call("action.scan","192.168.56.0/24")
     assert_equal "<?xml version=\"1.0\" ?><methodResponse><params><param><value><string>ok</string></value></param></params></methodResponse>\n", result
 
+    h = FIDIUS::Asset::Host.find_by_ip "192.168.56.101"
+    assert !h
+    sleep 2
     h = FIDIUS::Asset::Host.find_by_ip "192.168.56.101"
     assert h
     assert_equal "Windows", h.os_name
