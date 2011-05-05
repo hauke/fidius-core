@@ -200,14 +200,29 @@ module FIDIUS
           model = nil
 
           begin
+            # search model global
+            model = nil
+            model_name.split("::").each do |const|
+              unless model
+                model = Kernel.const_get(const)
+              else
+                model = model.const_get(const)
+              end
+            end
+
+          rescue
+          end          
+          begin
             # search model in FIDIUS namespace
             model = Kernel.const_get("FIDIUS").const_get(model_name)
           rescue
+            puts $!.message
           end
           begin
             # search model in FIDIUS::Asset namespace
             model = Kernel.const_get("FIDIUS").const_get("Asset").const_get(model_name)
           rescue
+            puts $!.message
           end
           raise XMLRPC::FaultException.new(2, "Class #{model_name} was not found") unless model
           begin #save execution of find method
