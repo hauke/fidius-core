@@ -37,7 +37,7 @@ module FIDIUS
         if File.exists?('/etc/debian_version')
           cmd = '/sbin/ifconfig' 
         else
-          cmd = IO.popen('sudo which ifconfig'){ |f| f.readlines[0] }
+          cmd = IO.popen('which ifconfig'){ |f| f.readlines[0] }
           raise RuntimeError.new("ifconfig not in PATH") unless !cmd.nil?
         end
         if RUBY_VERSION.to_f < 1.9
