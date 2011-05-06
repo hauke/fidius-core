@@ -36,11 +36,15 @@ end
 
 def check_vms
   @example = YAML.load_file File.expand_path("../../config/fidius.yml.example", __FILE__)
-  @example[:tests].each_pair { |key, pair|
-    unless FIDIUS.config[:tests][key]
-      puts "The Following Key isn't defined in the config_file: #{key}"
-    end
-  }
+  if FIDIUS.config[:tests]
+      @example[:tests].each_pair { |key, pair|
+      unless FIDIUS.config[:tests][key]
+        puts "The Following Key isn't defined in the config_file: #{key}"
+      end
+    }
+  else
+    puts "No Test-Section defined in config_file"
+  end
 end
 
 prepare_test_db

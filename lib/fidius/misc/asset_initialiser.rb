@@ -33,9 +33,13 @@ module FIDIUS
     def self.get_interfaces4
       # require 'rbconfig'; Config::CONFIG['host_os'] =~ /linux/ bzw. /mswin|mingw/ /darwin/ 
       os = IO.popen('uname'){ |f| f.readlines[0] }
-      if os.strip.downcase == "linux" # TODO: macOS ifconfig looks different|| os.strip.downcase == "darwin"
-        cmd = IO.popen('which ifconfig'){ |f| f.readlines[0] }
-        raise RuntimeError.new("ifconfig not in PATH") unless !cmd.nil?
+      if os.strip.downcase == "linux" || os.strip.downcase == "darwin"
+        if File.exists?('/sbin/ifconfig')
+          cmd = '/sbin/ifconfig'
+        else
+          cmd = IO.popen('which ifconfig'){ |f| f.readlines[0] }
+          raise RuntimeError.new("ifconfig not in PATH") unless !cmd.nil?
+        end
         if RUBY_VERSION.to_f < 1.9
           ifconfig = IO.popen("LANG=C #{cmd}"){ |f| f.readlines.join }
         else
@@ -44,11 +48,11 @@ module FIDIUS
 
         return ifconfig.scan(/(?:HWaddr ([a-f0-9:]*)?)?\s*inet addr:([0-9\.]*)\s*(?:Bcast:([0-9\.]*)\s*?)?Mask:([0-9\.]*)/)
         #TODO: IPv6: ifconfig.scan(/inet6 addr: ([0-9a-f:]*)\/([0-9]{1,2})/)
-#ip.inspect.scan(/\/([a-f0-9\.\:]*)>/).flatten
-       end
-       return []
+        #ip.inspect.scan(/\/([a-f0-9\.\:]*)>/).flatten
+      end
+      return []
     end
-
+    
     def self.initializePrelude
       return unless FIDIUS.config['prelude']
       FIDIUS.connect_db
@@ -57,9 +61,9 @@ module FIDIUS
       h.save
       FIDIUS.disconnect_db
     end
-
+    
     addLocalAddresses
     initializePrelude
-
+    
   end
 end

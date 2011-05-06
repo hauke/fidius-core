@@ -141,7 +141,7 @@ module FIDIUS
                 # TODO: determine rating?
                 h = FIDIUS::Asset::Host.find_or_create_by_ip(host)
                 interface = h.find_by_ip host
-                h.pivot_host_id = attacker.id
+                h.pivot_host_id = attacker.id if attacker
                 h.save
                 scan = FIDIUS::Action::Scan::PortScan.new(interface)
 
