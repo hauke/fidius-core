@@ -87,6 +87,24 @@ module FIDIUS
           rpc_method_finish
         end
 
+        # TODO: gebrauchte Funktionen:
+        # add_handler("action.reconnaissance") do |host_id|
+
+        # add_handler("meta.post_exploit_actions") do |session_id|
+        # ohne oder für die session 
+        # sessionid kann auch nil sein, dann bitte alles
+        # gibt hash mit ID, name und beschreibung zurück
+        # action.postexploit wird dann mit der ID aufgerufen
+
+
+        # funktion zum angreifen eines interfaces/hosts mit einem gegebenen exploit 
+        # bzw als parameter exploit_id, welches AttackModule in der EvasionDB ist
+        # FIDIUS::EvasionDB::AttackModule.find(exploit_id)
+        # 
+
+        #  add_handler("action.attack_interface") do |interface_id|
+
+        # TODO: das dieses alle interface probiert
         add_handler("action.attack_host") do |host_id|
           rpc_method_began
           begin
@@ -151,6 +169,13 @@ module FIDIUS
           FIDIUS::Action::PostExploit.run sessionID, action
           rpc_method_finish
         end
+
+        # TODO entweder so oder über generelle task-lösung
+
+        # add_handler("status.browser_autopwn.is_running?") do |lhost|
+        # add_handler("status.file_autopwn.is_running?") do |lhost|
+        #add_handler("action.browser_autopwn.start") do |lhost|
+        #add_handler("action.browser_autopwn.stop") do |lhost|
 
         add_handler("action.browser_autopwn.start") do |lhost|
           rpc_method_began
