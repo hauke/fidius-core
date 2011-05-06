@@ -34,8 +34,8 @@ module FIDIUS
       # require 'rbconfig'; Config::CONFIG['host_os'] =~ /linux/ bzw. /mswin|mingw/ /darwin/ 
       os = IO.popen('uname'){ |f| f.readlines[0] }
       if os.strip.downcase == "linux" || os.strip.downcase == "darwin"
-        if File.exists?('/etc/debian_version')
-          cmd = '/sbin/ifconfig' 
+        if File.exists?('/sbin/ifconfig')
+          cmd = '/sbin/ifconfig'
         else
           cmd = IO.popen('which ifconfig'){ |f| f.readlines[0] }
           raise RuntimeError.new("ifconfig not in PATH") unless !cmd.nil?
