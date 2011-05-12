@@ -132,6 +132,7 @@ module FIDIUS
             self_address = nil
             # TODO: multiple scans lead to duplicate hosts in db
             scan = FIDIUS::Action::Scan::PingScan.new(iprange)
+            scan = FIDIUS::Action::Scan::ArpScan.new(iprange) unless scan.compatible
             attacker = FIDIUS::Asset::Host.find_by_localhost(true)
             hosts = scan.execute
             if hosts.size > 0
