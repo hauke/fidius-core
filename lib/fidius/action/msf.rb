@@ -101,6 +101,17 @@ module FIDIUS
         daemon.framework.events.add_session_subscriber(handler)
       end
 
+      # Returns the switchbard instance. This is needed to forward traffic
+      # through a meterpreter session.
+      def get_switch_board
+        daemon.get_switch_board
+      end
+
+      # Returns a object which iterates over the ips in an ip range.
+      def create_range_walker cidr
+        daemon.create_range_walker cidr
+      end
+
       # Returns the Metasploit framework DRb wrapper. Useful for debugging.
       #
       # @return [FIDIUS::MsfDRbD]  The DRb wrapper.
