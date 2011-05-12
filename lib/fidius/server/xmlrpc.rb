@@ -129,29 +129,36 @@ module FIDIUS
           rpc_method_began
           task = FIDIUS::Task.create_task("Scan #{iprange}")
           Thread.new {
-            self_address = nil
-            # TODO: multiple scans lead to duplicate hosts in db
-            scan = FIDIUS::Action::Scan::PingScan.new(iprange)
-            scan = FIDIUS::Action::Scan::ArpScan.new(iprange) unless scan.compatible
-            attacker = FIDIUS::Asset::Host.find_by_localhost(true)
-            hosts = scan.execute
-            if hosts.size > 0
-              self_address = FIDIUS::Common.get_my_ip(hosts.first) unless self_address
-              hosts.delete(self_address) # do not take scanner host in iteration
-              hosts.each do |host|
-                # TODO: determine rating?
-                h = FIDIUS::Asset::Host.find_or_create_by_ip(host)
-                interface = h.find_by_ip host
-                h.pivot_host_id = attacker.id if attacker
-                h.save
-                scan = FIDIUS::Action::Scan::PortScan.new(interface)
+            begin
+              self_address = nil
+              # TODO: multiple scans lead to duplicate hosts in db
+              scan = FIDIUS::Action::Scan::PingScan.new(iprange)
+              scan = FIDIUS::Action::Scan::ArpScan.new(iprange) unless scan.compatible
+              attacker = FIDIUS::Asset::Host.find_by_localhost(true)
+              hosts = scan.execute
+              if hosts.size > 0
+                self_address = FIDIUS::Common.get_my_ip(hosts.first) unless self_address
+                hosts.delete(self_address) # do not take scanner host in iteration
+                hosts.each do |host|
+                  # TODO: determine rating?
+                  h = FIDIUS::Asset::Host.find_or_create_by_ip(host)
+                  interface = h.find_by_ip host
+                  h.pivot_host_id = attacker.id if attacker
+                  h.save
+                  scan = FIDIUS::Action::Scan::PortScan.new(interface)
 
-                target = scan.execute
-                # TODO: not services returned ???
+                  target = scan.execute
+                  # TODO: not services returned ???
+                end
               end
+              task.finished
+              FIDIUS::UserDialog.create_dialog("Scan Completed","Scan was completed")
+            rescue
+              puts "An error occurred while scanning #{iprange}: #{$!.inspect}"
+              puts $!.backtrace
+              task.finished
+              FIDIUS::UserDialog.create_dialog("Scan Completed", "An error occurred while scanning #{iprange}: #{$!.inspect}")
             end
-            task.finished
-            FIDIUS::UserDialog.create_dialog("Scan Completed","Scan was completed")
           }
           #FIDIUS::UserDialog.create_dialog("Scan started","Scan started. Please wait.")
           rpc_method_finish
