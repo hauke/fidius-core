@@ -141,6 +141,10 @@ module FIDIUS
           @ipAddresses.each(&block)
         end
 
+        def each_route(&block)
+
+        end
+
       end # class ConfigMock
 
       class NetMock
@@ -195,5 +199,13 @@ module FIDIUS
 
       end # module Session
     end # class ProcessMock
+
+    class SwitchBoard
+
+      def self.best_comm(addr)
+        nil
+      end
+
+    end # class SwitchBoard
   end # module MsfMock
 end # module FIDIUS

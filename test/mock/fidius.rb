@@ -12,6 +12,10 @@ module FIDIUS
         @framework.events.subscriber.on_session_open(session)
       end
 
+      def get_switch_board
+        FIDIUS::MsfMock::SwitchBoard
+      end
+
     end # class MsfDRbD
   end # module Server
 
