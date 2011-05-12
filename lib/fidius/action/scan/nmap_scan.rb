@@ -5,7 +5,19 @@ module FIDIUS
 
         include FIDIUS::Action::Scan
 
+        def compatible
+          comm = FIDIUS::Action::Msf.instance.get_switch_board.best_comm IPAddr.new(@target).to_s
+          return respond_to? "execute_nmap" unless comm
+          return respond_to? "execute_msf" if comm
+        end
+
         def execute
+          comm = FIDIUS::Action::Msf.instance.get_switch_board.best_comm IPAddr.new(@target).to_s
+          return execute_nmap unless comm
+          return execute_msf(comm) if comm
+        end
+
+        def execute_nmap
           fd = Tempfile.new('xmlnmap')
           fd.binmode
           run_nmap fd
