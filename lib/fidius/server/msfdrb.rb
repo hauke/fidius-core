@@ -53,12 +53,12 @@ module FIDIUS
         unless @loaded.include? name
           puts "loading ... #{name}"
           path = File.join(@plugin_basepath, name) unless name =~ /^\//
-          path ||= name   
+          path ||= name 
           @framework.plugins.load path, opts
           @loaded << name
         end
       end
-      
+
       def unload_plugin(name)
         if @loaded.include? name
           path = File.join(@plugin_basepath, name) unless name =~ /^\//
@@ -67,7 +67,7 @@ module FIDIUS
           @loaded.delete name
         end
       end
-      
+
       def list_plugins
         Dir.glob(File.join @plugin_basepath, "**/*.rb").map {|f|
           f.gsub(@plugin_basepath, '').gsub(/\.rb$/, '')
@@ -96,6 +96,17 @@ module FIDIUS
 
       def modules_clear
         @modules[module_name] = {}
+      end
+
+      # Returns the switchbard instance. This is needed to forward traffic
+      # through a meterpreter session.
+      def get_switch_board
+        Rex::Socket::SwitchBoard.instance
+      end
+
+      # Returns a object which iterates over the ips in an ip range.
+      def create_range_walker cidr
+        Rex::Socket::RangeWalker.new(cidr)
       end
 
       def debug

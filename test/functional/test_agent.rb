@@ -14,7 +14,8 @@ class AgentTest < FIDIUS::Test
     i1.services << FIDIUS::Service.create(:name => "vnc", :port => 5900, :proto => "tcp")
     i1.services << FIDIUS::Service.create(:name => "smtp", :port => 25, :proto => "tcp")
     i1.services << FIDIUS::Service.create(:name => "domain", :port => 53, :proto => "udp")
-    # h1.value = 2
+    h1.rating = 2
+    
     inst1 = Instance.new(h1,2)
 
     h2 = FIDIUS::Asset::Host.find_or_create_by_ip "134.102.201.103"
@@ -24,8 +25,8 @@ class AgentTest < FIDIUS::Test
     i2.services << FIDIUS::Service.create(:name => "vnc", :port => 5900, :proto => "tcp")
     i2.services << FIDIUS::Service.create(:name => "smtp", :port => 25, :proto => "tcp")
     i2.services << FIDIUS::Service.create(:name => "domain", :port => 53, :proto => "udp")
-    # h2.value = 3
     h2.interfaces << i2
+    h2.rating = 3
     inst2 = Instance.new(h2,5)
 
     # Test set
