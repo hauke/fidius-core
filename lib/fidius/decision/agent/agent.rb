@@ -5,6 +5,20 @@ module FIDIUS
     class Agent
       include Containers
 
+      def initialize(predictor_file)
+        File.open(predictor_file) do |f|
+          @predictor = Marshal.load(f)
+        end
+        @open_list = PriorityQueue.new
+        @current = nil        
+      end
+
+      def save(predictor_file)
+        File.open(predictor_file, "w+") do |f|
+          Marshal.dump(@predictor, f)
+        end
+      end
+
       def initialize 
         # dimension = |known_services|; 8 layers
         @predictor = Predictor.new(FIDIUS::MachineLearning::known_services.size, 8)
