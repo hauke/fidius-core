@@ -4,9 +4,9 @@ module FIDIUS
       class PingScan < NmapScan
 
         # returns an array of hosts (which are up) in a given subnet
-        def initialize subnet
-          raise ArgumentError, "target not set" unless subnet
-          @subnet = subnet
+        def initialize target
+          raise ArgumentError, "target not set" unless target
+          @target = target
           @hosts = []
         end
 
@@ -22,7 +22,7 @@ module FIDIUS
         end
 
         def create_arg tmpfile
-          args = ["-sP", @subnet]
+          args = ["-sP", @target]
           args.push('-oX', tmpfile)
         end
 
