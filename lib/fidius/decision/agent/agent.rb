@@ -66,7 +66,7 @@ module FIDIUS
       def train instances, iterations
         instances.each do |inst|
           inst.host.interfaces.each do |i|
-            @predictor.add_instance(i.get_services_as_bit_vector, inst.rating)
+            @predictor.add_instance(i.get_services_as_bit_vector, i.rating)
           end
         end
         iterations.times do
