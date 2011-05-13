@@ -24,7 +24,7 @@ class XMLServerTest < FIDIUS::Test
 
     h = FIDIUS::Asset::Host.find_by_ip "192.168.56.101"
     assert !h
-    sleep 2
+    sleep 10
     h = FIDIUS::Asset::Host.find_by_ip "192.168.56.101"
     assert h
     assert_equal "Windows", h.os_name
