@@ -82,19 +82,19 @@ module FIDIUS
       def startup
         FIDIUS.connect_db
         FIDIUS::Action::Msf.instance.start
-        FIDIUS.disconnect_db
       end
 
       def teardown
         FIDIUS::Action::Msf.instance.stop
+        FIDIUS.disconnect_db
       end
 
       def rpc_method_began
-        FIDIUS.connect_db
+#        FIDIUS.connect_db
       end
 
       def rpc_method_ended
-        FIDIUS.disconnect_db
+#        FIDIUS.disconnect_db
       end
 
       def rpc_method_finish(result="ok")
