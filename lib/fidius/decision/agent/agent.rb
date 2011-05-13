@@ -13,8 +13,8 @@ module FIDIUS
       end
 
       def add(interface)
-          prediction = @predictor.predict(interface.get_services_as_bit_vector)
-          @open_list.push(interface, prediction)
+        prediction = @predictor.predict(interface.get_services_as_bit_vector)
+        @open_list.push(interface, prediction)
       end
 
       # returns the next host 
@@ -52,7 +52,7 @@ module FIDIUS
       def train instances, iterations
         instances.each do |inst|
           inst.host.interfaces.each do |i|
-            @predictor.add_instance(i.get_services_as_bit_vector, inst.value)
+            @predictor.add_instance(i.get_services_as_bit_vector, inst.rating)
           end
         end
         iterations.times do
@@ -62,7 +62,7 @@ module FIDIUS
       
       def reward instance, iterations 
         instance.host.interfaces.each do |i|
-          @predictor.add_instance(i.get_services_as_bit_vector, instance.value)
+          @predictor.add_instance(i.get_services_as_bit_vector, instance.rating)
         end
         iterations.times do
           @predictor.train
