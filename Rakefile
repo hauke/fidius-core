@@ -74,7 +74,7 @@ def setup_test_enviorment
 end
 
 $UNIT = 'test/unit/test_*.rb'
-$FUNCTIONAL = 'test/functional/test_*.rb'
+$FUNCTIONAL = 'test/functional/test_xmlserver.rb'
 $INTEGRATION = 'test/integration/test_*.rb'
 def create_test_task name, files
    Rake::TestTask.new(name) do |t|
