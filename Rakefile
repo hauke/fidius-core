@@ -4,6 +4,7 @@ require 'active_record'
 require 'ci/reporter/rake/test_unit' # use this if you're using Test::Unit
 
 $LOAD_PATH.unshift File.expand_path(File.dirname __FILE__)
+require 'lib/fidius'
 require 'lib/helper/fidius_db_helper'
 require 'logger'
 
@@ -93,3 +94,13 @@ namespace :test do
   create_test_task :integration, $INTEGRATION
   create_test_task :all, [$UNIT, $FUNCTIONAL]
 end
+
+namespace :lab do
+  namespace :create do
+    task :virtualbox do
+      lab_helper = FIDIUS::LabHelper.new
+      lab_helper.create_lab_config "virtualbox"
+    end
+  end
+end
+
