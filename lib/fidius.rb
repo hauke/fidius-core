@@ -40,6 +40,9 @@ module FIDIUS
     autoload :MsfDRb, 'fidius/server/msfdrb.rb'
   end
   
+  #Helper
+  autoload :LabHelper, 'helper/lab_helper.rb'
+
   def connect_db env=nil
     databases = config['databases']
     env ||= @env
