@@ -4,10 +4,46 @@ require "fidius-common"
 require "fidius-common/json_symbol_addon"
 require "fidius/server/data_changed_patch"
 require "fidius/misc/asset_initialiser"
+
 require "fidius/server/handlers/handlers"
 require "fidius/server/task_manager"
+
+require 'webrick'
+
+
 module FIDIUS
   module Server
+    require 'webrick/httputils'
+    class PayloadHandler < WEBrick::HTTPServlet::AbstractServlet
+      def initialize(server, local_path)
+        super(server, local_path)
+        @local_path = local_path
+      end
+      
+      def do_GET(request, response)
+        status, mime, body = payload_for_request(request)
+        response.status = status
+        response['Content-Type'] = mime
+        response.body = body
+      end
+
+      private
+      
+      def payload_for_request request
+        case request.path.split('/').last
+        when "linux"
+          payload = "YEAH"
+          payload = open("#{@local_path}/payloads/test.bin", "r") #send File
+        when "windows"
+          #payload = open("#{@local_path}/payloads/#{}","rb")
+        when "osx"
+          #payload = open("#{@local_path}/payloads/#{}","rb")
+        end
+        return 200, "application/octet-stream", payload if payload
+        return 400, "text/plain","You gave me #{request.path} -- I have no idea what to do with that."
+      end
+    end
+    
     class RPC < ::XMLRPC::Server
 
       def initialize(options={}, *args)
@@ -36,6 +72,7 @@ module FIDIUS
         Signal.trap(:INT) {
           shutdown
         }
+        @server.mount("/payloads",PayloadHandler,"#{Dir.pwd}")
 
         startup
         serve
@@ -94,6 +131,19 @@ module FIDIUS
         FIDIUS.connect_db
         FIDIUS::Action::Msf.instance.start
         FIDIUS.disconnect_db
+      end
+
+      def teardown
+        FIDIUS::Action::Msf.instance.stop
+        FIDIUS.disconnect_db
+      end
+
+      def rpc_method_began
+#        FIDIUS.connect_db
+      end
+
+      def rpc_method_ended
+#        FIDIUS.disconnect_db
       end
 
       def teardown
