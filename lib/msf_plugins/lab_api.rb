@@ -47,17 +47,34 @@ module Msf
 			  @controller.to_file(file_path)  
 			end
 			
-			def lab_load_running
-			  
+			def lab_load_running controller, user = nil, password = nil
+			    return lab_usage unless controller
+			
+			  if args[0] =~ /^remote_/
+				  return lab_usage unless (user && password) == false 
+				  ## Expect a username & password
+				  @controller.build_from_running(controller, user, password)
+			  else
+				  @controller.build_from_running(controller)
+			  end
 			end
 			
-			def lab_load_config
-			  
+			def lab_load_config controller, user = nil, password = nil
+			  return -1  if controller == nil
+			
+			  if controller =~ /^remote_/
+          return -1  if (user && password) == false 
+          ## Expect a username & password
+          @controller.build_from_config(controller, user, password)
+        else
+          @controller.build_from_config(controller)
+			  end
 			end
 			
-#			def lab_load_dir
-#			 
-#			end			
+      def lab_load_dir controller, dir
+        return -1  unless (controller && dir )
+        @controller.build_from_dir(controller,dir,true)
+      end
 			
 			def lab_clear
 			  @controller.clear!
@@ -135,8 +152,7 @@ module Msf
 			end
 			
 			def lab_revert vmids, snapshot
-			  return -1  if check_vm_param(vmids) || snapshot.empty?
-			  snapshot = args[args.count-1] 		
+			  return -1  if check_vm_param(vmids) || snapshot.empty?		
 
   			if vmids.class == String && vmids == "all"
   				#Logging	

@@ -13,6 +13,14 @@ module FIDIUS
     end
     @cfg
   end
-  module_function :config
+
+  def save
+    output = File.new(File.expand_path("../../../config/fidius.yml", __FILE__), 'w')
+    output.puts YAML.dump(@cfg)
+    output.close
+  end
+  module_function :config, :save
+
+  
 
 end # module FIDIUS
