@@ -54,7 +54,7 @@ end
 class FIDIUS::Asset::Host
   # this is for filtering hosts in simulation mode
   # find only hosts which are discovered
-  def self.fineerd(*args)
+  def self.find(*args)
     if args.to_a.member?(:ignore_discovered)
       args.delete(:ignore_discovered)
       super(*args)
