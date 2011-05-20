@@ -2,7 +2,7 @@ require 'test_helper_fidius'
 require 'test_helper_function'
 
 class PortScanTest < FIDIUS::Test
-  def test_port_scan
+  def test_port_scan_scanned_hosts
     h = FIDIUS::Asset::Host.find_or_create_by_ip "192.168.56.103"
     scan = FIDIUS::Action::Scan::PortScan.new(h.interfaces[0])
     target = scan.execute

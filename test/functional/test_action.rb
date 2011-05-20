@@ -5,7 +5,4 @@ require 'test_helper_function'
 #   FIDIUS::Action.new
 
 class ActionTest < FIDIUS::Test
-  def test_truth
-    assert true
-  end
 end
