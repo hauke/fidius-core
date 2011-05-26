@@ -15,7 +15,7 @@ class XMLServerTest < FIDIUS::Test
     h.save
   end
 
-  def test_scan_host
+  def test_scan_host_xmlserver
     h = FIDIUS::Asset::Host.find_by_ip "192.168.56.101"
     assert !h
     xmlrpc = FIDIUS::Server::RPC.new
@@ -24,7 +24,7 @@ class XMLServerTest < FIDIUS::Test
 
     h = FIDIUS::Asset::Host.find_by_ip "192.168.56.101"
     assert !h
-    sleep 2
+    sleep 10
     h = FIDIUS::Asset::Host.find_by_ip "192.168.56.101"
     assert h
     assert_equal "Windows", h.os_name

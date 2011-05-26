@@ -2,7 +2,7 @@ require 'test_helper_fidius'
 require 'test_helper_function'
 
 class HostTest < FIDIUS::Test
-  def test_host
+  def test_host_bit_vector
     h = FIDIUS::Asset::Host.find_or_create_by_ip '192.168.0.2'
     inter = h.find_or_create_by_ip "192.168.0.2"
     inter.services << FIDIUS::Service.new(:name => "ssh",    :port => 22,   :proto => "tcp")

@@ -4,7 +4,7 @@ require 'test_helper_function'
 class AgentTest < FIDIUS::Test
   include FIDIUS::MachineLearning
   
-  def test_agent
+  def test_train_agent
   
     # Training set
     h1 = FIDIUS::Asset::Host.find_or_create_by_ip "134.102.201.100"

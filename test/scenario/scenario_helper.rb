@@ -1,5 +1,13 @@
 class FIDIUS::Asset::Host
+  def rand_interface
+    res = []
+    6.times do
+      res << (rand(255).to_s(16))
+    end
+    res.join(":")
+  end
   def add_interace(opts,&block)
+    opts[:mac] = rand_interface unless opts[:mac]
     interface = FIDIUS::Asset::Interface.create(opts)
     self.interfaces << interface
     self.save

@@ -26,6 +26,7 @@ module FIDIUS
         @framework = create_framework
         @plugin_basepath = File.expand_path('../../../../lib/msf_plugins/', __FILE__)
         @modules = {}
+        @rangewalker = []
       end
 
       class << self
@@ -106,7 +107,13 @@ module FIDIUS
 
       # Returns a object which iterates over the ips in an ip range.
       def create_range_walker cidr
-        Rex::Socket::RangeWalker.new(cidr)
+        walker = Rex::Socket::RangeWalker.new(cidr)
+        @rangewalker << walker
+        walker
+      end
+
+      def destroy_range_walker walker
+        @rangewalker.delete walker
       end
 
       def debug
