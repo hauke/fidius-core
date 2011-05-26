@@ -118,19 +118,9 @@ module FIDIUS
     private
       include FIDIUS::MachineLearning # TODO: include??
 
-      def rpc_method_began
-        FIDIUS.connect_db
-      end
-
-      def rpc_method_ended
-        FIDIUS.disconnect_db
-      end
-
-
       def startup
         FIDIUS.connect_db
         FIDIUS::Action::Msf.instance.start
-        FIDIUS.disconnect_db
       end
 
       def teardown
@@ -144,10 +134,6 @@ module FIDIUS
 
       def rpc_method_ended
 #        FIDIUS.disconnect_db
-      end
-
-      def teardown
-        FIDIUS::Action::Msf.instance.stop
       end
 
       def add_handlers
