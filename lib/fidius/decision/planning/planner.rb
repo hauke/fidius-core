@@ -23,8 +23,9 @@ module FIDIUS
     end
 
     private
-    def neighbours host_id
-      # search for all interfaces all neighbours
+    def neighbours host
+      subnet = host.subnet
+      subnet.get_hosts
     end
 
     def create_plan

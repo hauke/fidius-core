@@ -15,6 +15,10 @@ module FIDIUS
       end
     end
 
+    def get_hosts
+      raise NotImplementedError, "not implemented yet"      
+    end
+
     def get_asset
       raise NotImplementedError, "not implemented yet"
     end
