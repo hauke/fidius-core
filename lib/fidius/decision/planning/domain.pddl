@@ -1,4 +1,7 @@
-; Security Domain for attackers for contingent Planners
+; Security Domain for attackers 
+;
+; DANGER: Sensing Actions !!
+;    Usage with contingent Planners only
 ;
 ; cff: http://www.loria.fr/~hoffmanj/cff.html
 ;
@@ -16,6 +19,9 @@
   (:predicates
    ; Host predicates
 
+   ; is a webserver running
+   (webserver_running ?host - server)
+   
    ; Current host = ?host
    (on_host ?host - computer)                 
    ; ?service running on ?host
@@ -34,10 +40,7 @@
 
    
    ; Network predicates
-   (trap_in_subnet ?subnet - net)
-   (iframe_injected ?host - server)
-   ; is a webserver running
-   (webserver_running ?host - server)
+
    ; Is host ?target visible from ?host ?
    (host_visible ?host - computer ?target - computer)  
    ; In which ?subnet is ?host located ?
@@ -54,7 +57,10 @@
    (server_owned ?net - net)
    ; is a host exploited ?
    (exploited ?host - computer)
-   
+   ; is a trap like an iFrame injected in a subnet
+   (trap_in_subnet ?subnet - net)
+   ; is an iFrame injected on a host
+   (iframe_injected ?host - server)
    ; is one host plumed in subnet ?
    (plumbed ?host - computer)                  
    (plumb_in ?subnet - net)               
@@ -69,19 +75,21 @@
   ; --------------------- ;
   ;      TRAPPING         ;
   ; ----------------------;
-  
+
+  ; inject an iFrame in a host
   (:action inject_iframe
    :parameters(?host - server ?subnet - net)
-   :precondition(and(on_host ?host)
-                    (and(webserver_running ?host)
-		         (in_subnet ?subnet)))
-   :effect(and(iframe_injected ?host)(trap_in_subnet ?subnet))
+   :precondition(and(on_host ?host)                            ; acting on host
+                    (and(webserver_running ?host)              ; is a web server running
+		         (in_subnet ?subnet)))                 ; action in subnet
+   :effect(and(iframe_injected ?host)(trap_in_subnet ?subnet)) ; iframe injected on host, trap in subnet
    )
-  
+
+  ; is a webserver running ? 
   (:action check_httpd
    :parameters(?host - server)
-   :precondition(on_host ?host)
-   :observe(webserver_running ?host)
+   :precondition(on_host ?host)      ; acting on host
+   :observe(webserver_running ?host) ; sensing action webserver
    )
 
   ; --------------------- ;
@@ -91,11 +99,11 @@
   ; get root access
   (:action become_admin
    :parameters(?host - computer ?subnet - net)	   
-   :precondition(and (and (on_host ?host)                 ; acting on host
-			      (host_subnet ?host ?subnet))     ; init subnet
+   :precondition(and (and (on_host ?host)                     ; acting on host
+			      (host_subnet ?host ?subnet))    ; init subnet
 			 (or (password_crackable ?host)       ; password weak or user creatable
 			     (user_creatable ?host)))
-   
+
    :effect(and (plumb_in ?subnet) (admin ?host))              ; host plumbed and mark the subnet as plumbed
    )
 
@@ -141,8 +149,6 @@
    	 	    (on_host ?target))
 	       (not (on_host ?host)))
   )
-
-
   
   ; --------------------- ;
   ;      HACKING          ;
@@ -151,10 +157,10 @@
   ; crack a password
   (:action crack
    :parameters(?host - computer)
-   :precondition(and (on_host ?host)
-		     (and (shadow_reachable ?host)
-		          (shadow_decryptable ?host)))
-   :effect(password_crackable ?host)
+   :precondition(and (on_host ?host)                   ; action on host
+		     (and (shadow_reachable ?host)     ; etc/shadow is accessible with current user rights
+		          (shadow_decryptable ?host))) ; the shadow file is decryptable
+   :effect(password_crackable ?host)                   ; then we can crack the password
    )
   
   ; pwn domain controller
@@ -176,7 +182,7 @@
 			       (on_host ?host)))              ; currently acting on host 
 			  (service_running ?target ?service)) ; the service is running
 
-   :effect(exploited ?target) ; mark the target as exploited
+   :effect(exploited ?target)                                 ; mark the target as exploited
    )
   
   ; scan a host for services nmap
@@ -191,9 +197,9 @@
   
   ; report server hacked in subnet
   (:action report_server
-   :parameters(?host - server ?subnet - net)
-   :precondition(and (on_host ?host)
-	             (host_subnet ?host ?subnet))
-   :effect(server_owned ?subnet)
+   :parameters(?host - server ?subnet - net)  
+   :precondition(and (on_host ?host)              ; action on host of type server
+	             (host_subnet ?host ?subnet)) ; action in subnet
+   :effect(server_owned ?subnet)                  ; we hacked a server
   )
 )

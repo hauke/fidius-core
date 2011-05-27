@@ -112,6 +112,10 @@ module FIDIUS
         daemon.create_range_walker cidr
       end
 
+      def destroy_range_walker walker
+        daemon.destroy_range_walker walker
+      end
+
       # Returns the Metasploit framework DRb wrapper. Useful for debugging.
       #
       # @return [FIDIUS::MsfDRbD]  The DRb wrapper.
