@@ -16,24 +16,17 @@ module FIDIUS
         # FIDIUS::EvasionDB::AttackModule.find(exploit_id)
         # 
 
-        #  add_handler("action.attack_interface") do |interface_id|
-
         # TODO: das dieses alle interface probiert
-        def attack_host(host_id)
+        def attack_host(host_id)          
           host = FIDIUS::Asset::Host.find(host_id)
-          FIDIUS::Server::TaskManager.new_task "Attack #{host.name}" do |task|
-            interface = host.interfaces.first #FIDIUS::Asset::Interface.find(interface_id)
-            exploiter = FIDIUS::Action::Exploit::Exploit.instance
-            task.update_progress 30
-
-            result = exploiter.autopwn interface
-            p "exploit result: #{result}"
-            if interface.host.exploited?
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
-            else
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
-            end
-          end
+          interface = host.interfaces.first
+          attack_interface_priv(interface)
+          rpc_method_finish
+        end
+        
+        def attack_interface(interface_id)
+          interface = FIDIUS::Asset::Interface.find(interface_id)
+          attack_interface_priv(interface)
           rpc_method_finish
         end
 
@@ -112,6 +105,22 @@ module FIDIUS
           rpc_method_finish
         end
 
+private
+
+        def attack_interface_priv(interface)
+          FIDIUS::Server::TaskManager.new_task "Attack #{interface.host.name}" do |task|
+            exploiter = FIDIUS::Action::Exploit::Exploit.instance
+            task.update_progress 30
+
+            result = exploiter.autopwn interface
+            p "exploit result: #{result}"
+            if interface.host.exploited?
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
+            else
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
+            end
+          end
+        end
       end
     end
   end
