@@ -28,6 +28,11 @@ module FIDIUS
           #end
           rpc_method_finish
         end
+
+        def post_exploit_actions(sessionID = nil)
+          FIDIUS::Action::PostExploit.get_exploit_names sessionID
+          rpc_method_finish
+        end
       end
     end
   end

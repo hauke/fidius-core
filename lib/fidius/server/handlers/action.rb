@@ -9,11 +9,6 @@ module FIDIUS
         def reconnaissance(host_id)
           raise "NOT IMPLEMENTED"
         end
-        # add_handler("meta.post_exploit_actions") do |session_id|
-        # ohne oder für die session 
-        # sessionid kann auch nil sein, dann bitte alles
-        # gibt hash mit ID, name und beschreibung zurück
-        # action.postexploit wird dann mit der ID aufgerufen
 
 
         # funktion zum angreifen eines interfaces/hosts mit einem gegebenen exploit 
