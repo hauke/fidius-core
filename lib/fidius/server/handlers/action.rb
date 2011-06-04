@@ -11,19 +11,19 @@ module FIDIUS
         end
 
 
-        # funktion zum angreifen eines interfaces/hosts mit einem gegebenen exploit 
+        # funktion zum angreifen eines interfaces/hosts mit einem gegebenen exploit
         # bzw als parameter exploit_id, welches AttackModule in der EvasionDB ist
         # FIDIUS::EvasionDB::AttackModule.find(exploit_id)
-        # 
+        #
 
         # TODO: das dieses alle interface probiert
-        def attack_host(host_id)          
+        def attack_host(host_id)
           host = FIDIUS::Asset::Host.find(host_id)
           interface = host.interfaces.first
           attack_interface_priv(interface)
           rpc_method_finish
         end
-        
+
         def attack_interface(interface_id)
           interface = FIDIUS::Asset::Interface.find(interface_id)
           attack_interface_priv(interface)
@@ -69,9 +69,9 @@ module FIDIUS
           rpc_method_finish
         end
 
-        def postexploit(sessionID, action)
+        def postexploit(sessionID, action, *args)
           FIDIUS::Server::TaskManager.new_task "Postexploit #{sessionID}" do |task|
-            FIDIUS::Action::PostExploit.run sessionID, action
+            FIDIUS::Action::PostExploit.run sessionID, action, *args
           end
           rpc_method_finish
         end
@@ -84,10 +84,9 @@ module FIDIUS
         #add_handler("action.browser_autopwn.stop") do |lhost|
 
         def browser_autopwn_start(lhost)
- 
           FIDIUS::Server::TaskManager.new_task "BrowserAutopwn" do |task|
             # TODO: browser autopwn should not leaf this block
-            # task is immediatly finished 
+            # task is immediatly finished
             # should block as long as runtime
             FIDIUS::Action::Exploit::Passive.instance.start_browser_autopwn lhost
           end
@@ -98,7 +97,7 @@ module FIDIUS
         def file_autopwn_start(lhost)
           FIDIUS::Server::TaskManager.new_task "FileAutopwn" do |task|
             # TODO: file autopwn should not leaf this block
-            # task is immediatly finished 
+            # task is immediatly finished
             FIDIUS::Action::Exploit::Passive.instance.start_file_autopwn lhost
           end
           FIDIUS::UserDialog.create_dialog("FileAutopwn startet","FileAutopwn startet")
