@@ -34,6 +34,13 @@ module FIDIUS
           rpc_method_finish
           result
         end
+
+        def running_passive_actions
+          result = FIDIUS::Action::Exploit::Passive.instance.running_actions
+          rpc_method_finish
+          result
+        end
+
       end
     end
   end
