@@ -14,6 +14,7 @@ module FIDIUS
             return unless "auxiliary/scanner/portscan/tcp" == calledClass.fullname
             return unless opts[:state] == "open"
             service = FIDIUS::Service.find_or_create_by_port_and_proto_and_interface_id(opts[:port], "tcp", @interface.id)
+            services.state = "open"
             @interface.services << service
             service.save
           end
@@ -49,6 +50,7 @@ module FIDIUS
               service = FIDIUS::Service.find_or_create_by_port_and_proto_and_interface_id(p["portid"], p["protocol"], @interface.id)
               service.info = p["product"] if p["product"]
               service.name = p["name"] if p["name"]
+              service.name = p["state"] if p["status"]
               @interface.services << service
               service.save
             end
