@@ -28,6 +28,19 @@ module FIDIUS
           #end
           rpc_method_finish
         end
+
+        def post_exploit_actions(sessionID = nil)
+          result = FIDIUS::Action::PostExploit.get_exploit_names sessionID
+          rpc_method_finish
+          result
+        end
+
+        def running_passive_actions
+          result = FIDIUS::Action::Exploit::Passive.instance.running_actions
+          rpc_method_finish
+          result
+        end
+
       end
     end
   end

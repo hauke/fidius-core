@@ -247,7 +247,24 @@ module FIDIUS
       def self.best_comm(addr)
         nil
       end
+      
+      def self.each(&block)
+      end
 
     end # class SwitchBoard
   end # module MsfMock
 end # module FIDIUS
+
+module Msf
+  module Auxiliary
+    module Report
+
+      def report_service(opts)
+      end
+
+      def report_host(opts)
+      end
+
+    end # module Report
+  end # module Auxiliary
+end # module Msf
