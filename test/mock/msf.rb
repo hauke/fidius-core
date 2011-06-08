@@ -6,6 +6,8 @@ module FIDIUS
         @modules = ModuleSetMock.new
         @sessions = {}
         @events = EventDispatcherMock.new
+        @plugins = PluginsMock.new
+        @thread = ThreadMock.new
 
         @modules["http"] = ExploitMock.new "exploit/http", 80
         @modules["smb"] = ExploitMock.new "exploit/smb", 445
@@ -25,6 +27,22 @@ module FIDIUS
 
       def events
         @events
+      end
+
+      def plugins
+        @plugins
+      end
+
+      def get_running_multihandler
+        [{:lhost =>"127.0.0.1", :payload => "linux/x86/meterpreter/reverse_tcp"}]
+      end
+
+      def start_multihandler options
+        @thread
+      end
+
+      def stop_multihandler jid
+        nil
       end
 
     end # class Framework
@@ -57,6 +75,26 @@ module FIDIUS
 
     end #class ModuleSetMock
 
+    class PluginsMock
+
+      def load path, opts
+        nil
+      end
+
+      def unload path
+        nil
+      end
+
+    end #PluginsMock
+
+    class ThreadMock
+
+      def join
+        nil
+      end
+
+    end #ThreadMock
+
     class ExploitMock
 
       def initialize fullname, port
@@ -87,6 +125,10 @@ module FIDIUS
 
       def arch
         "cmd"
+      end
+
+      def compatible_payloads
+      [["linux/x86/meterpreter/reverse_tcp"]]
       end
 
     end #class ModuleSetMock
@@ -205,7 +247,24 @@ module FIDIUS
       def self.best_comm(addr)
         nil
       end
+      
+      def self.each(&block)
+      end
 
     end # class SwitchBoard
   end # module MsfMock
 end # module FIDIUS
+
+module Msf
+  module Auxiliary
+    module Report
+
+      def report_service(opts)
+      end
+
+      def report_host(opts)
+      end
+
+    end # module Report
+  end # module Auxiliary
+end # module Msf

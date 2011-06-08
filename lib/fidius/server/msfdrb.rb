@@ -1,5 +1,6 @@
 require 'drb'
 require 'drb/acl'
+require 'singleton'
 
 class DRb::DRbMessage
   def dump(obj, error=false)  # :nodoc:
@@ -15,8 +16,56 @@ class DRb::DRbMessage
   end
 end
 
+module Msf
+  module Auxiliary::Report
+
+    alias_method :orig_report_service, :report_service
+    def report_service(opts)
+      FIDIUS::Server::ReportDispatcher.instance.report_service(self, opts)
+      orig_report_service(opts)
+    end
+
+    alias_method :orig_report_host, :report_host
+    def report_host(opts)
+      FIDIUS::Server::ReportDispatcher.instance.report_host(self, opts)
+      orig_report_host(opts)
+    end
+  end
+end
+
 module FIDIUS
   module Server
+    class ReportDispatcher
+      include Singleton
+
+      def initialize
+        @report_listener = []
+      end
+
+      def add_report_listener listener
+        @report_listener << listener
+      end
+
+      def remove_report_listener listener
+        @report_listener.delete listener
+      end
+
+      def report_host(calledClass, opts)
+        @report_listener.each do |listener|
+          next unless listener.respond_to?("report_host")
+          listener.report_host(calledClass, opts)
+        end
+      end
+      
+      def report_service(calledClass, opts)
+        @report_listener.each do |listener|
+          next unless listener.respond_to?("report_service")
+          listener.report_service(calledClass, opts)
+        end
+      end
+
+    end # class ReportDispatcher
+
     class MsfDRb
 
       attr_reader :uri
@@ -26,7 +75,6 @@ module FIDIUS
         @framework = create_framework
         @plugin_basepath = File.expand_path('../../../../lib/msf_plugins/', __FILE__)
         @modules = {}
-        @rangewalker = []
       end
 
       class << self
@@ -54,7 +102,7 @@ module FIDIUS
         unless @loaded.include? name
           puts "loading ... #{name}"
           path = File.join(@plugin_basepath, name) unless name =~ /^\//
-          path ||= name 
+          path ||= name
           @framework.plugins.load path, opts
           @loaded << name
         end
@@ -105,15 +153,12 @@ module FIDIUS
         Rex::Socket::SwitchBoard.instance
       end
 
-      # Returns a object which iterates over the ips in an ip range.
-      def create_range_walker cidr
-        walker = Rex::Socket::RangeWalker.new(cidr)
-        @rangewalker << walker
-        walker
+      def add_auxiliary_report_listener listener
+        FIDIUS::Server::ReportDispatcher.instance.add_report_listener listener
       end
 
-      def destroy_range_walker walker
-        @rangewalker.delete walker
+      def remove_auxiliary_report_listener listener
+        FIDIUS::Server::ReportDispatcher.instance.remove_report_listener listener
       end
 
       def debug

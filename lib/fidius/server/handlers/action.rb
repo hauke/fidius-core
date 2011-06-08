@@ -9,36 +9,30 @@ module FIDIUS
         def reconnaissance(host_id)
           raise "NOT IMPLEMENTED"
         end
-        # add_handler("meta.post_exploit_actions") do |session_id|
-        # ohne oder für die session 
-        # sessionid kann auch nil sein, dann bitte alles
-        # gibt hash mit ID, name und beschreibung zurück
-        # action.postexploit wird dann mit der ID aufgerufen
 
-
+        def single_exploit(host_id, exploit_id)
+          host = FIDIUS::Asset::Host.find(host_id)
+          host.interfaces.each do |inter|
+            FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(inter.id, exploit_id)
+          end
+          rpc_method_finish
+        end
         # funktion zum angreifen eines interfaces/hosts mit einem gegebenen exploit 
         # bzw als parameter exploit_id, welches AttackModule in der EvasionDB ist
         # FIDIUS::EvasionDB::AttackModule.find(exploit_id)
-        # 
-
-        #  add_handler("action.attack_interface") do |interface_id|
+        #
 
         # TODO: das dieses alle interface probiert
         def attack_host(host_id)
           host = FIDIUS::Asset::Host.find(host_id)
-          FIDIUS::Server::TaskManager.new_task "Attack #{host.name}" do |task|
-            interface = host.interfaces.first #FIDIUS::Asset::Interface.find(interface_id)
-            exploiter = FIDIUS::Action::Exploit::Exploit.instance
-            task.update_progress 30
+          interface = host.interfaces.first
+          attack_interface_priv(interface)
+          rpc_method_finish
+        end
 
-            result = exploiter.autopwn interface
-            p "exploit result: #{result}"
-            if interface.host.exploited?
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
-            else
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
-            end
-          end
+        def attack_interface(interface_id)
+          interface = FIDIUS::Asset::Interface.find(interface_id)
+          attack_interface_priv(interface)
           rpc_method_finish
         end
 
@@ -84,9 +78,9 @@ module FIDIUS
           rpc_method_finish
         end
 
-        def postexploit(sessionID, action)
+        def postexploit(sessionID, action, *args)
           FIDIUS::Server::TaskManager.new_task "Postexploit #{sessionID}" do |task|
-            FIDIUS::Action::PostExploit.run sessionID, action
+            FIDIUS::Action::PostExploit.run sessionID, action, *args
           end
           rpc_method_finish
         end
@@ -99,10 +93,9 @@ module FIDIUS
         #add_handler("action.browser_autopwn.stop") do |lhost|
 
         def browser_autopwn_start(lhost)
- 
           FIDIUS::Server::TaskManager.new_task "BrowserAutopwn" do |task|
             # TODO: browser autopwn should not leaf this block
-            # task is immediatly finished 
+            # task is immediatly finished
             # should block as long as runtime
             FIDIUS::Action::Exploit::Passive.instance.start_browser_autopwn lhost
           end
@@ -113,13 +106,29 @@ module FIDIUS
         def file_autopwn_start(lhost)
           FIDIUS::Server::TaskManager.new_task "FileAutopwn" do |task|
             # TODO: file autopwn should not leaf this block
-            # task is immediatly finished 
+            # task is immediatly finished
             FIDIUS::Action::Exploit::Passive.instance.start_file_autopwn lhost
           end
           FIDIUS::UserDialog.create_dialog("FileAutopwn startet","FileAutopwn startet")
           rpc_method_finish
         end
 
+private
+
+        def attack_interface_priv(interface)
+          FIDIUS::Server::TaskManager.new_task "Attack #{interface.host.name}" do |task|
+            exploiter = FIDIUS::Action::Exploit::Exploit.instance
+            task.update_progress 30
+
+            result = exploiter.autopwn interface
+            p "exploit result: #{result}"
+            if interface.host.exploited?
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
+            else
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
+            end
+          end
+        end
       end
     end
   end

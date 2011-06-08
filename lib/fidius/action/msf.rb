@@ -41,7 +41,7 @@ module FIDIUS
 
       # Returns the Metasploit framework. Getting this object is not
       # cached. You may do that on your own.
-      # 
+      #
       # @return [Msf::Simple::Framework]  The Metasploit framework.
       def framework
         daemon.framework
@@ -107,13 +107,12 @@ module FIDIUS
         daemon.get_switch_board
       end
 
-      # Returns a object which iterates over the ips in an ip range.
-      def create_range_walker cidr
-        daemon.create_range_walker cidr
+      def add_auxiliary_report_listener listener
+        daemon.add_auxiliary_report_listener listener
       end
 
-      def destroy_range_walker walker
-        daemon.destroy_range_walker walker
+      def remove_auxiliary_report_listener listener
+        daemon.remove_auxiliary_report_listener listener
       end
 
       # Returns the Metasploit framework DRb wrapper. Useful for debugging.

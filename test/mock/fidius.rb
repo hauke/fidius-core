@@ -12,6 +12,10 @@ module FIDIUS
         @framework.events.subscriber.on_session_open(session)
       end
 
+      def run_auxiliary(auxiliary, opts)
+        nil
+      end
+
       def get_switch_board
         FIDIUS::MsfMock::SwitchBoard
       end
@@ -42,7 +46,7 @@ private
 
         @@filename_ping = nil
         @@filename_port = nil
-      
+
         def self.filename_port filename
           @@filename_port = filename
         end
@@ -81,7 +85,7 @@ private
       def startup
         FIDIUS::Action::Msf.instance.start
       end
-      
+
       def teardown
       end
 
@@ -90,7 +94,7 @@ private
 
       def rpc_method_ended
       end
-    
+
     end # class RPC
   end # module Server
 end # module FIDIUS
