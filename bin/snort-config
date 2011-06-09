@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+require File.expand_path('../../lib/fidius.rb', __FILE__)
+
+FIDIUS::Action::Exploit::Autopwner
+
+require 'snortor'
+#puts "HALLO:#{FIDIUS.config}"
+FIDIUS.connect_db
+
+class SnortConfig
+
+  def self.start
+    # regeln importieren
+    #config_file = YAML.load_file File.expand_path("../../config/evasiondb.yml", __FILE__)
+    #FIDIUS::EvasionDB.config(config_file)
+    @@config = YAML.load_file("/home/bernd/fidius/architecture/config/evasiondb.yml")
+
+    FIDIUS::EvasionDB.config "/home/bernd/fidius/architecture/config/evasiondb.yml"
+    FIDIUS::EvasionDB.use_recoder "Msf-Recorder"
+    FIDIUS::EvasionDB.use_fetcher "PreludeDB"
+    FIDIUS::EvasionDB.use_rule_fetcher "Snortrule-Fetcher"
+    begin
+      FIDIUS::EvasionDB.current_rule_fetcher.import_rules
+    rescue
+      puts "no need to import rules, we have already rules in our db"
+    end
+    bitvector_size = FIDIUS::EvasionDB::Knowledge::IdsRule.all.size
+    puts "#{bitvector_size}"
+    
+    #f = BitField.new(bitvector_size)
+    #f[0] = 1
+    t = Array.new(bitvector_size)
+    t[0] = 1
+    self.test_run(t)
+  end
+
+  def self.test_run(bitvector_array)
+    # auf basis des bitvectors regeln aktivieren
+    #FIDIUS::EvasionDB.current_rule_fetcher.import_rules_to_snortor
+    puts Snortor.rules.size.to_s
+    i = -1
+    Snortor.rules.each do |rule|
+      rule.active = ((bitvector_array[i+=1]).to_i == 1)
+      #i += 1
+    end
+
+    # export rules and 
+    #conf = YAML.load_file("/home/bernd/fidius/architecture/config/evasiondb.yml")["snort-fetcher"]
+    #a = {:host=>conf["ssh_host"],:user=>conf["ssh_user"],:password=>conf["ssh_pw"],:remote_path=>"/root/neue_snort_rules"}
+    #puts "export snort rules to: #{a}"
+    #Snortor.export_rules(a)    
+
+    #restart snort
+  
+
+    # do attacks
+    
+    autopwner = FIDIUS::Action::Exploit::Autopwner.new(FIDIUS::Asset::Interface.new ("10.20.20.1"))
+    autopwner.run_autopwn(nil,nil)
+    #
+  end
+end
+
+#puts @@config["snort-fetcher"].inspect
+SnortConfig.start
+#SnortConfig.test_run([])
+
