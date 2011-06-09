@@ -19,7 +19,7 @@ module FIDIUS
     def plan(services, initial_host, target_host) # returns action model
       create_problem(services, initial_host, target_host)
       create_plan()
-      parse_plan()
+      # parse_plan()
     end
 
     private
