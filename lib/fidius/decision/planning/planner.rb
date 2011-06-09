@@ -18,8 +18,9 @@ module FIDIUS
    
     def plan(services, initial_host, target_host) # returns action model
       create_problem(services, initial_host, target_host)
-#      create_plan()
-#      parse_plan()
+      # Uncomment when cff is installed
+      # create_plan()
+      # parse_plan()
     end
 
     private
@@ -70,12 +71,20 @@ module FIDIUS
       p.add_object(initial_host.id)
       problem.add_predicate(p)
 
+      # neighbours
+      neighbours = host.neighbours?
+      neighbours.each do |neighbour|
+        visible = Predicate.new("host_visiblex")
+        visible.add_object(host.id)
+        visible.add_object(neighbour.id)
+      end
+
       # goal is to exploit target
       goal_p = Predicate.new("on_host")
       goal_p.add_object(target_host.id)
       goal = Goal.new(goal_p)
       problem.set_goal(goal)
-
+      
       problem.write(@@CUR_PROB)
     end
 
