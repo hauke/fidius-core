@@ -30,9 +30,10 @@ module FIDIUS
   autoload :Action, 'fidius/action'
 
   # AI
-  autoload :MachineLearning, 'fidius/decision/agent/machine_learning'
-  autoload :Planner,         'fidius/decision/planning/planner'
-  
+  autoload :MachineLearning,  'fidius/decision/agent/machine_learning'
+  autoload :Planner,          'fidius/decision/planning/planner'
+  autoload :GeneticAlgorithm, 'fidius/decision/genetic_algorithm/genetic_algorithm'
+
   # Server
   module Server
     autoload :RPC,    'fidius/server/xmlrpc.rb'

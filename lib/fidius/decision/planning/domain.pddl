@@ -15,7 +15,7 @@
   (:requirements :typing)
   (:types computer service net
 	  server - computer
-	  client - computer)  ; Client not used yet
+	  client - computer) 
   (:predicates
    ; Host predicates
 
