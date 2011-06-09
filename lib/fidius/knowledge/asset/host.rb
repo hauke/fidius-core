@@ -54,6 +54,10 @@ module FIDIUS
         raise NotImplementedError, "not implemented yet"
       end
 
+      def neighbours?
+        raise NotImplementedError, "not implemented yet"
+      end
+
       #def ==
       #  raise NotImplementedError, "not implemented yet"
       #end
