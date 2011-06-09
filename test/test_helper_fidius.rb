@@ -26,7 +26,7 @@ def prepare_test_db
   ENV['ENV'] = "test"
 #  #ActiveRecord::Migration.verbose = false
   db_helper = FIDIUS::DbHelper.new cfg_d, wd
-  db_helper.drop_database
+  db_helper.drop_database  rescue nil
   db_helper.create_database
   db_helper.with_db {
     Dir.chdir(wd)

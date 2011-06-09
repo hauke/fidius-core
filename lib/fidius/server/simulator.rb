@@ -27,10 +27,14 @@ module FIDIUS
       end
 
       def add_handlers
-        add_handler("meta",FIDIUS::Server::Handler::Meta.new)
-        add_handler("model",FIDIUS::Server::Handler::Model.new)
-        #add_handler("action",FIDIUS::Server::Handler::Action.new)
-        add_handler("action",FIDIUS::Server::Handler::Simulator::Action.new)
+        @@meta = FIDIUS::Server::Handler::Meta.new
+        puts "HALLO: @@meta: #{@@meta}"
+        @@model = FIDIUS::Server::Handler::Model.new
+        @@action = FIDIUS::Server::Handler::Simulator::Action.new
+
+        add_handler("meta",@@meta)
+        add_handler("model",@@model)
+        add_handler("action",@@action)
 
 
         set_default_handler do |name, *args|
@@ -39,6 +43,14 @@ module FIDIUS
           )
         end
       end
+
+      def self.action
+        @@action
+      end
+      def self.meta
+        @@meta
+      end
+
 
       def startup
         # do nothing
@@ -54,7 +66,7 @@ end
 class FIDIUS::Asset::Host
   # this is for filtering hosts in simulation mode
   # find only hosts which are discovered
-  def self.find(*args)
+  def self.fin2d(*args)
     if args.to_a.member?(:ignore_discovered)
       args.delete(:ignore_discovered)
       super(*args)

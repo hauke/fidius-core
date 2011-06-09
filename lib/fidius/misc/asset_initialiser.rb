@@ -54,7 +54,7 @@ module FIDIUS
     end
     
     def self.initializePrelude
-      return unless FIDIUS.config['prelude']
+      return unless FIDIUS.config['prelude'] and FIDIUS.config['prelude']['host']
       FIDIUS.connect_db
       h = FIDIUS::Asset::Host.find_or_create_by_ip(FIDIUS.config['prelude']['host'])
       h.ids = true;
