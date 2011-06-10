@@ -1,7 +1,7 @@
 module FIDIUS
   class ActionRecommendation
 
-    def initialize
+    def initialize 
       create()
       @current_state = @emission.index("start")
     end
