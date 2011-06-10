@@ -13,7 +13,8 @@ module FIDIUS
         def single_exploit(host_id, exploit_id)
           host = FIDIUS::Asset::Host.find(host_id)
           host.interfaces.each do |inter|
-            FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(inter.id, exploit_id)
+            s = FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(inter.id, exploit_id)
+            return if s
           end
           rpc_method_finish
         end
@@ -46,6 +47,7 @@ module FIDIUS
             # TODO: multiple scans lead to duplicate hosts in db
             task.update_progress 10
             scan = FIDIUS::Action::Scan::PingScan.new(iprange)
+            scan = FIDIUS::Action::Scan::ArpScan.new(iprange) unless scan.compatible
             attacker = FIDIUS::Asset::Host.find_by_localhost(true)
             task.update_progress 20
             hosts = scan.execute

@@ -20,6 +20,12 @@ module FIDIUS
       # Called when a session is closed.
       #
       def on_session_close(session, reason='')
+        begin
+          FIDIUS::Action::Session.remove_session_from_db session
+        rescue
+          puts "An error occurred while adding new session #{$!.inspect} #{session}"
+          puts $!.backtrace
+        end
       end
 
     end # class SessionEvent
@@ -42,6 +48,15 @@ module FIDIUS
         host.sessions << session_db
         session_db.save
         host.save
+      end
+      
+      def self.remove_session_from_db session
+        puts "Session died #{session.name.to_s}"
+        rhost_addr = FIDIUS::Action::Session.get_rhost session
+        host = FIDIUS::Asset::Host.find_or_create_by_ip(rhost_addr)
+        host.pivot_host_id = nil
+        host.save
+        FIDIUS::Session.delete(session.name.to_s)
       end
 
       def self.get_lhost session
