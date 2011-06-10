@@ -56,13 +56,17 @@ class SnortConfig
     puts FIDIUS::EvasionDB::Knowledge::AttackModule.find(:first,:joins => [:attack_options])
 
     puts @@config["ids_db"].inspect
-    FIDIUS::PreludeDB::Alert.establish_connection(@@config["ids_db"])
-    FIDIUS::PreludeDB::Alert.connection
-    puts FIDIUS::PreludeDB::Alert.find(:first,:joins => [:detect_time],:order=>"time DESC")
-    #FIDIUS::EvasionDB.current_fetcher.begin_record
-    #self.run_autopwn
+    #FIDIUS::PreludeDB::Alert.establish_connection(@@config["ids_db"])
+    #FIDIUS::PreludeDB::Alert.connection
+    #puts FIDIUS::PreludeDB::Alert.find(:first,:joins => [:detect_time],:order=>"time DESC")
+    FIDIUS::EvasionDB.current_fetcher.begin_record
+    self.run_autopwn
+    events = FIDIUS::EvasionDB.current_fetcher.fetch_events
 
-    # events = FIDIUS::EvasionDB.current_fetcher.fetch_events
+    
+    puts events.size
+
+    puts events.inspect
   end
 
   def self.run_autopwn
