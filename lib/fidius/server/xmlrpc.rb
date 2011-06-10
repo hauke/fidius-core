@@ -69,14 +69,13 @@ module FIDIUS
           #      like in line 38/42
           obj.call(*args)
         end
-        Signal.trap(:INT) {
+        @server.mount("/payloads",PayloadHandler,"#{Dir.pwd}")
+        startup
+        Signal.trap('INT') {        
+          teardown
           shutdown
         }
-        @server.mount("/payloads",PayloadHandler,"#{Dir.pwd}")
-
-        startup
-        serve
-        teardown
+        @server.start
       end
 
     # overwritten this method from XMLRPC:Server
