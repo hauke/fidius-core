@@ -4,21 +4,21 @@ require 'logger'
 
 module FIDIUS
   class DbHelper
-    
+
     def initialize cfg_d, wd
       @cfg_d = cfg_d
       @wd = wd
     end
-  
+
     def get_env
-      ENV["ENV"] || "development" 
+      ENV["ENV"] || "development"
     end
 
     def connection_data
       Dir.chdir(@wd)
       @connection_data ||= YAML.load_file("#{@cfg_d}/fidius.yml")['databases'][get_env]
     end
-  
+
     def with_db &block
       begin
         ActiveRecord::Base.establish_connection(connection_data)
@@ -42,6 +42,14 @@ module FIDIUS
       when 'postgresql'
         ActiveRecord::Base.establish_connection(config.merge('database' => 'postgres', 'schema_search_path' => 'public'))
         ActiveRecord::Base.connection.drop_database config['database']
+      when /sqlite/
+        require 'fileutils'
+        begin
+          FileUtils.rm config['database']
+          puts "Deleted #{config['database']}"
+        rescue
+          puts "#{config['database']} does not exist!"
+        end
       end
     end
 
@@ -89,6 +97,6 @@ module FIDIUS
         end
       end
     end
-    
+
   end
 end
