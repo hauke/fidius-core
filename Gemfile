@@ -3,12 +3,10 @@ source 'http://rubygems.org'
 require 'yaml'
 YAML.load_file(File.expand_path('../config/fidius.yml', __FILE__))['databases'].each_pair{|env,conf|
   case conf['adapter']
-  when /mysql/
-    if RUBY_VERSION >= '1.9'
-      gem 'mysql2', '~>0.2.6'
-    else
-      gem 'mysql' # or fail!?
-    end
+  when /mysql2/
+    gem 'mysql2', '~>0.2.6'
+  when /mysql$/
+    gem 'mysql'
   when /postgresql/
     gem 'pg'
   when /sqlite3/
