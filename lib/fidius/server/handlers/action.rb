@@ -13,7 +13,8 @@ module FIDIUS
         def single_exploit(host_id, exploit_id)
           host = FIDIUS::Asset::Host.find(host_id)
           host.interfaces.each do |inter|
-            FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(inter.id, exploit_id)
+            s = FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(inter.id, exploit_id)
+            return if s
           end
           rpc_method_finish
         end

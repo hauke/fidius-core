@@ -5,7 +5,7 @@ module FIDIUS
     require 'fidius/decision/planning/cfflib/planparser'
     require 'fidius/decision/planning/cfflib/action_model'
     
-    @@DOMAIN = "domain.pddl"
+    @@DOMAIN = "fidius"
     @@CUR_PROB = "fidius_prob.pddl"
     @@CUR_PLAN = "fidius.plan"
 
@@ -36,7 +36,7 @@ module FIDIUS
     
     # services we want to exploit
     def create_problem(services, initial_host, target_host)
-      problem = PlanningProblem.new("FIDIUS_PROBLEM", @@DOMAIN)
+      problem = PlanningProblem.new("fidius", @@DOMAIN)
       
       # add services 
       services.each do |s|
@@ -45,12 +45,13 @@ module FIDIUS
       
       # add hosts
       @hosts.each do |host|
+        # problem.add_object("host#{host.id}", "computer")
         problem.add_object(host.id, "computer")
-
         host.subnets.each do |sub| 
           p = Predicate.new("host_subnet")
           p.add_object(host.id)
           p.add_object(sub.ip_range)
+          problem.add_object(sub.ip_range, "net")
           problem.add_predicate(p)
         end
 
@@ -64,20 +65,21 @@ module FIDIUS
           unknown.add_oneof(service)
         end
         problem.add_predicate(unknown)
+
+        # neighbours
+        neighbours = host.neighbours?
+        neighbours.each do |neighbour|
+          visible = Predicate.new("host_visible")
+          visible.add_object(host.id)
+          visible.add_object(neighbour.id)
+          problem.add_predicate(visible)
+        end
       end
       
       # starting at initial_host
       p = Predicate.new("on_host")
       p.add_object(initial_host.id)
       problem.add_predicate(p)
-
-      # neighbours
-      neighbours = host.neighbours?
-      neighbours.each do |neighbour|
-        visible = Predicate.new("host_visiblex")
-        visible.add_object(host.id)
-        visible.add_object(neighbour.id)
-      end
 
       # goal is to exploit target
       goal_p = Predicate.new("on_host")
