@@ -13,59 +13,56 @@
 ; University Bremen
 (define (domain fidius)
   (:requirements :typing)
-  (:types computer service net
-	  server - computer
-	  client - computer) 
   (:predicates
    ; Host predicates
 
    ; is a webserver running
-   (webserver_running ?host - server)
+   (webserver_running ?host)
    
    ; Current host = ?host
-   (on_host ?host - computer)                 
+   (on_host ?host)                 
    ; ?service running on ?host
-   (service_running ?host - computer ?service - service) 
+   (service_running ?host  ?service ) 
    ; admin password weak ?
-   (password_crackable ?host - computer)
-   (shadow_reachable ?host - computer)
-   (shadow_decryptable ?host - computer)
+   (password_crackable ?host )
+   (shadow_reachable ?host )
+   (shadow_decryptable ?host )
    
    ; user creatable host ?
-   (user_creatable ?host - computer)
+   (user_creatable ?host)
    ; Is an anti virus software installed on host ? 
-   (virus_scanner ?host - computer)           
+   (virus_scanner ?host )           
    ; is the host a domain controller ?
-   (dc ?host - computer)
+   (dc ?host )
 
    
    ; Network predicates
 
    ; Is host ?target visible from ?host ?
-   (host_visible ?host - computer ?target - computer)  
+   (host_visible ?host  ?target )  
    ; In which ?subnet is ?host located ?
-   (host_subnet ?host - computer ?subnet - net)      
+   (host_subnet ?host  ?subnet )      
    ; Current subnet = ?subnet ?
-   (in_subnet ?subnet - net)          
+   (in_subnet ?subnet )          
    ; Is an IDS installed in subnet ? 
-   (nids ?subnet - net)          
+   (nids ?subnet )          
    
    ; Hacking status predicates
    ; is admin on host
-   (admin ?host - computer)
+   (admin ?host )
    ; server owned in net ?
-   (server_owned ?net - net)
+   (server_owned ?net )
    ; is a host exploited ?
-   (exploited ?host - computer)
+   (exploited ?host )
    ; is a trap like an iFrame injected in a subnet
-   (trap_in_subnet ?subnet - net)
+   (trap_in_subnet ?subnet )
    ; is an iFrame injected on a host
-   (iframe_injected ?host - server)
+   (iframe_injected ?host)
    ; is one host plumed in subnet ?
-   (plumbed ?host - computer)                  
-   (plumb_in ?subnet - net)               
+   (plumbed ?host)                  
+   (plumb_in ?subnet)               
    ; is a domain controller under our controll ?
-   (pwned_dc ?subnet - net)
+   (pwned_dc ?subnet)
 
    ; Reconaissance
    ; is host a server
@@ -78,7 +75,7 @@
 
   ; inject an iFrame in a host
   (:action inject_iframe
-   :parameters(?host - server ?subnet - net)
+   :parameters(?host ?subnet )
    :precondition(and(on_host ?host)                            ; acting on host
                     (and(webserver_running ?host)              ; is a web server running
 		         (in_subnet ?subnet)))                 ; action in subnet
@@ -87,7 +84,7 @@
 
   ; is a webserver running ? 
   (:action check_httpd
-   :parameters(?host - server)
+   :parameters(?host)
    :precondition(on_host ?host)      ; acting on host
    :observe(webserver_running ?host) ; sensing action webserver
    )
@@ -98,18 +95,18 @@
   
   ; get root access
   (:action become_admin
-   :parameters(?host - computer ?subnet - net)	   
+   :parameters(?host  ?subnet )	   
    :precondition(and (and (on_host ?host)                     ; acting on host
 			      (host_subnet ?host ?subnet))    ; init subnet
 			 (or (password_crackable ?host)       ; password weak or user creatable
 			     (user_creatable ?host)))
-
+   
    :effect(and (plumb_in ?subnet) (admin ?host))              ; host plumbed and mark the subnet as plumbed
    )
 
   ; install bridge head on host
    (:action install_bridge_head              
-   :parameters(?host - computer ?subnet - net)
+   :parameters(?host  ?subnet )
    :precondition(and (and (on_host ?host)
 			  (host_subnet ?host ?subnet))        ; acting on host
 		     (not(virus_scanner ?host)))              ; no virus scanner
@@ -123,7 +120,7 @@
   
   ; move from a ?host to exploited ?target
   (:action move_exploit
-   :parameters(?host - computer ?target - computer ?targetnet - net ?subnet - net)
+   :parameters(?host  ?target  ?targetnet  ?subnet )
    :precondition(and (and (host_visible ?host ?target)           ; target reachable from host
 			  (on_host ?host))                       ; currently acting on host 
 		     (and (host_subnet ?target ?targetnet)       ; just initialize targetnet
@@ -138,7 +135,7 @@
 
   ; move from a ?host to ?target with granted access from domain controller
   (:action move_right
-   :parameters(?host - computer ?target - computer ?targetnet - net ?subnet - net)
+   :parameters(?host  ?target  ?targetnet  ?subnet )
    :precondition(and (and (host_visible ?host ?target)           ; target reachable from host
 			  (on_host ?host))                       ; currently acting on host 
 		     (and (host_subnet ?target ?targetnet)       ; just initialize targetnet
@@ -149,6 +146,8 @@
    	 	    (on_host ?target))
 	       (not (on_host ?host)))
   )
+
+
   
   ; --------------------- ;
   ;      HACKING          ;
@@ -156,7 +155,7 @@
 
   ; crack a password
   (:action crack
-   :parameters(?host - computer)
+   :parameters(?host )
    :precondition(and (on_host ?host)                   ; action on host
 		     (and (shadow_reachable ?host)     ; etc/shadow is accessible with current user rights
 		          (shadow_decryptable ?host))) ; the shadow file is decryptable
@@ -165,7 +164,7 @@
   
   ; pwn domain controller
   (:action pwn_dc
-   :parameters(?host - computer ?subnet - net)	    
+   :parameters(?host  ?subnet )	    
    :precondition(and (dc ?host)                               ; is the host a domain controller ? 
 		     (and (password_crackable ?host)          ; password weak 
 			  (and (on_host ?host)                ; acting on host  
@@ -176,7 +175,7 @@
   
   ; Perform exploit
   (:action exploit
-   :parameters(?host - computer ?service - service ?target  - computer ?targetnet - net)
+   :parameters(?host  ?service  ?target   ?targetnet )
    :precondition(and (and (host_subnet ?target ?targetnet)    ; just initialize targetnet
 			  (and (host_visible ?host ?target)   ; target reachable from host
 			       (on_host ?host)))              ; currently acting on host 
@@ -187,7 +186,7 @@
   
   ; scan a host for services nmap
   (:action scan
-   :parameters(?host - computer ?target - computer ?service - service ?targetnet - net)
+   :parameters(?host  ?target  ?service ?targetnet )
    :precondition(and (and (on_host ?host)                    ; currently acting on host
 			  (host_subnet ?target ?targetnet))  ; initialize target subnet		     
 		     (and (host_visible ?host ?target)       ; target reachable from host
@@ -197,7 +196,7 @@
   
   ; report server hacked in subnet
   (:action report_server
-   :parameters(?host - server ?subnet - net)  
+   :parameters(?host ?subnet )  
    :precondition(and (on_host ?host)              ; action on host of type server
 	             (host_subnet ?host ?subnet)) ; action in subnet
    :effect(server_owned ?subnet)                  ; we hacked a server

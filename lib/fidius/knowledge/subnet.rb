@@ -16,7 +16,7 @@ module FIDIUS
     end
 
     def ==(subnet)
-      self.ip_range == subnet.ip_range
+      self.ip_range.to_s == subnet.ip_range.to_s
     end
 
     def get_hosts

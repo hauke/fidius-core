@@ -59,7 +59,7 @@ module FIDIUS
       end
 
       def neighbours?
-        # All hosts in subnets
+        # All hosts in subnets are neighbours
         neighbours = []
         nets = self.subnets()
         hosts = Host.all()
@@ -67,7 +67,6 @@ module FIDIUS
           if host.id != self.id
             hnets = host.subnets()
             nets.each do |net|
-              
               if hnets.include?(net)
                 neighbours << host
                 break
