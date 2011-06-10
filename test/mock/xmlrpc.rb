@@ -15,6 +15,10 @@ module XMLRPC
   def shutdown
   end
 
+  def start    
+    nil
+  end
+
   def mount(dir, servlet, *options)
     nil
   end

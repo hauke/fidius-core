@@ -225,13 +225,26 @@ module FIDIUS
 
         def initialize
           @process = ProcessMock.new
+          @config = SysConfigMock.new
         end
 
         def process
           @process
         end
 
+        def config
+          @config
+        end
+
       end # class SysMock
+
+      class SysConfigMock
+
+        def sysinfo
+          {"Computer"=>"FIDIUS-69B8F53A", "OS"=>"Windows XP (Build 2600, Service Pack 2).", "Architecture"=>"x86", "System Language"=>"de_DE"}
+        end
+
+      end #class SysConfigMock
 
       class ProcessMock
 
@@ -247,7 +260,7 @@ module FIDIUS
       def self.best_comm(addr)
         nil
       end
-      
+
       def self.each(&block)
       end
 
