@@ -64,20 +64,20 @@ module FIDIUS
           unknown.add_oneof(service)
         end
         problem.add_predicate(unknown)
+
+        # neighbours
+        neighbours = host.neighbours?
+        neighbours.each do |neighbour|
+          visible = Predicate.new("host_visiblex")
+          visible.add_object(host.id)
+          visible.add_object(neighbour.id)
+        end
       end
       
       # starting at initial_host
       p = Predicate.new("on_host")
       p.add_object(initial_host.id)
       problem.add_predicate(p)
-
-      # neighbours
-      neighbours = host.neighbours?
-      neighbours.each do |neighbour|
-        visible = Predicate.new("host_visiblex")
-        visible.add_object(host.id)
-        visible.add_object(neighbour.id)
-      end
 
       # goal is to exploit target
       goal_p = Predicate.new("on_host")
