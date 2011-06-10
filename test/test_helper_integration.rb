@@ -31,8 +31,8 @@ end
 def run_with_vm vm_key, &block
   FIDIUS::Action::Msf.instance.daemon.load_plugin "lab_api"
   msf = FIDIUS::Action::Msf.instance.framework
-  msf.lab_api.lab_load FIDIUS.config[:tests][:lab_config]
-  vm = FIDIUS.config[:tests][vm_key]  
+  msf.lab_api.lab_load FIDIUS.config[:tests][:lab_config]  if FIDIUS.config[:tests]
+  vm = FIDIUS.config[:tests][vm_key]  if FIDIUS.config[:tests]
   if vm
     vm_revert vm
     vm_start vm
@@ -41,11 +41,3 @@ def run_with_vm vm_key, &block
     puts "VM not defined"
   end
 end
-
-def start_msfdrbd
-  system(ENV, "/home/lmeyer/Uni/Fidius/git/architecture/bin/msfdrbd &")
-  puts "before"
-  sleep(60)
-  puts "after"
-end
-#start_msfdrbd
