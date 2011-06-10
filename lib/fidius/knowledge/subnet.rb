@@ -15,6 +15,10 @@ module FIDIUS
       end
     end
 
+    def ==(subnet)
+      self.ip_range.to_s == subnet.ip_range.to_s
+    end
+
     def get_hosts
       raise NotImplementedError, "not implemented yet"      
     end

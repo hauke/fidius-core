@@ -14,34 +14,38 @@ module FIDIUS
         subnets = []
         self.interfaces.each do |interface| 
           # Parse ip adresses
-          ip_comp = interface.ip.split(@@IPv4_DELIM)
+          if interface.ip != nil
+            # puts "IP: #{interface.ip}"
 
-          if ip_comp.length == 1 # no IPv4_DELIM found
-            # ipv6
-            ip_comp = interface.ip.split(@@IPv6_DELIM)          
-            4.times do # delete host identifier
-              ip_comp.pop
-            end
+            ip_comp = interface.ip.split(@@IPv4_DELIM)
 
-            # build ip range
-            str_ip = String.new
-            ip_comp.each do |i|
-              str_ip << i << ":"
-            end
-            str_ip << ":/64"
-            subnets << Subnet.new(str_ip)
-          else
-            # ipv4
-            ip_comp.pop # delete host identifier            
-
-            # build ip range
-            str_ip = String.new
-            ip_comp.each do |i|
-              str_ip << i << "."
-            end
-            str_ip << "0/24"
-            subnets << Subnet.new(str_ip)
-          end          
+            if ip_comp.length == 1 # no IPv4_DELIM found
+              # ipv6
+              ip_comp = interface.ip.split(@@IPv6_DELIM)          
+              4.times do # delete host identifier
+                ip_comp.pop
+              end
+              
+              # build ip range
+              str_ip = String.new
+              ip_comp.each do |i|
+                str_ip << i << ":"
+              end
+              str_ip << ":/64"
+              subnets << Subnet.new(str_ip)
+            else
+              # ipv4
+              ip_comp.pop # delete host identifier            
+              
+              # build ip range
+              str_ip = String.new
+              ip_comp.each do |i|
+                str_ip << i << "."
+              end
+              str_ip << "0/24"
+              subnets << Subnet.new(str_ip)
+            end          
+          end
         end
         subnets
       end
@@ -55,7 +59,22 @@ module FIDIUS
       end
 
       def neighbours?
-        raise NotImplementedError, "not implemented yet"
+        # All hosts in subnets are neighbours
+        neighbours = []
+        nets = self.subnets()
+        hosts = Host.all()
+        hosts.each do |host|
+          if host.id != self.id
+            hnets = host.subnets()
+            nets.each do |net|
+              if hnets.include?(net)
+                neighbours << host
+                break
+              end
+            end
+          end
+        end
+        return neighbours
       end
 
       #def ==

@@ -12,6 +12,7 @@ module FIDIUS
 
           def report_service(calledClass, opts)
             return unless "auxiliary/scanner/portscan/tcp" == calledClass.fullname
+            puts "found service #{opts}"
             service = FIDIUS::Service.find_or_create_by_port_and_proto_and_interface_id(opts[:port], "tcp", @interface.id)
             service.state = opts[:state]
             @interface.services << service

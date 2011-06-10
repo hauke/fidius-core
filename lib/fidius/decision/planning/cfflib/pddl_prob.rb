@@ -92,7 +92,7 @@ class PlanningProblem
     problem << " (#{DOMAIN} #{@domain_name}) \n"
     problem << " (#{OBJECTS} "
     @objects.each do |o|
-      problem << "#{o} "
+      problem << "#{o} \n"
     end
     problem << ") \n"
     problem << " (:init \n "

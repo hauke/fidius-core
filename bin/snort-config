@@ -5,21 +5,21 @@ require File.expand_path('../../lib/fidius.rb', __FILE__)
 FIDIUS::Action::Exploit::Autopwner
 
 require 'snortor'
-#puts "HALLO:#{FIDIUS.config}"
-FIDIUS.connect_db
 
 class SnortConfig
+  @@config_file = File.expand_path("../../config/evasiondb.yml", __FILE__)
 
   def self.start
     # regeln importieren
-    #config_file = YAML.load_file File.expand_path("../../config/evasiondb.yml", __FILE__)
-    #FIDIUS::EvasionDB.config(config_file)
-    @@config = YAML.load_file("/home/bernd/fidius/architecture/config/evasiondb.yml")
 
-    FIDIUS::EvasionDB.config "/home/bernd/fidius/architecture/config/evasiondb.yml"
+    @@config = YAML.load_file(@@config_file)#"/home/bernd/fidius/architecture/config/evasiondb.yml")
+
+    FIDIUS.connect_db
+    FIDIUS::EvasionDB.config @@config_file #"/home/bernd/fidius/architecture/config/evasiondb.yml"
     FIDIUS::EvasionDB.use_recoder "Msf-Recorder"
     FIDIUS::EvasionDB.use_fetcher "PreludeDB"
     FIDIUS::EvasionDB.use_rule_fetcher "Snortrule-Fetcher"
+
     begin
       FIDIUS::EvasionDB.current_rule_fetcher.import_rules
     rescue
@@ -42,27 +42,52 @@ class SnortConfig
     i = -1
     Snortor.rules.each do |rule|
       rule.active = ((bitvector_array[i+=1]).to_i == 1)
-      #i += 1
     end
 
     # export rules and 
-    #conf = YAML.load_file("/home/bernd/fidius/architecture/config/evasiondb.yml")["snort-fetcher"]
-    #a = {:host=>conf["ssh_host"],:user=>conf["ssh_user"],:password=>conf["ssh_pw"],:remote_path=>"/root/neue_snort_rules"}
-    #puts "export snort rules to: #{a}"
-    #Snortor.export_rules(a)    
-
-    #restart snort
+    #self.export_rules
+    # restart snort
   
 
     # do attacks
+    #puts FIDIUS::PreludeDB::Alert.first.inspect
+    #puts FIDIUS::PreludeDB::Alert.first(:joins=>[:detect_time]).inspect
+    #puts FIDIUS::PreludeDB::Alert.connection.inspect
+    puts FIDIUS::EvasionDB::Knowledge::AttackModule.find(:first,:joins => [:attack_options])
+
+    puts @@config["ids_db"].inspect
+    FIDIUS::PreludeDB::Alert.establish_connection(@@config["ids_db"])
+    FIDIUS::PreludeDB::Alert.connection
+    puts FIDIUS::PreludeDB::Alert.find(:first,:joins => [:detect_time],:order=>"time DESC")
+    #FIDIUS::EvasionDB.current_fetcher.begin_record
+    #self.run_autopwn
+
+    # events = FIDIUS::EvasionDB.current_fetcher.fetch_events
+  end
+
+  def self.run_autopwn
+      autopwner = FIDIUS::Action::Exploit::Exploit.instance
+      
+      host = FIDIUS::Asset::Host.new
+      host.interfaces << FIDIUS::Asset::Interface.new(:ip => "10.20.20.1")
+
+      
+
+      inter = host.interfaces.first
+      host.save
+      puts inter.host.inspect
+
+      scan = FIDIUS::Action::Scan::PortScan.new(inter)
+      target = scan.execute
     
-    autopwner = FIDIUS::Action::Exploit::Autopwner.new(FIDIUS::Asset::Interface.new ("10.20.20.1"))
-    autopwner.run_autopwn(nil,nil)
-    #
+      result = autopwner.autopwn inter  
+  end
+
+  def self.export_rules
+    a = {:host=>@@config["snort-fetcher"]["ssh_host"],:user=>@@config["snort-fetcher"]["ssh_user"],:password=>@@config["snort-fetcher"]["ssh_pw"],:remote_path=>"/root/neue_snort_rules"}
+    puts "export snort rules to: #{a}"
+    Snortor.export_rules(a)    
   end
 end
 
-#puts @@config["snort-fetcher"].inspect
 SnortConfig.start
-#SnortConfig.test_run([])
-
