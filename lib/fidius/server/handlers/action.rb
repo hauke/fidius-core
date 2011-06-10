@@ -46,6 +46,7 @@ module FIDIUS
             # TODO: multiple scans lead to duplicate hosts in db
             task.update_progress 10
             scan = FIDIUS::Action::Scan::PingScan.new(iprange)
+            scan = FIDIUS::Action::Scan::ArpScan.new(iprange) unless scan.compatible
             attacker = FIDIUS::Asset::Host.find_by_localhost(true)
             task.update_progress 20
             hosts = scan.execute
