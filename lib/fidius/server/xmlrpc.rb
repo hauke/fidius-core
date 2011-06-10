@@ -10,6 +10,13 @@ require "fidius/server/task_manager"
 
 require 'webrick'
 
+module XMLRPC
+  class Server
+    def serve
+      @server.start
+    end
+  end
+end
 
 module FIDIUS
   module Server
@@ -71,11 +78,12 @@ module FIDIUS
         end
         @server.mount("/payloads",PayloadHandler,"#{Dir.pwd}")
         startup
-        Signal.trap('INT') {        
+        Signal.trap('INT') {
+          puts "FIDIUS teardown ..."        
           teardown
           shutdown
         }
-        @server.start
+        serve
       end
 
     # overwritten this method from XMLRPC:Server
