@@ -12,6 +12,7 @@ module FIDIUS
 
           def report_host(calledClass, opts)
             return unless "post/windows/gather/arp_scanner" == calledClass.fullname
+            puts "found host #{opts}"
             @result << opts[:host]
           end
 
