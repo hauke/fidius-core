@@ -143,8 +143,8 @@ module GeneticAlgorithm
   
 end
 
-puts "Beginning genetic search, please wait... "
-search = GeneticAlgorithm::GeneticSearch.new(800, 100)
-result = search.run
-puts "Result cost: #{result.fitness}"
-puts "Reslt tour: #{result.data}"
+#puts "Beginning genetic search, please wait... "
+#search = GeneticAlgorithm::GeneticSearch.new(800, 100)
+#result = search.run
+#puts "Result cost: #{result.fitness}"
+#puts "Reslt tour: #{result.data}"

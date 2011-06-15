@@ -1,16 +1,31 @@
 #!/usr/bin/env ruby
 
 require File.expand_path('../../lib/fidius.rb', __FILE__)
-
-FIDIUS::Action::Exploit::Autopwner
-
 require 'snortor'
+require 'fidius/decision/snort_conf/genetic_algoirthms'
 
+module GeneticAlgorithm
+  class Chromosome
+    def fitness
+      return SnortConfig.test_run(@data)
+    end
+
+    def self.seed
+      data_size = SnortConfig.rule_size # Num Rules
+      seed = []
+      data_size.times do 
+        seed << rand(2)
+      end
+      return Chromosome.new(seed)
+    end
+  end
+end
 class SnortConfig
   @@config_file = File.expand_path("../../config/evasiondb.yml", __FILE__)
-  @@snort_rule_directory = "/etc/snort/" #rules wird wohl autom. appended
+  @@snort_rule_directory = "/etc/snort/rules" #rules wird wohl autom. appended
   @@exploit_target_host = "10.20.20.1"
-
+  @@rule_size = 0
+  cattr_accessor :rule_size
   ##
   # THIS IS A CLONE FROM exploit_picker.rb
   ## 
@@ -36,22 +51,33 @@ class SnortConfig
     FIDIUS::EvasionDB.use_recoder "Msf-Recorder"
     FIDIUS::EvasionDB.use_fetcher "PreludeDB"
     FIDIUS::EvasionDB.use_rule_fetcher "Snortrule-Fetcher"
-
     begin
       FIDIUS::EvasionDB.current_rule_fetcher.import_rules
     rescue
       puts "no need to import rules, we have already rules in our db"
     end
+    #FIDIUS::EvasionDB.current_rule_fetcher.import_rules_to_snortor
+    #puts Snortor.rules.size.to_s
+    #self.export_rules
+    #return
     bitvector_size = FIDIUS::EvasionDB::Knowledge::IdsRule.all.size
-    puts "#{bitvector_size}"
+    puts "We have #{bitvector_size} rules to analyse"
     
     # test call
-    t = Array.new(bitvector_size)
-    t[0] = 1
-    self.test_run(t)
+    rules_bitvector = Array.new(bitvector_size)
+    @@rule_size = rules_bitvector.size
+
+    search = GeneticAlgorithm::GeneticSearch.new(10, 50)
+    puts "starting genetic algorithm"
+    result = search.run
+    puts "Result cost: #{result.fitness}"
+    puts "Reslt tour: #{result.data}"
+    #t[0] = 1
+    #self.test_run(t)
   end
 
   def self.test_run(bitvector_array)
+    puts "** SnortConfig testrun"
     FIDIUS::EvasionDB.current_rule_fetcher.import_rules_to_snortor
     # auf basis des bitvectors regeln aktivieren
     self.set_rules(bitvector_array)
@@ -68,10 +94,12 @@ class SnortConfig
     event_value = 0
     events = FIDIUS::EvasionDB.current_fetcher.fetch_events
     events.each do |event|
+      puts event.inspect
       event_value += self.severity_value(event)
     end
-    
-    puts "#{events.size} events with value of #{event_value}"
+    puts "** #{events.size} events with value of #{event_value}"
+    return event_value
+
   end
 
   def self.run_autopwn
@@ -93,11 +121,16 @@ class SnortConfig
   def self.set_rules(bitvector_array)
     puts "** set rules"
     i = -1
+    active_rules = 0
     Snortor.rules.each do |rule|
-      rule.active = ((bitvector_array[i+=1]).to_i == 1)
+      rule.active = false#((bitvector_array[i+=1]).to_i == 1)
+      if (((bitvector_array[i+=1]).to_i == 1))
+        active_rules += 1
+        rule.active = true
+      end
     end
+    puts "** we have #{active_rules} rules activated"
   end
-
   def self.restart_snort
     puts "** restarting snort"
     Net::SSH.start(@@config["snort-fetcher"]["ssh_host"], @@config["snort-fetcher"]["ssh_user"], :password => @@config["snort-fetcher"]["ssh_pw"]) do |ssh|
@@ -106,9 +139,19 @@ class SnortConfig
   end
 
   def self.export_rules
-    puts "** exporting rules to #{@@snort_rule_directory}"
-    a = {:host=>@@config["snort-fetcher"]["ssh_host"],:user=>@@config["snort-fetcher"]["ssh_user"],:password=>@@config["snort-fetcher"]["ssh_pw"],:remote_path=>@@snort_rule_directory}
-    Snortor.export_rules(a)    
+    puts "** deleting /etc/snort/rules"
+    # fix bug that rules are exported into /etc/snort/rules/rules
+    Net::SSH.start(@@config["snort-fetcher"]["ssh_host"], @@config["snort-fetcher"]["ssh_user"], :password => @@config["snort-fetcher"]["ssh_pw"]) do |ssh|
+      ssh.exec "rm -rf /etc/snort/rules"
+    end
+
+
+    puts "** exporting rules"
+    local_path = "/tmp/rules/"
+    remote_path = "/etc/snort"
+    a = {:host=>@@config["snort-fetcher"]["ssh_host"],:user=>@@config["snort-fetcher"]["ssh_user"],:password=>@@config["snort-fetcher"]["ssh_pw"],:remote_path=>remote_path,:local_path=>local_path}
+    Snortor.export_rules(a)
+    #Snortor.export_rules("/home/bernd/fidius/snort/neue_rules")    
   end
 end
 
