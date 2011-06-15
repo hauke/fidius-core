@@ -1,5 +1,7 @@
+$:.unshift(File.join FIDIUS.config['metasploit']['path'], 'lib')
+require 'msf/base'
+
 require 'drb'
-require 'drb/acl'
 require 'singleton'
 
 class DRb::DRbMessage
@@ -86,7 +88,6 @@ module FIDIUS
           end
 
 
-          # FIXME: DRb.install_acl ACL.new(%w[deny all allow #{config['host']}])
           uri = "druby://#{config['host']}:#{config['port']}"
           puts "[*] Loading Metasploit framework."
           obj = self.new
@@ -178,4 +179,4 @@ module FIDIUS
     end # class MsfDRbD
   end # module Server
 end # module FIDIUS
-
+FIDIUS::Server::MsfDRb.start_service FIDIUS.config['metasploit']

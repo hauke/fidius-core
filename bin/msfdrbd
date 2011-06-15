@@ -2,7 +2,7 @@
 
 require File.expand_path('../../lib/fidius.rb', __FILE__)
 
-$:.unshift(File.join FIDIUS.config['metasploit']['path'], 'lib')
-require 'msf/base'
+require 'daemons'
 
-FIDIUS::Server::MsfDRb.start_service FIDIUS.config['metasploit']
+Daemons.run(File.expand_path('../../lib/fidius/server/msfdrb.rb', __FILE__))
+#FIDIUS::Server::MsfDRb.start_service FIDIUS.config['metasploit']
