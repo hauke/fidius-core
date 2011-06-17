@@ -12,7 +12,7 @@ module FIDIUS
 
       def subnets
         subnets = []
-        self.interfaces.each do |interface| 
+        self.interfaces.each do |interface|
           # Parse ip adresses
           if interface.ip != nil
             # puts "IP: #{interface.ip}"
@@ -21,11 +21,11 @@ module FIDIUS
 
             if ip_comp.length == 1 # no IPv4_DELIM found
               # ipv6
-              ip_comp = interface.ip.split(@@IPv6_DELIM)          
+              ip_comp = interface.ip.split(@@IPv6_DELIM)
               4.times do # delete host identifier
                 ip_comp.pop
               end
-              
+
               # build ip range
               str_ip = String.new
               ip_comp.each do |i|
@@ -35,8 +35,8 @@ module FIDIUS
               subnets << Subnet.new(str_ip)
             else
               # ipv4
-              ip_comp.pop # delete host identifier            
-              
+              ip_comp.pop # delete host identifier
+
               # build ip range
               str_ip = String.new
               ip_comp.each do |i|
@@ -44,7 +44,7 @@ module FIDIUS
               end
               str_ip << "0/24"
               subnets << Subnet.new(str_ip)
-            end          
+            end
           end
         end
         subnets
@@ -80,6 +80,16 @@ module FIDIUS
       #def ==
       #  raise NotImplementedError, "not implemented yet"
       #end
+
+      def find_exploits_for_host
+        ports = []
+        self.interfaces.each do |i|
+          ports.concat(i.services.map { |s| s.port }).uniq
+        end
+
+        FIDIUS::EvasionDB::Knowledge.find_exploits_for_services(ports)
+      end
+
       def find_by_ip_and_mac ip, mac
         FIDIUS::Asset::Interface.find_by_ip_and_mac_and_host_id(ip, mac, id)
       end
