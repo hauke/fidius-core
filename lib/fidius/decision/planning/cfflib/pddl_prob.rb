@@ -79,7 +79,8 @@ class PlanningProblem
   end
 
   def add_object(object, type)
-    @objects << object << " - " << type if !@objects.include?(object)
+    new_obj = "#{object} - #{type}"
+    @objects << new_obj if !@objects.include?(new_obj)
   end
 
   def add_predicate(predicate)
@@ -99,6 +100,7 @@ class PlanningProblem
     @predicates.each do |p|
       problem << p.to_s << " \n"
     end
+
     problem << " ) \n"
     problem << " " << @goal.to_s()
     problem << ") \n"
