@@ -77,6 +77,13 @@ module FIDIUS
           obj.call(*args)
         end
         @server.mount("/payloads",PayloadHandler,"#{Dir.pwd}")
+        begin
+          FIDIUS::Action::Msf.instance.daemon.status
+        rescue
+          sleep 10
+          puts "No msfdrbd running"
+          retry
+        end
         startup
         Signal.trap('INT') {
           puts "FIDIUS teardown ..."        

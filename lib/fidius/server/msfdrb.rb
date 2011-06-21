@@ -1,6 +1,3 @@
-$:.unshift(File.join FIDIUS.config['metasploit']['path'], 'lib')
-require 'msf/base'
-
 require 'drb'
 require 'singleton'
 
@@ -167,6 +164,10 @@ module FIDIUS
         p @framework.sessions
       end
 
+      def status
+        "running"
+      end
+
     private
       def method_missing(method, *args, &block)
         @framework.send(method, *args, &block)
@@ -179,4 +180,3 @@ module FIDIUS
     end # class MsfDRbD
   end # module Server
 end # module FIDIUS
-FIDIUS::Server::MsfDRb.start_service FIDIUS.config['metasploit']

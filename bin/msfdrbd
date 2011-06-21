@@ -4,5 +4,8 @@ require File.expand_path('../../lib/fidius.rb', __FILE__)
 
 require 'daemons'
 
-Daemons.run(File.expand_path('../../lib/fidius/server/msfdrb.rb', __FILE__))
-#FIDIUS::Server::MsfDRb.start_service FIDIUS.config['metasploit']
+Daemons.run_proc('msfdrbd', :log_output => true, :keep_pid_file => false) do
+  $:.unshift(File.join FIDIUS.config['metasploit']['path'], 'lib')
+  require 'msf/base'
+  FIDIUS::Server::MsfDRb.start_service FIDIUS.config['metasploit']
+end
