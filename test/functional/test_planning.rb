@@ -23,6 +23,7 @@ class PlanningTest < FIDIUS::Test
     i4 = FIDIUS::Asset::Interface.create()
     i4.ip = "192.0.0.1"
     h4.interfaces << i4
+    h4.interfaces << i3
     i5 = FIDIUS::Asset::Interface.create()
     i5.ip = "192.0.0.1"
     h5.interfaces << i5
@@ -38,8 +39,14 @@ class PlanningTest < FIDIUS::Test
     #Create plan
     planner = FIDIUS::Planner.new    
     planner.hosts = [h1,h2,h3,h4,h5]
-    planner.plan(services, h1, h5)
+    action = planner.plan(services, h1, h5)
     
+    #puts "============ ACTION MODEL =============="
+    #while action.get_next_action != nil
+    #  puts action.get_next_action.action
+    #  action.success
+    #end
+    #puts "============ /ACTION MODEL ============="
   end
 
 end        
