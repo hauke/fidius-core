@@ -42,14 +42,21 @@ class SnortConfig
   ##########################################################
 
   def self.print_status
-    puts "** status"
+    puts "** STATUS"
     i = 0
-    FIDIUS::SnortConfig.all(:order=>:events_value).each do |c|
+    #FIDIUS::SnortConfig.find(:last, :select=>"*, (events_value/false_positives_value) as value",:order=>"value")
+    FIDIUS::SnortConfig.all(:select=>"*, (events_value/false_positives_value) as value",:order=>"value DESC").each do |c|
       rule_size = c[:bitvector].size
-      puts "  #{i}) [#{c[:active_rules]}/#{rule_size}] Rules generated #{c[:events_count]} with value #{c[:events_value]} and #{c[:false_positives_count]} false positives with value #{c[:false_positives_value]} overall: #{self.eval_function(c[:false_positives_value], c[:events_value]).round(3)}"
+      out = "  #{i}) [#{c[:active_rules]}/#{rule_size}] Rules generated #{c[:events_count]} with value #{c[:events_value]} and #{c[:false_positives_count]} false positives with value #{c[:false_positives_value]} overall: #{self.eval_function(c[:false_positives_value], c[:events_value]).round(3)}"
+      if i == 0
+        puts "THIS SEEMS TO BE BEST: "
+        puts "  #{out}\nothers:\n"
+      else
+        puts out
+      end
       i += 1
     end
-    puts "**"
+    puts "** STATUS END"
   end
 
   def self.start
@@ -160,7 +167,7 @@ class SnortConfig
       scan = FIDIUS::Action::Scan::PortScan.new(inter)
       target = scan.execute
 
-      autopwner.autopwn inter
+      autopwner.autopwn(inter, nil, nil)#, 1, 1)
     end
   end
 
@@ -206,14 +213,49 @@ class SnortConfig
     #Snortor.export_rules("/home/bernd/fidius/snort/neue_rules")
   end
 end
-t = Thread.new do
-  while true do
-    $stdin.gets
-    begin
-      SnortConfig.print_status
-    rescue
-      puts $!.inspect
+
+def start_evaluation
+  t = Thread.new do
+    while true do
+      $stdin.gets
+      begin
+        SnortConfig.print_status
+      rescue
+        puts $!.inspect
+      end
     end
   end
+
+  SnortConfig.start
 end
-SnortConfig.start
+
+puts "#"*50
+puts "Hello, make sure you have:"
+puts " * latest version of snortor installed"
+puts " * msf with false positve auxiliaries"
+puts " * latest version of evasiondb installed"
+puts ""
+
+def what_do_do?
+  puts "What to do?"
+  puts "1) run evaluation (its endless)"
+  puts "2) print found configs"
+  puts "3) apply best config"
+end
+
+def ask_for_input
+  what_do_do?
+  cmd = gets
+  case cmd.to_i
+    when 1
+      start_evaluation
+    when 2
+      FIDIUS.connect_db
+      SnortConfig.print_status
+    when 3
+      puts "NOT IMPLEMENTED"
+    else
+      ask_for_input
+  end
+end
+ask_for_input
