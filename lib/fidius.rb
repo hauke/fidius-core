@@ -7,6 +7,7 @@ require 'active_record'
 
 # self requirements
 $LOAD_PATH.unshift File.expand_path(File.dirname __FILE__)
+BASE = File.dirname __FILE__
 require 'fidius/design_patterns/observer'
 require 'fidius/config'
 
