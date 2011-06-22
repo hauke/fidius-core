@@ -24,6 +24,7 @@ module FIDIUS
   autoload :Subnet,     'fidius/knowledge/subnet'
   autoload :Asset,      'fidius/knowledge/asset'
   autoload :Task,       'fidius/knowledge/task'
+  autoload :SnortConfig,       'fidius/knowledge/snort_config'
   autoload :UserDialog, 'fidius/knowledge/user_dialog' # XXX: knowledge?
 
   # ACTION
@@ -40,7 +41,7 @@ module FIDIUS
     autoload :Simulator,    'fidius/server/simulator.rb'
     autoload :MsfDRb, 'fidius/server/msfdrb.rb'
   end
-  
+
   #Helper
   autoload :LabHelper, 'helper/lab_helper.rb'
 
@@ -50,10 +51,9 @@ module FIDIUS
     ActiveRecord::Base.establish_connection databases[env]
   end
   module_function :connect_db
-  
+
   def disconnect_db
     ActiveRecord::Base.connection.disconnect!
   end
   module_function :disconnect_db
 end
-
