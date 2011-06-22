@@ -8,7 +8,10 @@ require 'lib/fidius'
 require 'lib/helper/fidius_db_helper'
 require 'logger'
 
+YAML::ENGINE.yamler= 'syck'
+
 $WD = Dir.pwd
+
 import File.join("#{$WD}","test","scenarios.rake")
 # getting config dir
 $CFG_D = File.join $WD, "config"
