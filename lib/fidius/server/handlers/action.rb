@@ -1,8 +1,8 @@
+# -*- coding: utf-8 -*-
 module FIDIUS
   module Server
     module Handler
       class Action < FIDIUS::Server::Handler::Base
-
 
         # TODO: gebrauchte Funktionen:
         # add_handler("action.reconnaissance") do |host_id|
@@ -18,7 +18,7 @@ module FIDIUS
           end
           rpc_method_finish
         end
-        # funktion zum angreifen eines interfaces/hosts mit einem gegebenen exploit 
+        # funktion zum angreifen eines interfaces/hosts mit einem gegebenen exploit
         # bzw als parameter exploit_id, welches AttackModule in der EvasionDB ist
         # FIDIUS::EvasionDB::AttackModule.find(exploit_id)
         #
@@ -38,7 +38,14 @@ module FIDIUS
         end
 
         def attack_service(service_id)
-          FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful #{service_id}")          
+          FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful #{service_id}")
+        end
+
+        def get_exploits_for_host(host_id)
+          host = FIDIUS::Asset::Host.find(host_id)
+          exploits = host.find_exploits_for_host
+          rpc_method_finish
+          exploits
         end
 
         def scan(iprange)
@@ -134,4 +141,4 @@ private
       end
     end
   end
-end 
+end

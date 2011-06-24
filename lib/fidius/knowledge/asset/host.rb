@@ -86,7 +86,6 @@ module FIDIUS
         self.interfaces.each do |i|
           ports.concat(i.services.map { |s| s.port }).uniq
         end
-
         FIDIUS::EvasionDB::Knowledge.find_exploits_for_services(ports)
       end
 
