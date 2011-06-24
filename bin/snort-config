@@ -13,7 +13,7 @@ module GeneticAlgorithm
     def self.seed
       data_size = SnortConfig.rule_size # Num Rules
       seed = []
-      data_size.times do 
+      data_size.times do
         seed << rand(2)
       end
       return Chromosome.new(seed)
@@ -23,12 +23,12 @@ end
 class SnortConfig
   @@config_file = File.expand_path("../../config/evasiondb.yml", __FILE__)
   @@snort_rule_directory = "/etc/snort/rules" #rules wird wohl autom. appended
-  @@exploit_target_host = "10.20.20.1"
+  @@exploit_target_hosts = ["10.20.20.1","10.20.20.70"]
   @@rule_size = 0
   cattr_accessor :rule_size
   ##
   # THIS IS A CLONE FROM exploit_picker.rb
-  ## 
+  ##
   ##########################################################
   @@SEVERITY_HIGH = "high"
   @@SEVERITY_LOW = "low"
@@ -41,9 +41,26 @@ class SnortConfig
   end
   ##########################################################
 
+  def self.print_status
+    puts "** STATUS"
+    i = 0
+    #FIDIUS::SnortConfig.find(:last, :select=>"*, (events_value/false_positives_value) as value",:order=>"value")
+    FIDIUS::SnortConfig.all(:select=>"*, (events_value/false_positives_value) as value",:order=>"value DESC").each do |c|
+      rule_size = c[:bitvector].size
+      out = "  #{i}) [#{c[:active_rules]}/#{rule_size}] Rules generated #{c[:events_count]} with value #{c[:events_value]} and #{c[:false_positives_count]} false positives with value #{c[:false_positives_value]} overall: #{self.eval_function(c[:false_positives_value], c[:events_value]).round(3)}"
+      if i == 0
+        puts "THIS SEEMS TO BE BEST: "
+        puts "  #{out}\nothers:\n"
+      else
+        puts out
+      end
+      i += 1
+    end
+    puts "** STATUS END"
+  end
+
   def self.start
     # regeln importieren
-
     @@config = YAML.load_file(@@config_file)#"/home/bernd/fidius/architecture/config/evasiondb.yml")
 
     FIDIUS.connect_db
@@ -51,18 +68,16 @@ class SnortConfig
     FIDIUS::EvasionDB.use_recoder "Msf-Recorder"
     FIDIUS::EvasionDB.use_fetcher "PreludeDB"
     FIDIUS::EvasionDB.use_rule_fetcher "Snortrule-Fetcher"
+
     begin
       FIDIUS::EvasionDB.current_rule_fetcher.import_rules
     rescue
       puts "no need to import rules, we have already rules in our db"
     end
-    #FIDIUS::EvasionDB.current_rule_fetcher.import_rules_to_snortor
-    #puts Snortor.rules.size.to_s
-    #self.export_rules
-    #return
+
     bitvector_size = FIDIUS::EvasionDB::Knowledge::IdsRule.all.size
     puts "We have #{bitvector_size} rules to analyse"
-    
+
     # test call
     rules_bitvector = Array.new(bitvector_size)
     @@rule_size = rules_bitvector.size
@@ -80,11 +95,18 @@ class SnortConfig
     puts "** SnortConfig testrun"
     FIDIUS::EvasionDB.current_rule_fetcher.import_rules_to_snortor
     # auf basis des bitvectors regeln aktivieren
-    self.set_rules(bitvector_array)
-    # export rules and 
+    active_rules = self.set_rules(bitvector_array)
+    # export rules and
     self.export_rules
     # restart snort
-    self.restart_snort
+    snort_restarted = self.restart_snort
+    unless snort_restarted
+      puts "** UNABLE TO RESTART SNORT RULESET SEEMS INVALID"
+      FIDIUS::SnortConfig.create(:bitvector=>bitvector_array.join,:active_rules=>0,:events_count=>0,
+      :events_value=>-1,:false_positives_count=>0,:false_positives_value=>-1)
+      return 1000000000
+    end
+    puts "SNORT RESTARTED: #{snort_restarted}"
     # begin recording idmef-events
     FIDIUS::EvasionDB.current_fetcher.begin_record
     # run exploits
@@ -98,24 +120,55 @@ class SnortConfig
       event_value += self.severity_value(event)
     end
     puts "** #{events.size} events with value of #{event_value}"
-    return event_value
 
+
+    # run false positive auxiliaries
+    FIDIUS::EvasionDB.current_fetcher.begin_record
+    @@exploit_target_hosts.each do |target_host_ip|
+      opts = {}
+      opts['RHOST'] = target_host_ip
+      ["exploit_jmpcall_additive_encoder","web_server_exploit_suspected_php","netbios_share_access"].each do |a|
+        puts "running #{a}"
+        FIDIUS::Action::Msf.instance.run_auxiliary("auxiliary/ids/false_positive/#{a}", opts, false)
+      end
+
+    end
+    false_positive_events = FIDIUS::EvasionDB.current_fetcher.fetch_events
+    false_positive_value = 0
+    false_positive_events.each do |event|
+      puts event.inspect
+      false_positive_value += self.severity_value(event)
+    end
+
+    puts "STORE CONFIG LOG bitvector count:#{bitvector_array.size} bitvector join count: #{bitvector_array.join.size}"
+
+    FIDIUS::SnortConfig.create(:bitvector=>bitvector_array.join,:active_rules=>active_rules,:events_count=>events.size,
+      :events_value=>event_value,:false_positives_count=>false_positive_events.size,:false_positives_value=>false_positive_value)
+
+    return self.eval_function(false_positive_value, event_value)
+  end
+
+  def self.eval_function(false_positive_value, events_value)
+    if false_positive_value == 0
+      return events_value
+    else
+      return (events_value.to_f/false_positive_value.to_f).to_f
+    end
   end
 
   def self.run_autopwn
     puts "** run autopwn"
-    autopwner = FIDIUS::Action::Exploit::Exploit.instance
-      
-    host = FIDIUS::Asset::Host.new
-    host.interfaces << FIDIUS::Asset::Interface.new(:ip => @@exploit_target_host)
+    @@exploit_target_hosts.each do |target_host_ip|
+      autopwner = FIDIUS::Action::Exploit::Exploit.instance
+      host = FIDIUS::Asset::Host.new
+      host.interfaces << FIDIUS::Asset::Interface.new(:ip => target_host_ip)
+      inter = host.interfaces.first
+      host.save
+      scan = FIDIUS::Action::Scan::PortScan.new(inter)
+      target = scan.execute
 
-    inter = host.interfaces.first
-    host.save
-
-    scan = FIDIUS::Action::Scan::PortScan.new(inter)
-    target = scan.execute
-    
-    result = autopwner.autopwn inter  
+      autopwner.autopwn(inter, nil, nil)#, 1, 1)
+    end
   end
 
   def self.set_rules(bitvector_array)
@@ -130,12 +183,18 @@ class SnortConfig
       end
     end
     puts "** we have #{active_rules} rules activated"
+    return active_rules
   end
   def self.restart_snort
     puts "** restarting snort"
+    restart_ok = true
     Net::SSH.start(@@config["snort-fetcher"]["ssh_host"], @@config["snort-fetcher"]["ssh_user"], :password => @@config["snort-fetcher"]["ssh_pw"]) do |ssh|
-      ssh.exec "/etc/init.d/snort restart"
+      res = ssh.exec "/etc/init.d/snort restart" do|ch, stream, data|
+        #puts "Got this on the #{stream} stream: "
+        restart_ok = false if data["failed"]
+      end
     end
+    return restart_ok
   end
 
   def self.export_rules
@@ -151,8 +210,52 @@ class SnortConfig
     remote_path = "/etc/snort"
     a = {:host=>@@config["snort-fetcher"]["ssh_host"],:user=>@@config["snort-fetcher"]["ssh_user"],:password=>@@config["snort-fetcher"]["ssh_pw"],:remote_path=>remote_path,:local_path=>local_path}
     Snortor.export_rules(a)
-    #Snortor.export_rules("/home/bernd/fidius/snort/neue_rules")    
+    #Snortor.export_rules("/home/bernd/fidius/snort/neue_rules")
   end
 end
 
-SnortConfig.start
+def start_evaluation
+  t = Thread.new do
+    while true do
+      $stdin.gets
+      begin
+        SnortConfig.print_status
+      rescue
+        puts $!.inspect
+      end
+    end
+  end
+
+  SnortConfig.start
+end
+
+puts "#"*50
+puts "Hello, make sure you have:"
+puts " * latest version of snortor installed"
+puts " * msf with false positve auxiliaries"
+puts " * latest version of evasiondb installed"
+puts ""
+
+def what_do_do?
+  puts "What to do?"
+  puts "1) run evaluation (its endless)"
+  puts "2) print found configs"
+  puts "3) apply best config"
+end
+
+def ask_for_input
+  what_do_do?
+  cmd = gets
+  case cmd.to_i
+    when 1
+      start_evaluation
+    when 2
+      FIDIUS.connect_db
+      SnortConfig.print_status
+    when 3
+      puts "NOT IMPLEMENTED"
+    else
+      ask_for_input
+  end
+end
+ask_for_input
