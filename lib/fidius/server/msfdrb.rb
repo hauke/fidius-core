@@ -71,8 +71,8 @@ module FIDIUS
             "ok" != sub.status
           rescue
             puts "can not send message to drb client and remove it"
+            true
           end
-          true
         end
       end
 
