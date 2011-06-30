@@ -114,6 +114,14 @@ module FIDIUS
       def remove_auxiliary_report_listener listener
         daemon.remove_auxiliary_report_listener listener
       end
+      
+      def add_session_listener listener
+        daemon.register_session_handler listener
+      end
+
+      def remove_session_listener listener
+        daemon.unregister_session_handler listener
+      end
 
       # Returns the Metasploit framework DRb wrapper. Useful for debugging.
       #

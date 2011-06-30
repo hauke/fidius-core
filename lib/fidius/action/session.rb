@@ -28,6 +28,10 @@ module FIDIUS
         end
       end
 
+      def status
+        "ok"
+      end
+
     end # class SessionEvent
 
     class Session
@@ -81,13 +85,14 @@ module FIDIUS
         end
       end
 
-      def self.register_session_handler framework
+      def self.register_session_handler deamon
+        puts "def self.register_session_handler framework"
         @handler ||= FIDIUS::Action::SessionEvent.new
-        framework.events.add_session_subscriber(@handler)
+        deamon.add_session_listener @handler
       end
 
-      def self.deregister_session_handler framework
-        framework.events.remove_session_subscriber(@handler)
+      def self.deregister_session_handler deamon
+        deamon.remove_session_listener @handler
       end
 
       def self.add_existing_sessions framework

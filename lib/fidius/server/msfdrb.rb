@@ -34,6 +34,50 @@ end
 
 module FIDIUS
   module Server
+
+    class SessionDispatcher
+ 
+      def initialize
+        @session_listener = []
+      end
+   
+      def register_session_handler listener
+        cleanup
+        @session_listener << listener
+      end
+
+      def unregister_session_handler listener
+        @session_listener.delete listener
+      end
+
+      def on_session_open(session)
+        cleanup
+        @session_listener.each do |sub|
+          sub.on_session_open(session)
+        end
+      end
+
+      def on_session_close(session, reason='')
+        cleanup
+        @session_listener.each do |sub|
+          sub.on_session_close(session, reason)
+        end
+      end
+
+      def cleanup
+        puts "cleanup"
+        @session_listener.delete_if do |sub|
+          begin
+            "ok" != sub.status
+          rescue
+            puts "can not send message to drb client and remove it"
+          end
+          true
+        end
+      end
+
+    end # class SessionListener
+
     class ReportDispatcher
       include Singleton
 
@@ -55,7 +99,7 @@ module FIDIUS
           listener.report_host(calledClass, opts)
         end
       end
-      
+   
       def report_service(calledClass, opts)
         @report_listener.each do |listener|
           next unless listener.respond_to?("report_service")
@@ -74,6 +118,8 @@ module FIDIUS
         @framework = create_framework
         @plugin_basepath = File.expand_path('../../../../lib/msf_plugins/', __FILE__)
         @modules = {}
+        @sessionDispatcher = SessionDispatcher.new
+        @framework.events.add_session_subscriber @sessionDispatcher
       end
 
       class << self
@@ -149,6 +195,14 @@ module FIDIUS
       # through a meterpreter session.
       def get_switch_board
         Rex::Socket::SwitchBoard.instance
+      end
+
+      def add_session_listener listener
+        @sessionDispatcher.register_session_handler listener
+      end
+
+      def remove_session_listener listener
+        @sessionDispatcher.unregister_session_handler listener
       end
 
       def add_auxiliary_report_listener listener
