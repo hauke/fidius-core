@@ -3,12 +3,12 @@ module FIDIUS
 
 # TODO: add ipv6
 # TODO: add windows support
-# TODO: fix mac support
     def self.addLocalAddresses
       os = IO.popen('uname'){ |f| f.readlines[0] }
       name = IO.popen('hostname'){ |f| f.readlines[0] }
       arch = IO.popen('uname -m'){ |f| f.readlines[0] }
       addres = get_interfaces4
+      
       FIDIUS.connect_db
       host = nil
       addres.each do |mac, addr, bcast, mask|
@@ -32,6 +32,7 @@ module FIDIUS
 
     def self.get_interfaces4
       # require 'rbconfig'; Config::CONFIG['host_os'] =~ /linux/ bzw. /mswin|mingw/ /darwin/ 
+      return_array = []
       os = IO.popen('uname'){ |f| f.readlines[0] }
       if os.strip.downcase == "linux" || os.strip.downcase == "darwin"
         if File.exists?('/sbin/ifconfig')
@@ -45,14 +46,24 @@ module FIDIUS
         else
           ifconfig = IO.popen([{"LANG" => "C"}, cmd.strip]){ |f| f.readlines.join }
         end
-
-        return ifconfig.scan(/(?:HWaddr ([a-f0-9:]*)?)?\s*inet addr:([0-9\.]*)\s*(?:Bcast:([0-9\.]*)\s*?)?Mask:([0-9\.]*)/)
+          if os.strip.downcase == "darwin"
+            tmp_ary = ifconfig.scan(/ether\s([a-f0-9:]*)[\s\w:%]*inet\s([0-9\.]*)\s*netmask\s(0x[a-f0-9]*)\s*broadcast\s([0-9\.]*)/)
+            tmp_ary.each {|mac, addr, mask, bcast|
+              return_array<<[mac,addr,bcast,hex_to_ip(mask)]
+            }
+          else
+            return_array = ifconfig.scan(/(?:HWaddr ([a-f0-9:]*)?)?\s*inet addr:([0-9\.]*)\s*(?:Bcast:([0-9\.]*)\s*?)?Mask:([0-9\.]*)/)
+          end
         #TODO: IPv6: ifconfig.scan(/inet6 addr: ([0-9a-f:]*)\/([0-9]{1,2})/)
         #ip.inspect.scan(/\/([a-f0-9\.\:]*)>/).flatten
       end
-      return []
+      return return_array;
     end
     
+    def self.hex_to_ip hex
+      hex = hex.sub("0x",'')
+      hex.scan(/../).map {|i| i.to_i(16)}.join(".")
+    end
     def self.initializePrelude
       return unless FIDIUS.config['prelude'] and FIDIUS.config['prelude']['host']
       FIDIUS.connect_db
