@@ -12,8 +12,8 @@ module FIDIUS
 
     def == other
       return false unless other
-      return false unless other.port != port
-      return false unless other.proto != proto
+      return false if other.port != port
+      return false if other.proto != proto
       return true
     end
   

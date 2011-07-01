@@ -10,14 +10,43 @@ module FIDIUS
           raise "NOT IMPLEMENTED"
         end
 
-        def single_exploit(host_id, exploit_id)
+        def single_exploit_host(host_id, exploit_id)
           host = FIDIUS::Asset::Host.find(host_id)
           host.interfaces.each do |inter|
             s = FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(inter.id, exploit_id)
-            return if s
+            if s
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
+              return
+            else
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
+            end
           end
           rpc_method_finish
         end
+
+        def single_exploit_interface(interface_id, exploit_id)
+          inter = FIDIUS::Asset::Interface.find(interface_id)
+          s = FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(inter.id, exploit_id)
+          if s
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
+            return
+          else
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
+          end
+          rpc_method_finish
+        end
+
+        def single_exploit_service(service_id, exploit_id)
+          s = FIDIUS::Action::Exploit::Exploit.exploit_service_with_picked_exploit(service_id, exploit_id)
+          if s
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
+            return
+          else
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
+          end
+          rpc_method_finish
+        end
+
         # funktion zum angreifen eines interfaces/hosts mit einem gegebenen exploit
         # bzw als parameter exploit_id, welches AttackModule in der EvasionDB ist
         # FIDIUS::EvasionDB::AttackModule.find(exploit_id)
@@ -31,14 +60,17 @@ module FIDIUS
           rpc_method_finish
         end
 
+        def attack_service(service_id)
+          exploiter = FIDIUS::Action::Exploit::Exploit.instance
+          result = exploiter.service_autopwn service_id
+          #FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful #{service_id}")
+          rpc_method_finish
+        end
+
         def attack_interface(interface_id)
           interface = FIDIUS::Asset::Interface.find(interface_id)
           attack_interface_priv(interface)
           rpc_method_finish
-        end
-
-        def attack_service(service_id)
-          FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful #{service_id}")
         end
 
         def get_exploits_for_host(host_id)
@@ -130,13 +162,13 @@ private
             task.update_progress 30
 
             result = exploiter.autopwn interface
-            p "exploit result: #{result}"
             if interface.host.exploited?
               FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
             else
               FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
             end
           end
+
         end
       end
     end
