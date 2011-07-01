@@ -28,16 +28,18 @@ def vm_start vm
     end
 end
 
-def run_with_vm vm_key, &block
+def run_with_vm vm_key_list, &block
   FIDIUS::Action::Msf.instance.daemon.load_plugin "lab_api"
   msf = FIDIUS::Action::Msf.instance.framework
   msf.lab_api.lab_load FIDIUS.config[:tests][:lab_config]  if FIDIUS.config[:tests]
-  vm = FIDIUS.config[:tests][vm_key]  if FIDIUS.config[:tests]
-  if vm
-    vm_revert vm
-    vm_start vm
-    yield
-  else
-    puts "VM not defined"
+  vm_key_list.each do |vm_key|
+    vm = FIDIUS.config[:tests][vm_key]  if FIDIUS.config[:tests]
+    if vm
+      vm_revert vm
+      vm_start vm
+      yield
+    else
+      puts "VM not defined"
+    end
   end
 end

@@ -40,3 +40,8 @@ prelude:
     :ip: 127.0.0.1
     :waittime: 10
     :default_snapshot: default_snapshot 
+  :xp_vm_pivot:
+    :lab_name: VM_ID
+    :ip: 127.0.0.1
+    :waittime: 10
+    :default_snapshot: default_snapshot 
