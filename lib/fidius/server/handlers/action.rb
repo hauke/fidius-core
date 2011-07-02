@@ -14,7 +14,7 @@ module FIDIUS
           host = FIDIUS::Asset::Host.find(host_id)
           host.interfaces.each do |inter|
             s = FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(inter.id, exploit_id)
-            if s
+            if host.exploited?
               FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
               return
             else
@@ -27,7 +27,7 @@ module FIDIUS
         def single_exploit_interface(interface_id, exploit_id)
           inter = FIDIUS::Asset::Interface.find(interface_id)
           s = FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(inter.id, exploit_id)
-          if s
+          if inter.host.exploited?
             FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
             return
           else
@@ -37,8 +37,9 @@ module FIDIUS
         end
 
         def single_exploit_service(service_id, exploit_id)
+          service = FIDIUS::Service.find(service_id)
           s = FIDIUS::Action::Exploit::Exploit.exploit_service_with_picked_exploit(service_id, exploit_id)
-          if s
+          if service.interface.host.exploited?
             FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
             return
           else
@@ -55,15 +56,36 @@ module FIDIUS
         # TODO: das dieses alle interface probiert
         def attack_host(host_id)
           host = FIDIUS::Asset::Host.find(host_id)
-          interface = host.interfaces.first
-          attack_interface_priv(interface)
+          exploiter = FIDIUS::Action::Exploit::Exploit.instance
+          FIDIUS::Server::TaskManager.new_task "Attack #{host.name}" do |task|
+            task.update_progress 30
+            host.interfaces.each { |interface|
+              result = exploiter.autopwn interface
+              if host.exploited?
+                
+                break
+              end
+            }
+            if host.exploited?
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
+            else
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
+            end
+          end
           rpc_method_finish
         end
 
         def attack_service(service_id)
-          exploiter = FIDIUS::Action::Exploit::Exploit.instance
-          result = exploiter.service_autopwn service_id
-          #FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful #{service_id}")
+          service = FIDIUS::Service.find(service_id)
+          FIDIUS::Server::TaskManager.new_task "Attack #{service.interface.host.name}" do |task|
+            exploiter = FIDIUS::Action::Exploit::Exploit.instance
+            result = exploiter.service_autopwn service_id            
+            if service.interface.host.exploited?
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
+            else
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
+            end
+          end
           rpc_method_finish
         end
 
@@ -168,8 +190,8 @@ private
               FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
             end
           end
-
         end
+
       end
     end
   end
