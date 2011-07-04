@@ -53,13 +53,19 @@ def find_service_by_name name
 end
 
 def build_instance_from_csv(line, host)
+  # Build host + Interface
   host = FIDIUS::Asset::Host.find_or_create_by_ip host
   interface = host.find_or_create_by_ip host
+  
+  # split csv line
   values = line.split(",")
   for i in (0 .. values.length)
+    # for each running service
     if values[i].to_i == 1
+      # find by port number
       name =  @service_name[i]
       service = find_service_by_name name
+      
       if service != nil
         puts service["name"]
         interface.services << FIDIUS::Service.create(service)

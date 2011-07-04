@@ -59,7 +59,7 @@ module FIDIUS
             @open_list.push(i, prediction)
           end
         end
-        return @open_list.pop
+        # return @open_list.pop
       end
       
       # call with array of instances for training and #operations
