@@ -5,6 +5,8 @@ module FIDIUS
     class Predictor
       include Ai4r
 
+      attr_accessor :ann
+
       # dim: #known_services, num_layers: user specified (10)
       def initialize dim, num_layers
         @training_set = []
