@@ -135,6 +135,7 @@ module FIDIUS
       def startup
         FIDIUS.connect_db
         FIDIUS::Action::Msf.instance.start
+        FIDIUS::MachineLearning::AgendManager.instance
       end
 
       def teardown
@@ -154,6 +155,7 @@ module FIDIUS
         add_handler("meta",FIDIUS::Server::Handler::Meta.new)
         add_handler("model",FIDIUS::Server::Handler::Model.new)
         add_handler("action",FIDIUS::Server::Handler::Action.new)
+        add_handler("decision",FIDIUS::Server::Handler::Decision.new)
 
         set_default_handler do |name, *args|
           raise XMLRPC::FaultException.new(-99,

@@ -5,6 +5,8 @@ module FIDIUS
   include FIDIUS::Action::Scan
   
   module MachineLearning
+    autoload :AgendManager,	'fidius/decision/agent/agent_manager'
+
     include Containers
     include Ai4r
 
