@@ -40,6 +40,6 @@ class AgentTest < FIDIUS::Test
 
     # Choose next
     dec = agent.decision([h3,h4])
-    assert_not_equal nil, dec.ip
+    
   end
 end
