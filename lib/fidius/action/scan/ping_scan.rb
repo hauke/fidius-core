@@ -22,7 +22,7 @@ module FIDIUS
         end
 
         def create_arg tmpfile
-          args = ["-sP", @target]
+          args = ["-sP", @target, "--host-timeout", "20000000"]
           args.push('-oX', tmpfile)
         end
 
