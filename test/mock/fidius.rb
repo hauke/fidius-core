@@ -62,12 +62,12 @@ private
         def run_nmap fd
           args = create_arg(fd.path).join(' ')
           if args.include?("-sP")
-            ip = args.scan(/-sP ([0-9\.\/]*) -oX/).flatten[0].gsub("\/", "-")
+            ip = args.scan(/-sP ([0-9\.\/]*) -/).flatten[0].gsub("\/", "-")
             filename = @@filename_ping
             filename ||= File.join(File.expand_path(File.dirname(__FILE__)), '..', 'functional', 'data', "nmap-ping-scan-#{ip}.xml")
           end
           if args.include?("-sV")
-            ip = args.scan(/-sV ([0-9\.]*) -oX/).flatten[0]
+            ip = args.scan(/-sV ([0-9\.]*) -/).flatten[0]
             filename = @@filename_port
             filename ||= File.join(File.expand_path(File.dirname(__FILE__)), '..', 'functional', 'data', "nmap-port-scan-#{ip}.xml")
           end
