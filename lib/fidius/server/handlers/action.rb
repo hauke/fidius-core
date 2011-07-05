@@ -125,6 +125,7 @@ module FIDIUS
                 scan = FIDIUS::Action::Scan::PortScan.new(interface)
 
                 target = scan.execute
+                FIDIUS::MachineLearning::AgendManager.instance.agent.decision [h]
                 # TODO: not services returned ???
                 task.add_progress progress_step
               end
