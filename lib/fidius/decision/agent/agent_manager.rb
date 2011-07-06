@@ -48,7 +48,7 @@ module FIDIUS
       def fill_with_database
         instances = []
         FIDIUS::Asset::Host.all.each do |host| 
-          instances << host unless host.localhost
+          instances << host unless host.localhost or host.ids
         end
         @agent.decision instances
       end
