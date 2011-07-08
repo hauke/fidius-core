@@ -59,6 +59,7 @@ class XMLServerTest < FIDIUS::Test
     assert h
     result = xmlrpc.call("decision.next_host")
     interface = result.scan(/<i4>(.*)<\/i4>/).flatten[0]
-    assert_equal "192.168.56.101", FIDIUS::Asset::Interface.find_by_id(interface).ip
+    ip = FIDIUS::Asset::Interface.find_by_id(interface).ip
+    assert (ip == "192.168.56.101" || ip == "192.168.56.101")
   end
 end
