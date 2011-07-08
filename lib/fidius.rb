@@ -35,6 +35,7 @@ module FIDIUS
   autoload :MachineLearning,	'fidius/decision/agent/machine_learning'
   autoload :Planner,		'fidius/decision/planning/planner'
   autoload :GeneticAlgorithm,	'fidius/decision/genetic_algorithm/genetic_algorithm'
+  autoload :ExploitPicker,	'fidius/decision/exploit_picker/exploit_picker'
 
   # Server
   module Server

@@ -14,6 +14,12 @@ module FIDIUS
           ""
         end
 
+        def pick_exploit interface_id, blacklist = nil
+          inter = FIDIUS::Asset::Interface.find(interface_id)
+          result = FIDIUS::ExploitPicker::exploit_for_interface inter, blacklist
+          return result.name if result
+          return ""
+        end
       end
     end
   end
