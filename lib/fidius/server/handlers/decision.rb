@@ -5,7 +5,8 @@ module FIDIUS
         
         def next_host
           result = FIDIUS::MachineLearning::AgendManager.instance.agent.next
-          result.id
+          return result.id if result
+          return -1
         end
 
       end
