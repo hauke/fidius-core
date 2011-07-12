@@ -93,6 +93,51 @@ module FIDIUS
           rpc_method_finish
         end
 
+        def attack_ai_host(host_id)
+          host = FIDIUS::Asset::Host.find(host_id)
+          FIDIUS::Server::TaskManager.new_task "Attack #{host.name}" do |task|
+            host.interfaces.each do |interface|
+              result = attack_ai_interface_priv(interface)
+              next unless result
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on #{host.name}")
+              return
+            end
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on #{host.name}")
+          end
+          rpc_method_finish
+        end
+
+        def attack_ai_service(service_id)
+          service = FIDIUS::Service.find(service_id)
+          FIDIUS::Server::TaskManager.new_task "Attack #{service.interface.host.name}" do |task|
+          begin
+            result = attack_ai_service_priv(service)
+            if result
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Service #{service.name} (#{service.interface.host.name})")
+            else
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Service #{service.name} (#{service.interface.host.name})")
+            end
+            rescue
+            p $!
+            p $!.backtrace
+            end
+          end
+          rpc_method_finish
+        end
+
+        def attack_ai_interface(interface_id)
+          interface = FIDIUS::Asset::Interface.find(interface_id)
+          FIDIUS::Server::TaskManager.new_task "Attack #{interface.host.name}" do |task|
+            result = attack_ai_interface_priv(interface)
+            if result
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on (#{interface.host.name})")
+            else
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful (#{interface.host.name})")
+            end
+          end
+          rpc_method_finish
+        end
+
         def get_exploits_for_host(host_id)
           host = FIDIUS::Asset::Host.find(host_id)
           exploits = host.find_exploits_for_host
@@ -189,6 +234,35 @@ private
               FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Interface #{interface.ip} (#{interface.host.name})")
             end
           end
+        end
+        
+        def attack_ai_interface_priv(interface)
+          blacklist = []
+          while true do
+            exploit = FIDIUS::ExploitPicker::exploit_for_interface interface, blacklist
+            blacklist << exploit
+            break unless exploit
+            result = FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(interface.id, exploit.id)
+            if result or !interface.host.sessions.empty?
+              return true
+            end
+          end
+          return false
+        end
+
+        def attack_ai_service_priv(service)
+          blacklist = []
+          while true do
+            exploit = FIDIUS::ExploitPicker::exploit_for_service service, blacklist
+            puts "using exploit #{exploit.name}"
+            blacklist << exploit
+            break unless exploit
+            result = FIDIUS::Action::Exploit::Exploit.exploit_service_with_picked_exploit(service.id, exploit.id)
+            if result or !service.interface.host.sessions.empty?
+              return true
+            end
+          end
+          return false
         end
 
       end
