@@ -4,6 +4,7 @@ module FIDIUS
 
     class Host < ActiveRecord::Base
       has_many :interfaces, :class_name => "FIDIUS::Asset::Interface"
+      has_many :services, :through => :interfaces
       has_many :sessions, :class_name => "FIDIUS::Session"
 
       @@IPv6_DELIM = ':'
