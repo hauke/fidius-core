@@ -7,6 +7,7 @@ module FIDIUS
       # Called when a session is opened.
       #
       def on_session_open(session)
+        puts "got new session #{session.name.to_s}"
         begin
           FIDIUS::Action::Session.add_session_to_db session
           FIDIUS::Action::PostExploit::autorun session
@@ -20,6 +21,7 @@ module FIDIUS
       # Called when a session is closed.
       #
       def on_session_close(session, reason='')
+        puts "Session died #{session.name.to_s} because of #{reason}"
         begin
           FIDIUS::Action::Session.remove_session_from_db session
         rescue
@@ -57,7 +59,6 @@ module FIDIUS
       end
       
       def self.remove_session_from_db session
-        puts "Session died #{session.name.to_s}"
         rhost_addr = FIDIUS::Action::Session.get_rhost session
         host = FIDIUS::Asset::Host.find_or_create_by_ip(rhost_addr)
         host.pivot_host_id = nil
@@ -100,6 +101,7 @@ module FIDIUS
       def self.add_existing_sessions framework
         FIDIUS::Session.delete_all
         framework.sessions.each do | key, session |
+          puts "got new session #{session.name.to_s}"
           begin
             FIDIUS::Action::Session.add_session_to_db session
             FIDIUS::Action::PostExploit::autorun session
