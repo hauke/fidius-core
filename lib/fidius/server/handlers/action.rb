@@ -59,8 +59,7 @@ module FIDIUS
             task.update_progress 30
             host.interfaces.each { |interface|
               result = exploiter.autopwn interface
-              if host.exploited?
-                
+              if host.exploited?                
                 break
               end
             }
