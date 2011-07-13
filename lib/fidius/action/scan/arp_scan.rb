@@ -1,3 +1,5 @@
+require 'netaddr'
+
 module FIDIUS
   module Action
     module Scan
@@ -42,10 +44,11 @@ module FIDIUS
         end
 
         def execute_msf session
+          target = NetAddr::CIDR.create(@target).to_s
           result = []
           listener = AuxiliaryReportListener.new result
           FIDIUS::Action::Msf.instance.add_auxiliary_report_listener listener
-          options = {'RHOSTS' => @target, 'SESSION' => session.name, 'THREADS' => 10}
+          options = {'RHOSTS' => target, 'SESSION' => session.name, 'THREADS' => 10}
           FIDIUS::Action::Msf.instance.run_auxiliary("windows/gather/arp_scanner", options, false)
           FIDIUS::Action::Msf.instance.remove_auxiliary_report_listener listener
           return result

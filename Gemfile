@@ -28,5 +28,6 @@ gem 'activesupport', '~>3.0.6'
 gem 'amfranz-ci_reporter', '~>1.6.2'
 gem 'test-unit', '~>2.3.0'
 gem 'fidius-evasiondb', '>= 0.0.1'
+gem 'netaddr', '~>1.5.0'
 gem 'daemons'
 
