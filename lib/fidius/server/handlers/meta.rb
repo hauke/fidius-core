@@ -41,16 +41,19 @@ module FIDIUS
           result
         end
 
+        def exec_msf_command(cmd)
+          FIDIUS::Action::Msf.instance.daemon.exec_msf_command cmd
+        end
+
         def new_pentest
           FIDIUS::Asset::Host.all.each {|h| h.destroy}
           FIDIUS::Asset::Interface.all.each {|i| i.destroy}
-          FIDIUS::Service.all.each {|se| se.destroy}  
+          FIDIUS::Service.all.each {|se| se.destroy}
           FIDIUS::Task.all.each {|t| t.destroy}
           FIDIUS::UserDialogs.each {|u| u.destroy}
-          FIDIUS::Action::Session.close_all_sessions 
+          FIDIUS::Action::Session.close_all_sessions
         end
-
       end
     end
   end
-end 
+end

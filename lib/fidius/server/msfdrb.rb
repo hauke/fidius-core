@@ -36,11 +36,11 @@ module FIDIUS
   module Server
 
     class SessionDispatcher
- 
+
       def initialize
         @session_listener = []
       end
-   
+
       def register_session_handler listener
         cleanup
         @session_listener << listener
@@ -99,7 +99,7 @@ module FIDIUS
           listener.report_host(calledClass, opts)
         end
       end
-   
+
       def report_service(calledClass, opts)
         @report_listener.each do |listener|
           next unless listener.respond_to?("report_service")
@@ -120,6 +120,19 @@ module FIDIUS
         @modules = {}
         @sessionDispatcher = SessionDispatcher.new
         @framework.events.add_session_subscriber @sessionDispatcher
+
+        # these includes are needed for exec_msf_command
+        # dont' know, why they are not automatically loaded
+        require 'rex/io/bidirectional_pipe'
+        require 'msf/ui/console'
+        require 'msf/ui/web/console'
+
+        require 'rex/ui'
+        require 'rex/ui/text/input'
+        require 'rex/ui/text/output'
+        require 'rex/ui/text/output/buffer'
+
+        puts Rex::Ui::Text::Input::Readline
       end
 
       class << self
@@ -222,9 +235,39 @@ module FIDIUS
         "running"
       end
 
+      def exec_msf_command(cmd)
+        unless @console
+          @console = Msf::Ui::Web::WebConsole.new(@framework,1)
+        end
+
+        @console.execute(cmd)
+        @console.read+@console.prompt
+      end
+
+      def exec_session_cmd cmd, session_uuid
+        input = Rex::Ui::Text::Input::Readline.new
+        output = Rex::Ui::Text::Output::Buffer.new
+
+        session = get_session_by_uuid @framework.sessions, session_uuid
+        # FIXME this line is causing an error:
+        # DRb::DRbUnknownError: Rex::Ui::
+        session.init_ui(input,output)
+
+        session.run_cmd(cmd)
+        return session.console.output.dump_buffer
+      end
+
     private
       def method_missing(method, *args, &block)
         @framework.send(method, *args, &block)
+      end
+
+      def get_session_by_uuid sessions, uuid
+        sessions.each_sorted do |s|
+          if session = sessions.get(s)
+            return session if session.uuid == uuid
+          end
+        end
       end
 
       def create_framework
