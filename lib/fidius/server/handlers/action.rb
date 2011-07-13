@@ -12,8 +12,9 @@ module FIDIUS
 
         def single_exploit_host(host_id, exploit_id)
           host = FIDIUS::Asset::Host.find(host_id)
+          exploiter = FIDIUS::Action::Exploit::Exploit.instance
           host.interfaces.each do |inter|
-            s = FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(inter.id, exploit_id)
+            s = exploiter.exploit_interface_with_picked_exploit(inter.id, exploit_id)
             if host.exploited?
               FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on #{host.name}")
               return
@@ -26,7 +27,8 @@ module FIDIUS
 
         def single_exploit_interface(interface_id, exploit_id)
           inter = FIDIUS::Asset::Interface.find(interface_id)
-          s = FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(inter.id, exploit_id)
+          exploiter = FIDIUS::Action::Exploit::Exploit.instance
+          s = exploiter.exploit_interface_with_picked_exploit(inter.id, exploit_id)
           if inter.host.exploited?
             FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Interface #{inter.ip} (#{inter.host.name})")
           else
@@ -37,7 +39,8 @@ module FIDIUS
 
         def single_exploit_service(service_id, exploit_id)
           service = FIDIUS::Service.find(service_id)
-          s = FIDIUS::Action::Exploit::Exploit.exploit_service_with_picked_exploit(service_id, exploit_id)
+          exploiter = FIDIUS::Action::Exploit::Exploit.instance
+          s = exploiter.exploit_service_with_picked_exploit(service_id, exploit_id)
           if service.interface.host.exploited?
             FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Service #{service.name} (#{service.interface.host.name})")
             return
