@@ -49,6 +49,8 @@ module FIDIUS
         session_db.name = session.name
         session_db.exploit = session.via_exploit
         session_db.payload = session.via_payload
+        exploited_service = host.services.select{|s| s.port.to_s == session.exploit_datastore['RPORT'].to_s}
+        session_db.service_id = exploited_service.first.id
         host.sessions << session_db
         session_db.save
         host.save
