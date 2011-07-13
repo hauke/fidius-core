@@ -50,9 +50,11 @@ module FIDIUS
           FIDIUS::Asset::Interface.all.each {|i| i.destroy}
           FIDIUS::Service.all.each {|se| se.destroy}
           FIDIUS::Task.all.each {|t| t.destroy}
-          FIDIUS::UserDialogs.each {|u| u.destroy}
+          FIDIUS::UserDialog.all.each {|u| u.destroy}
           FIDIUS::Action::Session.close_all_sessions
           FIDIUS::AssetInitialiser.addLocalAddresses
+          FIDIUS::UserDialog.create_dialog("Completed","Database cleaned up")
+          rpc_method_finish
         end
       end
     end
