@@ -7,11 +7,11 @@ module FIDIUS
       os = IO.popen('uname'){ |f| f.readlines[0] }
       name = IO.popen('hostname'){ |f| f.readlines[0] }
       arch = IO.popen('uname -m'){ |f| f.readlines[0] }
-      addres = get_interfaces4
+      address = get_interfaces4
       
       FIDIUS.connect_db
       host = nil
-      addres.each do |mac, addr, bcast, mask|
+      address.each do |mac, addr, bcast, mask|
         next if addr == "127.0.0.1"
         unless host
           host = FIDIUS::Asset::Host.find_or_create_by_ip_and_mac(addr, mac)
@@ -27,6 +27,23 @@ module FIDIUS
         interface.ip_ver = 4
         interface.save
       end
+      
+      unless address.length > 0 && host
+        dummy_ip = "127.0.0.1"
+        dummy_mac = "00:11:22:33:44:55"
+        host = FIDIUS::Asset::Host.find_or_create_by_ip_and_mac(dummy_ip, dummy_mac)
+        host.localhost = true;
+        host.os_name = "windows";
+        host.name = "dummy";
+        host.arch = "x86";
+        host.save
+        
+        interface = host.find_or_create_by_ip_and_mac dummy_ip, dummy_mac
+        interface.ip_mask = "255.0.0.0"
+        interface.ip_ver = 4
+        interface.save
+      end
+      
       FIDIUS.disconnect_db
     end
 
