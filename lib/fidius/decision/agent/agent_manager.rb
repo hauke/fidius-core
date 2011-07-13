@@ -28,7 +28,22 @@ module FIDIUS
                         ]
 
         @services = FIDIUS::MachineLearning::known_services()
+        reset
+      end
 
+      def fill_with_database
+        instances = []
+        FIDIUS::Asset::Host.all.each do |host|
+          instances << host unless host.localhost or host.ids
+        end
+        @agent.decision instances
+      end
+
+      def agent
+        @agent
+      end
+
+      def reset
         training_file = "#{File.dirname(File.absolute_path __FILE__)}/nmap.dat" #TODO: add config option for this
         iter = 10 #TODO: add config option for this
         @agent = FIDIUS::MachineLearning::Agent.new
@@ -43,18 +58,6 @@ module FIDIUS
 
         @agent.train instances, iter
         fill_with_database
-      end
-
-      def fill_with_database
-        instances = []
-        FIDIUS::Asset::Host.all.each do |host| 
-          instances << host unless host.localhost or host.ids
-        end
-        @agent.decision instances
-      end
-
-      def agent
-        @agent
       end
 
       def find_service_by_name name
@@ -82,12 +85,10 @@ module FIDIUS
             service = find_service_by_name name
 
             if service != nil
-              puts service["name"]
               interface.services << FIDIUS::Service.new(service)
             end
           end
         end
-        puts "RATING: #{values.last.to_i}"
         host.rating = values.last.to_i
         host
         return Instance.new(host, values.last.to_i)

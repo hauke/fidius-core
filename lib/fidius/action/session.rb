@@ -108,6 +108,19 @@ module FIDIUS
         end
       end
 
+      def self.close_all_sessions
+        FIDIUS::Session.delete_all
+        framework = FIDIUS::Action::Msf.instance.framework
+        framework.sessions.each do | key, session |
+          begin
+            session.kill
+          rescue
+            puts "An error occurred while killing sessions #{$!.inspect} #{session}"
+            puts $!.backtrace
+          end
+        end
+      end
+
     end # class Session
   end # module Action
 end # module FIDIUS
