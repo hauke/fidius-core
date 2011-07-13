@@ -112,16 +112,11 @@ module FIDIUS
         def attack_ai_service(service_id)
           service = FIDIUS::Service.find(service_id)
           FIDIUS::Server::TaskManager.new_task "Attack #{service.interface.host.name}" do |task|
-          begin
             result = attack_ai_service_priv(service)
             if result
               FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Service #{service.name} (#{service.interface.host.name})")
             else
               FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Service #{service.name} (#{service.interface.host.name})")
-            end
-            rescue
-            p $!
-            p $!.backtrace
             end
           end
           rpc_method_finish
@@ -240,11 +235,12 @@ private
         
         def attack_ai_interface_priv(interface)
           blacklist = []
+          exploiter = FIDIUS::Action::Exploit::Exploit.instance
           while true do
             exploit = FIDIUS::ExploitPicker::exploit_for_interface interface, blacklist
             blacklist << exploit
             break unless exploit
-            result = FIDIUS::Action::Exploit::Exploit.exploit_interface_with_picked_exploit(interface.id, exploit.id)
+            result = exploiter.exploit_interface_with_picked_exploit(interface.id, exploit.id)
             if result or !interface.host.sessions.empty?
               return true
             end
@@ -254,12 +250,12 @@ private
 
         def attack_ai_service_priv(service)
           blacklist = []
+          exploiter = FIDIUS::Action::Exploit::Exploit.instance
           while true do
             exploit = FIDIUS::ExploitPicker::exploit_for_service service, blacklist
-            puts "using exploit #{exploit.name}"
             blacklist << exploit
             break unless exploit
-            result = FIDIUS::Action::Exploit::Exploit.exploit_service_with_picked_exploit(service.id, exploit.id)
+            result = exploiter.exploit_service_with_picked_exploit(service.id, exploit.id)
             if result or !service.interface.host.sessions.empty?
               return true
             end
