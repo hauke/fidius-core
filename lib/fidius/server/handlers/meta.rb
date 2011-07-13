@@ -41,7 +41,10 @@ module FIDIUS
           result
         end
 
+        def exec_msf_command(cmd)
+          FIDIUS::Action::Msf.instance.daemon.exec_msf_command cmd
+        end
       end
     end
   end
-end 
+end
