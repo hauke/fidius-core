@@ -52,6 +52,7 @@ module FIDIUS
           FIDIUS::Task.all.each {|t| t.destroy}
           FIDIUS::UserDialogs.each {|u| u.destroy}
           FIDIUS::Action::Session.close_all_sessions
+          FIDIUS::AssetInitialiser.addLocalAddresses
         end
       end
     end
