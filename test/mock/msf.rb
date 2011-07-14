@@ -187,7 +187,7 @@ module FIDIUS
       class ConfigMock
 
         def initialize
-          @ipAddresses = [InterfaceMock.new("127.0.0.1"), InterfaceMock.new("192.168.56.100")]
+          @ipAddresses = [InterfaceMock.new("127.0.0.1"), InterfaceMock.new("192.168.77.88")]
         end
 
         def each_interface(&block)
