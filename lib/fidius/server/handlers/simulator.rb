@@ -6,11 +6,13 @@ module FIDIUS
         class Meta < FIDIUS::Server::Handler::Meta
           def new_pentest
             FIDIUS::Asset::Host.all.each do |host|
-              next if host.localhost
-              host.discovered = false
+              if host.localhost
+                host.discovered = true
+              else
+                host.discovered = false
+              end
               host.save
             end
-            FIDIUS::ActionLog.destroy_all
             FIDIUS::Task.all.each do |t|
               FIDIUS::Server::TaskManager.kill_task(t)
             end
@@ -21,25 +23,29 @@ module FIDIUS
           end
         end
 
-        class Action < FIDIUS::Server::Handler::Base
-          def attack_host(host_id)
-            host = FIDIUS::Asset::Host.find(host_id)
-            FIDIUS::Server::TaskManager.new_task "Attack #{host.name_or_ip}" do |task|
-              task.update_progress(10)
-              sleep 3
-              
-              #interface = host.interfaces.first #FIDIUS::Asset::Interface.find(interface_id)
-              host.sessions << FIDIUS::Session.create(:service_id=>host.interfaces.first.services.first.id)
-              if host.exploited? || true
-                ActionLog.log("Sucessful Exploit",host_id)
-                FIDIUS::UserDialog.create_dialog("Completed","Attack was sucessful")
-              else
-                ActionLog.log("No Sucessful Exploit",host_id)
-                FIDIUS::UserDialog.create_dialog("Completed","Attack was not sucessful")
-              end
+        class Action < FIDIUS::Server::Handler::Action
+
+          def attack_interface_priv(interface)
+            FIDIUS::Server::TaskManager.new_task "Attack #{interface.name_or_ip}" do |task|
+              sleep 2
+              task.update_progress 30
+              sleep 5
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Interface #{interface.ip} (#{interface.name_or_ip})")
             end
-            puts "HALLO SIMULATOR create_log_for_action"
-            rpc_method_finish
+          end
+        
+          def attack_ai_interface_priv(interface)
+            sleep 2
+            task.update_progress 30
+            sleep 5
+            return true
+          end
+
+          def attack_ai_service_priv(service)
+            sleep 2
+            task.update_progress 30
+            sleep 5
+            return true
           end
 
           def attack_service(service_id)
@@ -61,7 +67,6 @@ module FIDIUS
                 end
               end
               task.finished
-              ActionLog.log("Reconnaissance #{host.name_or_ip}",host_id)
               FIDIUS::UserDialog.create_dialog("Reconnaissance Completed","Reconnaissance was completed")
             end
             rpc_method_finish
@@ -80,10 +85,8 @@ module FIDIUS
                 end
               end
               sleep(5)
-              ActionLog.log("Scan #{iprange}")
               FIDIUS::UserDialog.create_dialog("Scan Completed","Scan was completed")
             end
-            create_log_for_action(ActionMock.new)
             rpc_method_finish
           end
 
