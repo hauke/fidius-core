@@ -69,7 +69,7 @@ module FIDIUS
               return_array<<[mac,addr,bcast,hex_to_ip(mask)]
             }
           else
-            return_array = ifconfig.scan(/(?:HWaddr ([a-f0-9:]*)?)?\s*inet addr:([0-9\.]*)\s*(?:Bcast:([0-9\.]*)\s*?)?Mask:([0-9\.]*)/)
+            return_array = ifconfig.scan(/(?:HWaddr ([a-f0-9:]*)?)?\s*inet addr:([0-9\.]*)\s*(?:[(Bcast)|(P\-t\-P)]+:([0-9\.]*)\s*?)?Mask:([0-9\.]*)/)
           end
         #TODO: IPv6: ifconfig.scan(/inet6 addr: ([0-9a-f:]*)\/([0-9]{1,2})/)
         #ip.inspect.scan(/\/([a-f0-9\.\:]*)>/).flatten
