@@ -120,19 +120,7 @@ module FIDIUS
         @modules = {}
         @sessionDispatcher = SessionDispatcher.new
         @framework.events.add_session_subscriber @sessionDispatcher
-
-        # these includes are needed for exec_msf_command
-        # dont' know, why they are not automatically loaded
-        require 'rex/io/bidirectional_pipe'
-        require 'msf/ui/console'
-        require 'msf/ui/web/console'
-
-        require 'rex/ui'
-        require 'rex/ui/text/input'
-        require 'rex/ui/text/output'
-        require 'rex/ui/text/output/buffer'
-
-        puts Rex::Ui::Text::Input::Readline
+        initialize_msf_console
       end
 
       class << self
@@ -268,6 +256,21 @@ module FIDIUS
             return session if session.uuid == uuid
           end
         end
+      end
+
+      def initialize_msf_console
+        # these includes are needed for exec_msf_command
+        # dont' know, why they are not automatically loaded
+        require 'rex/io/bidirectional_pipe'
+        require 'msf/ui/console'
+        require 'msf/ui/web/console'
+
+        require 'rex/ui'
+        require 'rex/ui/text/input'
+        require 'rex/ui/text/output'
+        require 'rex/ui/text/output/buffer'
+
+        puts Rex::Ui::Text::Input::Readline
       end
 
       def create_framework

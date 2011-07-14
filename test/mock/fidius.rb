@@ -19,6 +19,10 @@ module FIDIUS
       def get_switch_board
         FIDIUS::MsfMock::SwitchBoard
       end
+      
+      def initialize_msf_console
+        nil
+      end
 
     end # class MsfDRbD
   end # module Server
