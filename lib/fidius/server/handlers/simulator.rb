@@ -3,7 +3,7 @@ module FIDIUS
     module Handler
       module Simulator
 
-        class Meta < FIDIUS::Server::Handler::Base
+        class Meta < FIDIUS::Server::Handler::Meta
           def new_pentest
             FIDIUS::Asset::Host.all.each do |host|
               next if host.localhost
@@ -15,6 +15,8 @@ module FIDIUS
               FIDIUS::Server::TaskManager.kill_task(t)
             end
             FIDIUS::Task.destroy_all
+            FIDIUS::Session.destroy_all
+            FIDIUS::UserDialog.destroy_all
             rpc_method_finish
           end
         end

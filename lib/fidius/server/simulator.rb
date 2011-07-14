@@ -27,7 +27,7 @@ module FIDIUS
       end
 
       def add_handlers
-        @@meta = FIDIUS::Server::Handler::Meta.new
+        @@meta = FIDIUS::Server::Handler::Simulator::Meta.new
         puts "HALLO: @@meta: #{@@meta}"
         @@model = FIDIUS::Server::Handler::Model.new
         @@action = FIDIUS::Server::Handler::Simulator::Action.new
@@ -47,6 +47,7 @@ module FIDIUS
       def self.action
         @@action
       end
+
       def self.meta
         @@meta
       end
