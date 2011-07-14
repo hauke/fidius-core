@@ -130,7 +130,6 @@ module FIDIUS
     end
 
     private
-      include FIDIUS::MachineLearning # TODO: include??
 
       def startup
         FIDIUS.connect_db
