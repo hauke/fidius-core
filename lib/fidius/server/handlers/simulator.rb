@@ -22,7 +22,7 @@ module FIDIUS
         class Action < FIDIUS::Server::Handler::Base
           def attack_host(host_id)
             host = FIDIUS::Asset::Host.find(host_id)
-            FIDIUS::Server::TaskManager.new_task "Attack #{host.name}" do |task|
+            FIDIUS::Server::TaskManager.new_task "Attack #{host.name_or_ip}" do |task|
               task.update_progress(10)
               sleep 3
               
@@ -46,7 +46,7 @@ module FIDIUS
 
           def reconnaissance(host_id)
             host = FIDIUS::Asset::Host.find(host_id)
-            FIDIUS::Server::TaskManager.new_task "Reconnaissance #{host.name}" do |task|
+            FIDIUS::Server::TaskManager.new_task "Reconnaissance #{host.name_or_ip}" do |task|
               sleep 3
               task.update_progress(10)
               sleep 3
@@ -59,7 +59,7 @@ module FIDIUS
                 end
               end
               task.finished
-              ActionLog.log("Reconnaissance #{host.name}",host_id)
+              ActionLog.log("Reconnaissance #{host.name_or_ip}",host_id)
               FIDIUS::UserDialog.create_dialog("Reconnaissance Completed","Reconnaissance was completed")
             end
             rpc_method_finish

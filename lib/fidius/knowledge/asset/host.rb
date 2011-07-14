@@ -78,6 +78,11 @@ module FIDIUS
         return neighbours
       end
 
+      def name_or_ip
+        return name if name
+        return interfaces.first.ip if interfaces.first
+      end
+
       #def ==
       #  raise NotImplementedError, "not implemented yet"
       #end

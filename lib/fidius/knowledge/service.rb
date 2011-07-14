@@ -10,6 +10,11 @@ module FIDIUS
       raise NotImplementedError, "not implemented yet"
     end
 
+    def name_or_ip
+      return interface.host.name if interface.host.name
+      return interface.ip
+    end
+
     def == other
       return false unless other
       return false if other.port != port

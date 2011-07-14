@@ -16,10 +16,10 @@ module FIDIUS
           host.interfaces.each do |inter|
             s = exploiter.exploit_interface_with_picked_exploit(inter.id, exploit_id)
             if host.exploited?
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on #{host.name}")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on #{host.name_or_ip}")
               return
             else
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on #{host.name}")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on #{host.name_or_ip}")
             end
           end
           rpc_method_finish
@@ -30,9 +30,9 @@ module FIDIUS
           exploiter = FIDIUS::Action::Exploit::Exploit.instance
           s = exploiter.exploit_interface_with_picked_exploit(inter.id, exploit_id)
           if inter.host.exploited?
-            FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Interface #{inter.ip} (#{inter.host.name})")
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Interface #{inter.ip} (#{inter.name_or_ip})")
           else
-            FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Interface #{inter.ip} (#{inter.host.name})")
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Interface #{inter.ip} (#{inter.name_or_ip})")
           end
           rpc_method_finish
         end
@@ -42,10 +42,10 @@ module FIDIUS
           exploiter = FIDIUS::Action::Exploit::Exploit.instance
           s = exploiter.exploit_service_with_picked_exploit(service_id, exploit_id)
           if service.interface.host.exploited?
-            FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Service #{service.name} (#{service.interface.host.name})")
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Service #{service.name} on (#{service.name_or_ip})")
             return
           else
-            FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Service #{service.name} (#{service.interface.host.name})")
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Service #{service.name} on (#{service.name_or_ip})")
           end
           rpc_method_finish
         end
@@ -58,7 +58,7 @@ module FIDIUS
         def attack_host(host_id)
           host = FIDIUS::Asset::Host.find(host_id)
           exploiter = FIDIUS::Action::Exploit::Exploit.instance
-          FIDIUS::Server::TaskManager.new_task "Attack #{host.name}" do |task|
+          FIDIUS::Server::TaskManager.new_task "Attack #{host.name_or_ip}" do |task|
             task.update_progress 30
             host.interfaces.each { |interface|
               result = exploiter.autopwn interface
@@ -67,9 +67,9 @@ module FIDIUS
               end
             }
             if host.exploited?
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on #{host.name}")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on #{host.name_or_ip}")
             else
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on #{host.name}")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on #{host.name_or_ip}")
             end
           end
           rpc_method_finish
@@ -77,13 +77,13 @@ module FIDIUS
 
         def attack_service(service_id)
           service = FIDIUS::Service.find(service_id)
-          FIDIUS::Server::TaskManager.new_task "Attack #{service.interface.host.name}" do |task|
+          FIDIUS::Server::TaskManager.new_task "Attack #{service.name} on #{service.name_or_ip}" do |task|
             exploiter = FIDIUS::Action::Exploit::Exploit.instance
             result = exploiter.service_autopwn service_id            
             if service.interface.host.exploited?
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Service #{service.name} (#{service.interface.host.name})")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Service #{service.name} on (#{service.name_or_ip})")
             else
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Service #{service.name} (#{service.interface.host.name})")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Service #{service.name} on (#{service.name_or_ip})")
             end
           end
           rpc_method_finish
@@ -97,26 +97,26 @@ module FIDIUS
 
         def attack_ai_host(host_id)
           host = FIDIUS::Asset::Host.find(host_id)
-          FIDIUS::Server::TaskManager.new_task "Attack #{host.name}" do |task|
+          FIDIUS::Server::TaskManager.new_task "Attack #{host.name_or_ip}" do |task|
             host.interfaces.each do |interface|
               result = attack_ai_interface_priv(interface)
               next unless result
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on #{host.name}")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on #{host.name_or_ip}")
               return
             end
-            FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on #{host.name}")
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on #{host.name_or_ip}")
           end
           rpc_method_finish
         end
 
         def attack_ai_service(service_id)
           service = FIDIUS::Service.find(service_id)
-          FIDIUS::Server::TaskManager.new_task "Attack #{service.interface.host.name}" do |task|
+          FIDIUS::Server::TaskManager.new_task "Attack #{service.name} on #{service.name_or_ip}" do |task|
             result = attack_ai_service_priv(service)
             if result
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Service #{service.name} (#{service.interface.host.name})")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Service #{service.name} on (#{service.name_or_ip})")
             else
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Service #{service.name} (#{service.interface.host.name})")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Service #{service.name} on (#{service.name_or_ip})")
             end
           end
           rpc_method_finish
@@ -124,12 +124,12 @@ module FIDIUS
 
         def attack_ai_interface(interface_id)
           interface = FIDIUS::Asset::Interface.find(interface_id)
-          FIDIUS::Server::TaskManager.new_task "Attack #{interface.host.name}" do |task|
+          FIDIUS::Server::TaskManager.new_task "Attack #{interface.name_or_ip}" do |task|
             result = attack_ai_interface_priv(interface)
             if result
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on (#{interface.host.name})")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on (#{interface.name_or_ip})")
             else
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful (#{interface.host.name})")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on (#{interface.name_or_ip})")
             end
           end
           rpc_method_finish
@@ -220,15 +220,15 @@ module FIDIUS
 private
 
         def attack_interface_priv(interface)
-          FIDIUS::Server::TaskManager.new_task "Attack #{interface.host.name}" do |task|
+          FIDIUS::Server::TaskManager.new_task "Attack #{interface.name_or_ip}" do |task|
             exploiter = FIDIUS::Action::Exploit::Exploit.instance
             task.update_progress 30
 
             result = exploiter.autopwn interface
             if interface.host.exploited?
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Interface #{interface.ip} (#{interface.host.name})")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on Interface #{interface.ip} (#{interface.name_or_ip})")
             else
-              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Interface #{interface.ip} (#{interface.host.name})")
+              FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on Interface #{interface.ip} (#{interface.name_or_ip})")
             end
           end
         end

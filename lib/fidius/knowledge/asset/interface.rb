@@ -11,6 +11,11 @@ module FIDIUS
         agent.add(self)
       end
 
+      def name_or_ip
+        return host.name if host.name
+        return ip
+      end
+
       def reachable?
         raise NotImplementedError, "not implemented yet"
       end
