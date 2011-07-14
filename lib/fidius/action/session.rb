@@ -46,13 +46,14 @@ module FIDIUS
         rhost_addr = FIDIUS::Action::Session.get_rhost session
         piv_host = FIDIUS::Asset::Host.find_or_create_by_ip(lhost_addr)
         host = FIDIUS::Asset::Host.find_or_create_by_ip(rhost_addr)
+        interface = FIDIUS::Asset::Interface.find_by_ip(rhost_addr)
         host.pivot_host_id = piv_host.id
         session_db = FIDIUS::Session.find_or_create_by_id(session.name.to_s)
         session_db.name = session.name
         session_db.exploit = session.via_exploit
         session_db.payload = session.via_payload
-        exploited_service = host.services.select{|s| s.port.to_s == session.exploit_datastore['RPORT'].to_s}
-        session_db.service_id = exploited_service.first.id
+        exploited_service = interface.services.select{|s| s.port.to_s == session.exploit_datastore['RPORT'].to_s}
+        session_db.service_id = exploited_service.first.id if exploited_service.first
         host.sessions << session_db
         session_db.save
         host.save
