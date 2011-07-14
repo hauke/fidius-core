@@ -8,7 +8,7 @@ module FIDIUS
 
         def dialog_closed
           ud = UserDialog.find :first, :order=>"created_at"
-          ud.destroy
+          ud.destroy if ud
           rpc_method_finish
         end
 
