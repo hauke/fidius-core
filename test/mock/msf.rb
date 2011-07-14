@@ -141,6 +141,7 @@ module FIDIUS
           @name = name
           @net = NetMock.new
           @sys = SysMock.new
+          @exploit_datastore = {"RPORT" => 80}
         end
 
         def name
@@ -170,6 +171,16 @@ module FIDIUS
         def sys
           @sys
         end
+        
+        def tunnel_peer
+          "192.168.77.88:1035"
+        end
+
+        def tunnel_local
+          "192.168.77.1:4444"
+        end
+        
+        attr_accessor :exploit_datastore 
 
       end #class ModuleSetMock
 
