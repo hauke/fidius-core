@@ -98,13 +98,14 @@ module FIDIUS
         def attack_ai_host(host_id)
           host = FIDIUS::Asset::Host.find(host_id)
           FIDIUS::Server::TaskManager.new_task "Attack #{host.name_or_ip}" do |task|
+            result = nil
             host.interfaces.each do |interface|
               result = attack_ai_interface_priv(interface)
               next unless result
               FIDIUS::UserDialog.create_dialog("Completed","Attack was successful on #{host.name_or_ip}")
-              return
+              break
             end
-            FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on #{host.name_or_ip}")
+            FIDIUS::UserDialog.create_dialog("Completed","Attack was not successful on #{host.name_or_ip}") unless result
           end
           rpc_method_finish
         end
