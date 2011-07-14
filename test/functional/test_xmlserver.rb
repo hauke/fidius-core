@@ -60,6 +60,6 @@ class XMLServerTest < FIDIUS::Test
     result = xmlrpc.call("decision.next_host")
     interface = result.scan(/<i4>(.*)<\/i4>/).flatten[0]
     ip = FIDIUS::Asset::Interface.find_by_id(interface).ip
-    assert (ip == "192.168.56.101" || ip == "192.168.56.102" || ip == "192.168.56.103")
+    assert (ip == "192.168.56.101" || ip == "192.168.56.102" || ip == "192.168.56.103"), "AI choosed wrong interface ip: #{ip}"
   end
 end
