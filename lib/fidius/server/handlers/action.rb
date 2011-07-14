@@ -197,23 +197,23 @@ module FIDIUS
         #add_handler("action.browser_autopwn.stop") do |lhost|
 
         def browser_autopwn_start(lhost)
-          FIDIUS::Server::TaskManager.new_task "BrowserAutopwn" do |task|
+          FIDIUS::Server::TaskManager.new_task "BrowserAutopwn on #{lhost}" do |task|
             # TODO: browser autopwn should not leaf this block
             # task is immediatly finished
             # should block as long as runtime
-            FIDIUS::Action::Exploit::Passive.instance.start_browser_autopwn lhost
+            url = FIDIUS::Action::Exploit::Passive.instance.start_browser_autopwn lhost
+            FIDIUS::UserDialog.create_dialog("BrowserAutopwn startet","BrowserAutopwn startet on #{url}")
           end
-          FIDIUS::UserDialog.create_dialog("BrowserAutopwn startet","BrowserAutopwn startet")
           rpc_method_finish
         end
 
         def file_autopwn_start(lhost)
-          FIDIUS::Server::TaskManager.new_task "FileAutopwn" do |task|
+          FIDIUS::Server::TaskManager.new_task "FileAutopwn on #{lhost}" do |task|
             # TODO: file autopwn should not leaf this block
             # task is immediatly finished
-            FIDIUS::Action::Exploit::Passive.instance.start_file_autopwn lhost
+            url = FIDIUS::Action::Exploit::Passive.instance.start_file_autopwn lhost
+            FIDIUS::UserDialog.create_dialog("FileAutopwn startet","FileAutopwn startet on #{url}")
           end
-          FIDIUS::UserDialog.create_dialog("FileAutopwn startet","FileAutopwn startet")
           rpc_method_finish
         end
 
