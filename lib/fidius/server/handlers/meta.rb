@@ -56,6 +56,20 @@ module FIDIUS
           FIDIUS::UserDialog.create_dialog("Completed","Database cleaned up")
           rpc_method_finish
         end
+
+        def get_processes session_id
+          session = FIDIUS::Session.find_by_id(session_id)
+          msf_session = FIDIUS::Action::Msf.instance.framework.sessions[session.name.to_i]
+          result = msf_session.sys.process.get_processes
+          result.each do |entry|
+            entry["name"].gsub!(/\P{ASCII}/, '_') if entry["name"]
+            entry["arch"].gsub!(/\P{ASCII}/, '_') if entry["arch"]
+            entry["user"].gsub!(/\P{ASCII}/, '_') if entry["user"]
+            entry["path"].gsub!(/\P{ASCII}/, '_') if entry["path"]
+          end
+          result
+        end
+
       end
     end
   end
