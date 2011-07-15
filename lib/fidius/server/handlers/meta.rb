@@ -62,8 +62,11 @@ module FIDIUS
           msf_session = FIDIUS::Action::Msf.instance.framework.sessions[session.name.to_i]
           result = msf_session.sys.process.get_processes
           result.each do |entry|
+            entry["pid"].to_s if entry["pid"]
+            entry["parentid"].to_s if entry["parentid"]
             entry["name"].gsub!(/\P{ASCII}/, '_') if entry["name"]
             entry["arch"].gsub!(/\P{ASCII}/, '_') if entry["arch"]
+            entry["session"].to_s if entry["session"]
             entry["user"].gsub!(/\P{ASCII}/, '_') if entry["user"]
             entry["path"].gsub!(/\P{ASCII}/, '_') if entry["path"]
           end
