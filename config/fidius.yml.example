@@ -6,7 +6,7 @@ databases:
     encoding: utf8
     username: msf
     password: passwordverydifficulttoguessed
-    socket: /tmp/mysql.sock
+#   socket: /tmp/mysql.sock
 
   development: 
     database: fidius
