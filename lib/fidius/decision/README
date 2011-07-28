@@ -1,0 +1,99 @@
+----- FIDIUS DECISION ----
+
+CONTENT:
+	1) agent - Host Prediction
+	2) exploit_picker 
+	3) genetic algorithm /  snort_config
+	4) logic
+	5) planning
+
+--------------------------
+Status description:
+       (STATUS: USED / INTEGRATED): 
+       Components with this flag are integrated 
+       in the architecture and are already used 
+       by outside components (like the C&C server). 
+
+       (STATUS: NOT USED / INTEGRATED): 
+       Those components are integrated but not used
+       by outside components.
+
+       (STATUS: DEPRECATED):
+       Components that moved from thie repository in	
+       another one are flagged DEPRECATED
+
+       (STATUS: DRAFT):
+       The code is just an idea sketch for what 
+       could be done.
+
+--------------------------
+1) agent - Host Prediction (STATUS: USED / INTEGRATED)
+This is the agent that predicts the Value
+of a Host.
+
+agent.rb:
+	Includes the main routines for training and
+	classification. 
+
+predictor.rb:
+	Interfaces ai4r for our purposes.
+
+offline_train.rb: 
+ 	Example of how to train the agent
+
+nmap.arff / nmap.dat:
+	Scan results for initial training
+
+--------------------------
+2) exploit picker (STATUS: USED / INTEGRATED)
+Uses the evasion db for exploit choosing.
+Given a bit-vector representing the open and closed
+ports of a host, the exploit picker will search 
+for the most silent exploit that matches a service.
+
+--------------------------
+3) genetic algorithm / snort conf (STATUS: DEPRECATED)
+Includes the class that can minimize the recognized exploits/
+false positive ratio.
+Integrated in the snortor repository.
+
+--------------------------
+4) logic (STATUS: DRAFT)
+This component was ment to decide about the next moves
+in a black box scneario. However, for some reasons it was
+never used / finished / integrated. Basically the
+class represents a finite state machine, where each state
+refers to an action.
+
+--------------------------
+5) planning (STATUS: NOT USED / INTEGRATED): 
+This component is generating plans from the knowledge components
+given a goal. 
+
+domain.pddl:
+	This is the definition of possible actions and
+	assets that can be used in a plan
+
+planner.rb:
+	This component generates the plans using the cff lib.
+
+cfflib:
+	action_model:
+		An action model is a tree representing a
+		contingent plan. The user can ask for the next	
+		step. When executed he should give feedback to the component
+		whether it failed or succeded.
+		
+	eval_prob_gen:
+		Just used for evaluation. Generated random nets.
+	
+	pddl_prob:	
+		Represents a PDDL Problem file
+		and can write it to disk.
+		
+	planparser: 
+		Parses cff output and generates	
+		an action model.
+		
+	test_planning:
+		Just an initial test.
