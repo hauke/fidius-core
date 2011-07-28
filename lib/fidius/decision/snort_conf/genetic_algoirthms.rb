@@ -1,3 +1,4 @@
+# Customized from ai4r: http://ai4r.rubyforge.org/
 module GeneticAlgorithm
   class GeneticSearch
     attr_accessor :population

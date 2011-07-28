@@ -1,6 +1,6 @@
 # Tool will optimize a snort rule set 
 #
-# Customized from ai4r
+# Customized from ai4r: http://ai4r.rubyforge.org/
 module FIDIUS
   module GeneticAlgorithm
     class GeneticSearch
