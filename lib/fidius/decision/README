@@ -19,7 +19,7 @@ Status description:
        by outside components.
 
        (STATUS: DEPRECATED):
-       Components that moved from thie repository in	
+       Components that moved from this repository in	
        another one are flagged DEPRECATED
 
        (STATUS: DRAFT):
@@ -60,7 +60,7 @@ Integrated in the snortor repository.
 --------------------------
 4) logic (STATUS: DRAFT)
 This component was ment to decide about the next moves
-in a black box scneario. However, for some reasons it was
+in a black box scenario. However, for some reasons it was
 never used / finished / integrated. Basically the
 class represents a finite state machine, where each state
 refers to an action.
@@ -82,7 +82,7 @@ cfflib:
 		An action model is a tree representing a
 		contingent plan. The user can ask for the next	
 		step. When executed he should give feedback to the component
-		whether it failed or succeded.
+		whether it failed or succeeded.
 		
 	eval_prob_gen:
 		Just used for evaluation. Generated random nets.
