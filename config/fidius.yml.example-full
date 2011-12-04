@@ -1,0 +1,47 @@
+databases:
+  basic: &default
+    adapter: mysql2
+    host: localhost
+    port: 3306
+    encoding: utf8
+    username: msf
+    password: passwordverydifficulttoguessed
+#   socket: /tmp/mysql.sock
+
+  development: 
+    database: fidius
+    <<: *default
+  test:
+    database: fidius_test
+    <<: *default
+  simulator: 
+    database: fidius
+    <<: *default
+  evasiondb:
+    database: evasion_db
+    <<: *default
+
+metasploit:
+  host: localhost
+  port: 56606
+  path: /path/to/msf
+xmlrpc:
+  host: localhost
+  port: 8080
+xmlrpc-simulator:
+  host: localhost
+  port: 8080
+prelude:
+  host: 10.20.20.1
+:tests:
+  :lab_config: path/to/lab_config
+  :xp_vm:
+    :lab_name: VM_ID
+    :ip: 127.0.0.1
+    :waittime: 10
+    :default_snapshot: default_snapshot 
+  :xp_vm_pivot:
+    :lab_name: VM_ID
+    :ip: 127.0.0.1
+    :waittime: 10
+    :default_snapshot: default_snapshot 
